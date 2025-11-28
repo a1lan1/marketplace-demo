@@ -1,0 +1,313 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse_ds"
+          },
+          "meta": {
+            "schema": "default",
+            "table": "events"
+          },
+          "rawSql": "SELECT\n    toStartOfHour(ts) AS hour,\n    count() AS views\nFROM events\nWHERE event_type = 'page_view' AND $__timeFilter(ts)\nGROUP BY hour\nORDER BY hour;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "hour",
+                "type": "DateTime"
+              },
+              {
+                "name": "views",
+                "type": "UInt64"
+              }
+            ],
+            "groupBy": [],
+            "limit": 1000,
+            "orderBy": [],
+            "table": "events"
+          }
+        }
+      ],
+      "title": "Page Views per Hour",
+      "type": "timeseries"
+    }
+    ,
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_ds"
+      },
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {"calcs": ["last"], "fields": "", "values": false},
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT count() AS views_24h FROM events WHERE event_type = 'page_view' AND ts >= now() - INTERVAL 24 HOUR",
+          "refId": "A"
+        }
+      ],
+      "title": "Page Views (24h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_ds"
+      },
+      "gridPos": { "h": 5, "w": 12, "x": 12, "y": 4 },
+      "id": 4,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT page, count() AS views FROM events WHERE event_type = 'page_view' AND $__timeFilter(ts) GROUP BY page ORDER BY views DESC LIMIT 10",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Pages (1h)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "showPoints": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 9 },
+      "id": 5,
+      "options": {
+        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "single", "sort": "none"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT toStartOfMinute(ts) AS minute, count() AS cnt FROM events WHERE event_type = 'page_view' AND $__timeFilter(ts) GROUP BY minute ORDER BY minute",
+          "refId": "PV"
+        },
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT toStartOfMinute(ts) AS minute, count() AS cnt FROM events WHERE event_type = 'click' AND $__timeFilter(ts) GROUP BY minute ORDER BY minute",
+          "refId": "CL"
+        },
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT toStartOfMinute(ts) AS minute, count() AS cnt FROM events WHERE event_type = 'sign_in' AND $__timeFilter(ts) GROUP BY minute ORDER BY minute",
+          "refId": "SI"
+        },
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT toStartOfMinute(ts) AS minute, count() AS cnt FROM events WHERE event_type = 'sign_up' AND $__timeFilter(ts) GROUP BY minute ORDER BY minute",
+          "refId": "SU"
+        },
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT toStartOfMinute(ts) AS minute, count() AS cnt FROM events WHERE event_type = 'error' AND $__timeFilter(ts) GROUP BY minute ORDER BY minute",
+          "refId": "ER"
+        }
+      ],
+      "title": "Events per Minute by Type",
+      "type": "timeseries"
+    }
+    ,
+    {
+      "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 18 },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {"calcs": ["last"], "fields": "", "values": false},
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT count() AS signins_24h FROM events WHERE event_type = 'sign_in' AND ts >= now() - INTERVAL 24 HOUR",
+          "refId": "A"
+        }
+      ],
+      "title": "Sign-ins (24h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 18 },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {"calcs": ["last"], "fields": "", "values": false},
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT count() AS signups_24h FROM events WHERE event_type = 'sign_up' AND ts >= now() - INTERVAL 24 HOUR",
+          "refId": "A"
+        }
+      ],
+      "title": "Sign-ups (24h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 22 },
+      "id": 8,
+      "options": {"showHeader": true},
+      "targets": [
+        {
+          "datasource": {"type": "grafana-clickhouse-datasource", "uid": "clickhouse_ds"},
+          "rawSql": "SELECT ts, page, event_type FROM events WHERE event_type = 'error' AND $__timeFilter(ts) ORDER BY ts DESC LIMIT 20",
+          "refId": "A"
+        }
+      ],
+      "title": "Latest Errors (1h)",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "refresh": "5s",
+  "timezone": "",
+  "title": "ClickHouse Analytics",
+  "uid": "clickhouse-analytics",
+  "version": 1,
+  "weekStart": ""
+}

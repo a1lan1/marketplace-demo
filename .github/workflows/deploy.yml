@@ -1,0 +1,66 @@
+name: CD (Continuous Deployment)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Show Deployment Instructions
+        run: |
+          echo "🚀 This is a template for Continuous Deployment."
+          echo "It demonstrates the commands that would run on a real server."
+          echo "To activate real deployment, follow these steps:"
+          echo "1. Go to your repository's Settings > Secrets and variables > Actions."
+          echo "2. Create the following repository secrets:"
+          echo "   - SSH_HOST: Your server's IP address or domain."
+          echo "   - SSH_USER: The username for SSH login (e.g., 'ubuntu', 'root')."
+          echo "   - SSH_PRIVATE_KEY: The private SSH key for authentication."
+          echo "3. Uncomment the 'Real Deployment' step below."
+          echo "4. Comment out or delete this 'Demonstration' step."
+          echo "5. Update the 'cd /path/to/your/project' line with the actual path on your server."
+
+      - name: 🤖 Demonstrate Deployment Commands
+        run: |
+          echo "Connecting to server (simulation)..."
+          echo "cd /path/to/your/project"
+          echo "git pull origin main"
+          echo "docker compose exec app composer install --no-interaction --no-progress --no-dev --optimize-autoloader"
+          echo "docker compose exec app yarn install"
+          echo "docker compose exec app yarn build"
+          echo "docker compose up -d --build"
+          echo "docker compose exec app php artisan migrate --force"
+          echo "docker compose exec app php artisan optimize:clear"
+          echo "docker compose exec app php artisan optimize"
+          echo "Deployment simulation complete! ✨"
+
+      # - name: 🚀 Real Deployment
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       echo "Connecting to server..."
+      #       cd /path/to/your/project
+      #       echo "Pulling latest changes..."
+      #       git pull origin main
+      #       echo "Installing Composer dependencies..."
+      #       docker compose exec app composer install --no-interaction --no-progress --no-dev --optimize-autoloader
+      #       echo "Installing Node dependencies..."
+      #       docker compose exec app yarn install
+      #       echo "Building frontend assets..."
+      #       docker compose exec app yarn build
+      #       echo "Rebuilding and restarting services..."
+      #       docker compose up -d --build
+      #       echo "Running database migrations..."
+      #       docker compose exec app php artisan migrate --force
+      #       echo "Optimizing application..."
+      #       docker compose exec app php artisan optimize:clear
+      #       docker compose exec app php artisan optimize
+      #       echo "Deployment complete! ✨"

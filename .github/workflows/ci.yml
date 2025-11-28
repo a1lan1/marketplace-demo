@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  lint:
+    name: 💅 Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Setup .env file
+        run: cp .env.example .env
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for app container
+        run: make wait-for-app
+
+      - name: Install Composer dependencies
+        run: docker compose exec app composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install Node dependencies
+        run: docker compose exec app yarn install
+
+      - name: Run linters
+        run: make lint
+
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Setup .env file for testing
+        run: cp .env.testing .env
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for app container
+        run: make wait-for-app
+
+      - name: Install Composer dependencies
+        run: docker compose exec app composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install Node dependencies
+        run: docker compose exec app yarn install
+
+      - name: Run tests
+        run: make test
