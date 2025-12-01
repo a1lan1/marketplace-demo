@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\DatabaseNotification;
@@ -48,6 +49,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read Collection<int, Product> $products
+ * @property-read int|null $products_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
  *
@@ -125,6 +129,11 @@ class User extends Authenticatable implements HasMedia
             'two_factor_confirmed_at' => 'datetime',
             'balance' => MoneyDecimalCast::class,
         ];
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
     }
 
     public function registerMediaConversions(?Media $media = null): void
