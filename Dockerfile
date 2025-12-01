@@ -18,7 +18,8 @@ RUN apk add --no-cache \
     supervisor \
     linux-headers \
     nodejs \
-    yarn
+    yarn \
+    openssl-dev
 
 # Install the PHP extensions
 RUN docker-php-ext-install -j$(nproc) \
@@ -54,11 +55,12 @@ RUN apk add --no-cache icu-dev \
 RUN apk add --no-cache librdkafka librdkafka-dev \
     && if ! php -m | grep -q 'rdkafka'; then pecl install rdkafka && docker-php-ext-enable rdkafka; fi
 
+# Install Swoole for Octane
+RUN pecl install swoole || true \
+    && docker-php-ext-enable swoole
+
 # Install Composer globally
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Install RoadRunner for Octane
-COPY --from=spiralscout/roadrunner:2025.1 /usr/bin/rr /usr/bin/rr
 
 # --- STAGE 2: Development Image ---
 FROM base AS local
@@ -78,5 +80,4 @@ EXPOSE 8585
 # Use entrypoint
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# Command for local development
-CMD ["php-fpm"]
+CMD ["php", "artisan", "octane:start", "--server=swoole", "--watch", "--host=0.0.0.0", "--port=8585"]
