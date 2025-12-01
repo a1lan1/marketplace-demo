@@ -48,6 +48,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $media_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, Order> $orders
+ * @property-read int|null $orders_count
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read Collection<int, Product> $products
@@ -134,6 +136,11 @@ class User extends Authenticatable implements HasMedia
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 
     public function registerMediaConversions(?Media $media = null): void
