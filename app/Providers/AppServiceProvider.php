@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\BalanceServiceInterface;
+use App\Contracts\ChatServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Services\BalanceService;
+use App\Services\ChatService;
 use App\Services\OrderService;
 use App\Services\ProductService;
 use Carbon\CarbonImmutable;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
         $this->app->bind(OrderServiceInterface::class, OrderService::class);
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
+        $this->app->bind(ChatServiceInterface::class, ChatService::class);
 
         if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
