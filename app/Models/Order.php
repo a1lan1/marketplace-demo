@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\OrderStatusEnum;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyDecimalCast;
 use Cknow\Money\Money;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property int $user_id Buyer ID
  * @property Money $total_amount
+ * @property OrderStatusEnum $status
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read User $buyer
@@ -56,6 +58,7 @@ class Order extends Model
     {
         return [
             'total_amount' => MoneyDecimalCast::class,
+            'status' => OrderStatusEnum::class,
         ];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->comment('Buyer ID')->constrained()->onDelete('cascade');
             $table->decimal('total_amount', 10, 2);
-            $table->string('status')->default('pending');
+            $table->enum('status', OrderStatusEnum::values())->default(OrderStatusEnum::PENDING->value);
             $table->timestamps();
         });
 
