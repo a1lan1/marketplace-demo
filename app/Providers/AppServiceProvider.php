@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\BalanceServiceInterface;
+use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Services\BalanceService;
+use App\Services\OrderService;
 use App\Services\ProductService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
+        $this->app->bind(OrderServiceInterface::class, OrderService::class);
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
 
         if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
