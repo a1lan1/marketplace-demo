@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\RoleEnum;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyDecimalCast;
 use Cknow\Money\Money;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -80,7 +83,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements FilamentUser, HasMedia
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -133,6 +136,11 @@ class User extends Authenticatable implements HasMedia
         ];
     }
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdminOrManager();
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
@@ -141,6 +149,31 @@ class User extends Authenticatable implements HasMedia
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(RoleEnum::ADMIN);
+    }
+
+    public function isManager(): bool
+    {
+        return $this->hasRole(RoleEnum::MANAGER);
+    }
+
+    public function isAdminOrManager(): bool
+    {
+        return $this->hasAnyRole(RoleEnum::ADMIN, RoleEnum::MANAGER);
+    }
+
+    public function isBuyer(): bool
+    {
+        return $this->hasRole(RoleEnum::BUYER);
+    }
+
+    public function isSeller(): bool
+    {
+        return $this->hasRole(RoleEnum::SELLER);
     }
 
     public function registerMediaConversions(?Media $media = null): void

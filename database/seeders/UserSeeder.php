@@ -26,7 +26,23 @@ class UserSeeder extends Seeder
             ->create([
                 'name' => 'Manager',
                 'email' => 'demo@example.com',
-            ])->assignRole(RoleEnum::MANAGER->value);
+            ])->assignRole(RoleEnum::MANAGER->value, RoleEnum::BUYER->value, RoleEnum::SELLER->value);
+
+        User::factory()
+            ->withAvatar()
+            ->withoutTwoFactor()
+            ->create([
+                'name' => 'Buyer',
+                'email' => 'buyer@example.com',
+            ])->assignRole(RoleEnum::BUYER->value, RoleEnum::SELLER->value);
+
+        User::factory()
+            ->withAvatar()
+            ->withoutTwoFactor()
+            ->create([
+                'name' => 'Seller',
+                'email' => 'seller@example.com',
+            ])->assignRole(RoleEnum::BUYER->value, RoleEnum::SELLER->value);
 
         User::factory(5)
             ->withAvatar()

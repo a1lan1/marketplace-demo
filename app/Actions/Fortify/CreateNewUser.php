@@ -44,7 +44,11 @@ class CreateNewUser implements CreatesNewUsers
                 'email' => $input['email'],
                 'password' => $input['password'],
             ]), function (User $user): void {
-                $user->assignRole(RoleEnum::USER->value, RoleEnum::BUYER->value);
+                $user->assignRole([
+                    RoleEnum::USER->value,
+                    RoleEnum::BUYER->value,
+                    RoleEnum::SELLER->value,
+                ]);
             });
         });
     }

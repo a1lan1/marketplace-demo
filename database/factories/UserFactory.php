@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -68,6 +69,20 @@ class UserFactory extends Factory
         return $this->afterCreating(function (User $user): void {
             $user->addMediaFromUrl('https://picsum.photos/500')
                 ->toMediaCollection('user.avatar');
+        });
+    }
+
+    /**
+     * Indicate that the user should have a base set of roles.
+     */
+    public function withBaseRoles(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole([
+                RoleEnum::USER->value,
+                RoleEnum::BUYER->value,
+                RoleEnum::SELLER->value,
+            ]);
         });
     }
 }

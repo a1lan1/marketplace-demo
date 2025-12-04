@@ -18,39 +18,39 @@ class RoleSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
+            'products.view', 'products.create', 'products.edit-own',
+            'products.delete-own', 'products.edit-any', 'products.delete-any',
+            'cart.manage',
+            'orders.view-own-seller', 'orders.update-status', 'orders.update-any',
+            'orders.view-all', 'orders.create', 'orders.view-own',
             'user.profile.view', 'user.profile.update',
-            'products.view', 'orders.create', 'orders.view-own', 'cart.manage',
-            'products.create', 'products.edit-own', 'products.delete-own',
-            'orders.view-own-seller', 'orders.update-status',
-            'products.edit-any', 'products.delete-any', 'orders.view-all',
-            'orders.update-any', 'users.view',
-            'users.create', 'users.edit', 'users.delete',
+            'users.view', 'users.create', 'users.edit', 'users.delete',
             'roles.manage', 'permissions.manage',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::findOrCreate($permission);
         }
 
-        $userRole = Role::create(['name' => RoleEnum::USER->value]);
+        $userRole = Role::findOrCreate(RoleEnum::USER->value);
         $userRole->givePermissionTo(['user.profile.view', 'user.profile.update']);
 
-        $buyerRole = Role::create(['name' => RoleEnum::BUYER->value]);
+        $buyerRole = Role::findOrCreate(RoleEnum::BUYER->value);
         $buyerRole->givePermissionTo(['products.view', 'orders.create', 'orders.view-own', 'cart.manage']);
 
-        $sellerRole = Role::create(['name' => RoleEnum::SELLER->value]);
+        $sellerRole = Role::findOrCreate(RoleEnum::SELLER->value);
         $sellerRole->givePermissionTo([
             'products.create', 'products.edit-own', 'products.delete-own',
-            'orders.view-own-seller', 'orders.update-status',
+            'orders.view-own-seller',
         ]);
 
-        $managerRole = Role::create(['name' => RoleEnum::MANAGER->value]);
+        $managerRole = Role::findOrCreate(RoleEnum::MANAGER->value);
         $managerRole->givePermissionTo([
             'products.edit-any', 'products.delete-any', 'orders.view-all',
-            'orders.update-any', 'users.view',
+            'orders.update-any', 'users.view', 'orders.update-status',
         ]);
 
-        $adminRole = Role::create(['name' => RoleEnum::ADMIN->value]);
+        $adminRole = Role::findOrCreate(RoleEnum::ADMIN->value);
         $adminRole->givePermissionTo(Permission::all());
     }
 }
