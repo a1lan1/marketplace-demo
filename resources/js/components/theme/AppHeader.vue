@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLogo from '@/components/AppLogo.vue'
-import AppLogoIcon from '@/components/AppLogoIcon.vue'
-import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import AppLogo from '@/components/theme/AppLogo.vue'
+import AppLogoIcon from '@/components/theme/AppLogoIcon.vue'
+import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -28,7 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import UserMenuContent from '@/components/UserMenuContent.vue'
+import UserMenuContent from '@/components/theme/UserMenuContent.vue'
 import { getInitials } from '@/composables/useInitials'
 import { toUrl, urlIsActive } from '@/lib/utils'
 import { dashboard } from '@/routes'
@@ -71,7 +71,7 @@ const mainNavItems: NavItem[] = [
 const rightNavItems: NavItem[] = [
   {
     title: 'Repository',
-    href: 'https://github.com/laravel/vue-starter-kit',
+    href: 'https://github.com/a1lan1/marketplace-demo',
     icon: Folder
   },
   {
@@ -106,13 +106,9 @@ const rightNavItems: NavItem[] = [
                 Navigation Menu
               </SheetTitle>
               <SheetHeader class="flex justify-start text-left">
-                <AppLogoIcon
-                  class="size-6 fill-current text-black dark:text-white"
-                />
+                <AppLogoIcon class="size-6 fill-current text-black dark:text-white" />
               </SheetHeader>
-              <div
-                class="flex h-full flex-1 flex-col justify-between space-y-4 py-6"
-              >
+              <div class="flex h-full flex-1 flex-col justify-between space-y-4 py-6">
                 <nav class="-mx-3 space-y-1">
                   <Link
                     v-for="item in mainNavItems"

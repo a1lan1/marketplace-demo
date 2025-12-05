@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import HeadingSmall from '@/components/HeadingSmall.vue'
-import TwoFactorRecoveryCodes from '@/components/TwoFactorRecoveryCodes.vue'
-import TwoFactorSetupModal from '@/components/TwoFactorSetupModal.vue'
+import HeadingSmall from '@/components/theme/HeadingSmall.vue'
+import TwoFactorRecoveryCodes from '@/components/theme/TwoFactorRecoveryCodes.vue'
+import TwoFactorSetupModal from '@/components/theme/TwoFactorSetupModal.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import NavFooter from '@/components/NavFooter.vue'
-import NavMain from '@/components/NavMain.vue'
-import NavUser from '@/components/NavUser.vue'
+import NavFooter from '@/components/theme/NavFooter.vue'
+import NavMain from '@/components/theme/NavMain.vue'
+import NavUser from '@/components/theme/NavUser.vue'
 import {
   Sidebar,
   SidebarContent,
@@ -17,15 +17,39 @@ import { index as horizon } from '@/routes/horizon'
 import { index as logViewer } from '@/routes/log-viewer'
 import { defaultMethod as prometheus } from '@/routes/prometheus'
 import { Link } from '@inertiajs/vue3'
-import { Folder, LayoutGrid } from 'lucide-vue-next'
+import { Folder, LayoutGrid, ShoppingCart, Package, MessageSquare, ListOrdered } from 'lucide-vue-next'
 import AppLogo from './AppLogo.vue'
 import type { NavItem } from '@/types'
+import { catalog as catalogIndex } from '@/routes/products'
+import { index as ordersIndex } from '@/routes/orders'
+import { index as productsIndex } from '@/routes/products'
+import { index as chatIndex } from '@/routes/chat'
 
 const mainNavItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: dashboard(),
     icon: LayoutGrid
+  },
+  {
+    title: 'Catalog',
+    href: catalogIndex(),
+    icon: ShoppingCart
+  },
+  {
+    title: 'Orders',
+    href: ordersIndex(),
+    icon: ListOrdered
+  },
+  {
+    title: 'My Products',
+    href: productsIndex(),
+    icon: Package
+  },
+  {
+    title: 'Support',
+    href: chatIndex(),
+    icon: MessageSquare
   },
   {
     title: 'Filament',
@@ -77,7 +101,7 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
   {
     title: 'Github Repo',
-    href: 'https://github.com/a1lan1/laravel-vuetify-starter',
+    href: 'https://github.com/a1lan1/marketplace-demo',
     icon: Folder
   }
 ]
