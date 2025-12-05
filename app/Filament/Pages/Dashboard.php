@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\StatsOverview;
-use App\Filament\Widgets\UsersChart;
+use App\Filament\Widgets\MarketplaceStatsOverview;
+use App\Filament\Widgets\OrdersChart;
+use App\Filament\Widgets\ProductsChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Override;
 
@@ -17,7 +18,7 @@ class Dashboard extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [
-            StatsOverview::class,
+            MarketplaceStatsOverview::class,
         ];
     }
 
@@ -25,7 +26,8 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            UsersChart::class,
+            OrdersChart::class,
+            ProductsChart::class,
         ];
     }
 }
