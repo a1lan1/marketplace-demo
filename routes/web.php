@@ -24,6 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
+    Route::resource('products', ProductController::class)->except(['show']);
+
     Route::get('checkout', fn () => Inertia::render('Checkout'))->name('checkout.index');
 
     Route::prefix('orders')->group(function (): void {
