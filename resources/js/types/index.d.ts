@@ -1,39 +1,154 @@
 import { InertiaLinkProps } from '@inertiajs/vue3'
 import type { LucideIcon } from 'lucide-vue-next'
+import type { OrderStatus } from '@/enums/OrderStatus'
 
 export interface Auth {
-    user: User;
+  user: User;
+  roles: string[];
+  permissions: string[];
 }
 
 export interface BreadcrumbItem {
-    title: string;
-    href: string;
+  title: string;
+  href: string;
 }
 
 export interface NavItem {
-    title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
-    icon?: LucideIcon;
-    isActive?: boolean;
+  title: string;
+  href: NonNullable<InertiaLinkProps['href']>;
+  icon?: LucideIcon;
+  isActive?: boolean;
 }
 
 export type AppPageProps<
-    T extends Record<string, unknown> = Record<string, unknown>,
+  T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
-    name: string;
-    quote: { message: string; author: string };
-    auth: Auth;
-    sidebarOpen: boolean;
+  name: string;
+  quote: { message: string; author: string };
+  auth: Auth;
+  sidebarOpen: boolean;
+  flash: FlashMessage;
 };
 
+export interface MoneyData {
+  amount: number;
+  currency: string;
+  formatted: string;
+}
+
 export interface User {
-    id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
+  id: number;
+  name: string;
+  email: string;
+  avatar?: string;
+  email_verified_at: string | null;
+  balance: MoneyData;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Product {
+  id: number;
+  user_id: number;
+  name: string;
+  description: string | null;
+  price: MoneyData;
+  stock: number;
+  cover_image: string;
+  created_at: string;
+  updated_at: string;
+  seller?: User;
+}
+
+export interface ProductInOrder extends Product {
+  quantity: number;
+  price: MoneyData;
+}
+
+export interface ProductFormData {
+  name: string
+  description: string | null
+  price: number
+  stock: number
+  cover_image: File | null
+}
+
+export interface Order {
+  id: number;
+  user_id: number;
+  total_amount: MoneyData;
+  status: OrderStatus;
+  created_at: string;
+  updated_at: string;
+  buyer?: User;
+  products: ProductInOrder[];
+}
+
+export interface Message {
+  id: number;
+  order_id: number;
+  user_id: number;
+  message: string;
+  created_at: string;
+  updated_at: string;
+  user: User; // sender
+}
+
+export interface PaginationLink {
+  url: string | null;
+  label: string;
+  active: boolean;
+}
+
+export interface Pagination<T> {
+  current_page: number;
+  data: T[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: PaginationLink[];
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
+export interface FlashMessage {
+  success?: string;
+  error?: string;
+  message?: string;
+}
+
+export interface CartItem {
+  product_id: number;
+  name: string;
+  cover_image: string;
+  price: MoneyData;
+  quantity: number;
+  stock: number;
+}
+
+export interface AutocompleteItem {
+  title: string;
+  value: number;
+  product: Product;
+}
+
+// Echo Events
+export interface OrderCreatedEvent {
+  order: Order;
+}
+
+export interface OrderStatusChangedEvent {
+  order_id: number;
+  status: Order['status'];
+}
+
+export interface MessageSentEvent {
+  message: Message;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
