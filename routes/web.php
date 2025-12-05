@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -10,7 +11,6 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
-
 
 Route::prefix('catalog')->group(function (): void {
     Route::get('', [ProductController::class, 'catalog'])->name('products.catalog');
@@ -23,6 +23,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('checkout', fn () => Inertia::render('Checkout'))->name('checkout.index');
+
+    Route::prefix('orders')->group(function (): void {
+        Route::post('', [OrderController::class, 'store'])->name('orders.store');
+    });
 });
 
 require __DIR__.'/settings.php';
