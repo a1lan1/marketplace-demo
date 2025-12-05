@@ -27,7 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('checkout', fn () => Inertia::render('Checkout'))->name('checkout.index');
 
     Route::prefix('orders')->group(function (): void {
+        Route::get('', [OrderController::class, 'index'])->name('orders.index');
         Route::post('', [OrderController::class, 'store'])->name('orders.store');
+        Route::put('{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status.update');
     });
 });
 
