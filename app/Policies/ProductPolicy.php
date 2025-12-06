@@ -17,9 +17,9 @@ class ProductPolicy
         return $user->can('products.view');
     }
 
-    public function view(User $user, Product $product): bool
+    public function view(): bool
     {
-        return $user->id === $product->user_id || $user->isAdminOrManager();
+        return true;
     }
 
     public function create(User $user): bool

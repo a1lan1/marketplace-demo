@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Contracts\OrderServiceInterface;
+use App\Models\Order;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -18,8 +20,13 @@ class ChatController extends Controller
         private readonly OrderServiceInterface $orderService,
     ) {}
 
+    /**
+     * @throws AuthorizationException
+     */
     public function index(): Response
     {
+        $this->authorize('viewAny', Order::class);
+
         $orders = $this->orderService->getOrdersForUser(Auth::user());
 
         return Inertia::render('Chat', [
