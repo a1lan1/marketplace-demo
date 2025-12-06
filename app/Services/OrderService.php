@@ -17,7 +17,7 @@ class OrderService implements OrderServiceInterface
     public function getUserOrders(User $user, int $perPage = 10): LengthAwarePaginator
     {
         return $user->orders()
-            ->with('products')
+            ->with('products', 'buyer')
             ->latest()
             ->paginate($perPage);
     }

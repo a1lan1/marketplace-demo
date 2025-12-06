@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('', [OrderController::class, 'index'])->name('orders.index');
         Route::post('', [OrderController::class, 'store'])->name('orders.store');
         Route::put('{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status.update');
+    });
+
+    Route::prefix('chat')->group(function (): void {
+        Route::get('', [ChatController::class, 'index'])->name('chat.index');
+        Route::get('{order}', [ChatController::class, 'show'])->name('chat.show');
     });
 });
 
