@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
-import { formatCurrency } from '@/utils/formatters'
-import { SidebarTrigger } from '@/components/ui/sidebar'
-import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
 import CartWidget from '@/components/cart/CartWidget.vue'
+import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 import type { BreadcrumbItemType } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
 withDefaults(
   defineProps<{
-        breadcrumbs?: BreadcrumbItemType[];
-    }>(),
+    breadcrumbs?: BreadcrumbItemType[];
+  }>(),
   {
     breadcrumbs: () => []
   }
 )
 
 const page = usePage()
-const userBalance = computed(() => formatCurrency(page.props.auth.user?.balance ?? 0))
+const userBalance = computed(() =>
+  formatCurrency(page.props.auth.user?.balance ?? 0)
+)
 </script>
 
 <template>

@@ -8,7 +8,7 @@ import { send } from '@/routes/verification'
 import { Form, Head } from '@inertiajs/vue3'
 
 defineProps<{
-    status?: string;
+  status?: string;
 }>()
 </script>
 
@@ -23,13 +23,12 @@ defineProps<{
       v-if="status === 'verification-link-sent'"
       class="mb-4 text-center text-sm font-medium text-green-600"
     >
-      A new verification link has been sent to the email address you
-      provided during registration.
+      A new verification link has been sent to the email address you provided during registration.
     </div>
 
     <Form
       v-slot="{ processing }"
-      v-bind="send.form()"
+      v-bind="send()"
       class="space-y-6 text-center"
     >
       <Button

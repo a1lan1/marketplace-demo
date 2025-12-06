@@ -1,12 +1,12 @@
 import '../css/app.css'
 
+import { registerPlugins } from '@/plugins'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+import type { DefineComponent } from 'vue'
 import { createApp, h } from 'vue'
 import { initializeTheme } from './composables/useAppearance'
-import { registerPlugins } from '@/plugins'
-import type { DefineComponent } from 'vue'
-import { initActivityAutoTrack } from './composables/useActivity'
+// import { initActivityAutoTrack } from './composables/useActivity'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 
@@ -23,7 +23,7 @@ createInertiaApp({
     registerPlugins(app)
 
     // Init analytics auto-tracking (page_view)
-    initActivityAutoTrack()
+    // initActivityAutoTrack()
 
     app.mount(el)
   },

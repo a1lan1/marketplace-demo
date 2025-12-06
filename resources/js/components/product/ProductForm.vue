@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import type { Product } from '@/types'
 import { useProductForm } from '@/composables/form/useProductForm'
+import type { Product } from '@/types'
 
 const props = defineProps<{
-  initialData?: Product
-  url: string
-  method: 'post' | 'put'
+  initialData?: Product;
+  url: string;
+  method: 'post' | 'put';
 }>()
 
-const { form, errors, validate, toFormData } = useProductForm(props.initialData)
+const { form, errors, validate, toFormData } = useProductForm(
+  props.initialData
+)
 
 const submitForm = () => {
   if (!validate()) return
@@ -19,7 +21,8 @@ const submitForm = () => {
     fd.append('_method', 'PUT')
   }
 
-  form.transform(() => fd)
+  form
+    .transform(() => fd)
     .post(props.url, {
       forceFormData: true
     })
@@ -102,7 +105,7 @@ const onFileChange = (files: File | File[] | null) => {
             @update:model-value="onFileChange"
           />
 
-          <div class="d-flex justify-end mt-4">
+          <div class="d-flex mt-4 justify-end">
             <v-btn
               type="submit"
               color="primary"

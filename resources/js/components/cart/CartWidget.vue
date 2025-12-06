@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useCartStore } from '@/stores/cart'
-import { storeToRefs } from 'pinia'
-import { router } from '@inertiajs/vue3'
 import { index as checkoutIndex } from '@/routes/checkout'
-import { formatCurrency } from '@/utils/formatters'
+import { useCartStore } from '@/stores/cart'
 import type { CartItem } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
+import { router } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia'
 
 const cartStore = useCartStore()
 const { items, totalItems, totalPrice } = storeToRefs(cartStore)
@@ -15,7 +15,7 @@ const goToCheckout = () => {
 }
 
 const getItemTotalPrice = (item: CartItem): string => {
-  return formatCurrency(item.price.amount / 100 * item.quantity)
+  return formatCurrency((item.price.amount / 100) * item.quantity)
 }
 </script>
 

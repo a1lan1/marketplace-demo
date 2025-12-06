@@ -45,8 +45,8 @@ onMounted(async() => {
         <LockKeyhole class="size-4" />2FA Recovery Codes
       </CardTitle>
       <CardDescription>
-        Recovery codes let you regain access if you lose your 2FA
-        device. Store them in a secure password manager.
+        Recovery codes let you regain access if you lose your 2FA device. Store
+        them in a secure password manager.
       </CardDescription>
     </CardHeader>
     <CardContent>
@@ -61,14 +61,13 @@ onMounted(async() => {
             :is="isRecoveryCodesVisible ? EyeOff : Eye"
             class="size-4"
           />
-          {{ isRecoveryCodesVisible ? 'Hide' : 'View' }} Recovery
-          Codes
+          {{ isRecoveryCodesVisible ? 'Hide' : 'View' }} Recovery Codes
         </Button>
 
         <Form
           v-if="isRecoveryCodesVisible && recoveryCodesList.length"
           v-slot="{ processing }"
-          v-bind="regenerateRecoveryCodes.form()"
+          v-bind="regenerateRecoveryCodes()"
           method="post"
           :options="{ preserveScroll: true }"
           @success="fetchRecoveryCodes"
@@ -85,9 +84,7 @@ onMounted(async() => {
       <div
         :class="[
           'relative overflow-hidden transition-all duration-300',
-          isRecoveryCodesVisible
-            ? 'h-auto opacity-100'
-            : 'h-0 opacity-0',
+          isRecoveryCodesVisible ? 'h-auto opacity-100' : 'h-0 opacity-0',
         ]"
       >
         <div
@@ -123,9 +120,8 @@ onMounted(async() => {
             </div>
           </div>
           <p class="text-xs text-muted-foreground select-none">
-            Each recovery code can be used once to access your
-            account and will be removed after use. If you need more,
-            click
+            Each recovery code can be used once to access your account and will
+            be removed after use. If you need more, click
             <span class="font-bold">Regenerate Codes</span> above.
           </p>
         </div>

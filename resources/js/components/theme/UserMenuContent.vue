@@ -13,7 +13,7 @@ import { Link, router } from '@inertiajs/vue3'
 import { LogOut, Settings } from 'lucide-vue-next'
 
 interface Props {
-    user: User;
+  user: User;
 }
 
 const handleLogout = () => {

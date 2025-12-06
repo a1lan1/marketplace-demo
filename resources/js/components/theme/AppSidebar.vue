@@ -12,18 +12,27 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar'
 import { dashboard, telescope } from '@/routes'
+import { index as chatIndex } from '@/routes/chat'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
 import { index as horizon } from '@/routes/horizon'
 import { index as logViewer } from '@/routes/log-viewer'
-import { defaultMethod as prometheus } from '@/routes/prometheus'
-import { Link } from '@inertiajs/vue3'
-import { Folder, LayoutGrid, ShoppingCart, Package, MessageSquare, ListOrdered } from 'lucide-vue-next'
-import AppLogo from './AppLogo.vue'
-import type { NavItem } from '@/types'
-import { catalog as catalogIndex } from '@/routes/products'
 import { index as ordersIndex } from '@/routes/orders'
-import { index as productsIndex } from '@/routes/products'
-import { index as chatIndex } from '@/routes/chat'
+import {
+  catalog as catalogIndex,
+  index as productsIndex
+} from '@/routes/products'
+import { defaultMethod as prometheus } from '@/routes/prometheus'
+import type { NavItem } from '@/types'
+import { Link } from '@inertiajs/vue3'
+import {
+  Folder,
+  LayoutGrid,
+  ListOrdered,
+  MessageSquare,
+  Package,
+  ShoppingCart
+} from 'lucide-vue-next'
+import AppLogo from './AppLogo.vue'
 
 const mainNavItems: NavItem[] = [
   {

@@ -10,8 +10,8 @@ import { Form, Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
 const props = defineProps<{
-    token: string;
-    email: string;
+  token: string;
+  email: string;
 }>()
 
 const inputEmail = ref(props.email)
@@ -26,7 +26,7 @@ const inputEmail = ref(props.email)
 
     <Form
       v-slot="{ errors, processing }"
-      v-bind="update.form()"
+      v-bind="update()"
       :transform="(data) => ({ ...data, token, email })"
       :reset-on-success="['password', 'password_confirmation']"
     >
@@ -63,9 +63,7 @@ const inputEmail = ref(props.email)
         </div>
 
         <div class="grid gap-2">
-          <Label for="password_confirmation">
-            Confirm Password
-          </Label>
+          <Label for="password_confirmation"> Confirm Password </Label>
           <Input
             id="password_confirmation"
             type="password"

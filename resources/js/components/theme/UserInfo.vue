@@ -5,8 +5,8 @@ import type { User } from '@/types'
 import { computed } from 'vue'
 
 interface Props {
-    user: User;
-    showEmail?: boolean;
+  user: User;
+  showEmail?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -7,9 +7,13 @@ namespace App\Enums;
 enum RoleEnum: string
 {
     case ADMIN = 'admin';
+
     case MANAGER = 'manager';
+
     case SELLER = 'seller';
+
     case BUYER = 'buyer';
+
     case USER = 'user';
 
     public function label(): string

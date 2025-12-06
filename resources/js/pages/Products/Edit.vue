@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import ProductForm from '@/components/product/ProductForm.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
-import { Head } from '@inertiajs/vue3'
 import {
   index as productsIndex,
   update as productUpdate
 } from '@/routes/products'
-import ProductForm from '@/components/product/ProductForm.vue'
 import type { BreadcrumbItem, Product } from '@/types'
+import { Head } from '@inertiajs/vue3'
 
 const props = defineProps<{
   product: Product;

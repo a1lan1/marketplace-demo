@@ -18,7 +18,7 @@ import { Form, Head } from '@inertiajs/vue3'
 
     <Form
       v-slot="{ errors, processing }"
-      v-bind="store.form()"
+      v-bind="store()"
       reset-on-success
     >
       <div class="space-y-6">

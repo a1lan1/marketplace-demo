@@ -8,8 +8,8 @@ const name = page.props.name
 const quote = page.props.quote
 
 defineProps<{
-    title?: string;
-    description?: string;
+  title?: string;
+  description?: string;
 }>()
 </script>
 

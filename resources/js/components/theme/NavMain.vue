@@ -11,7 +11,7 @@ import { type NavItem } from '@/types'
 import { Link, usePage } from '@inertiajs/vue3'
 
 defineProps<{
-    items: NavItem[];
+  items: NavItem[];
 }>()
 
 const page = usePage()

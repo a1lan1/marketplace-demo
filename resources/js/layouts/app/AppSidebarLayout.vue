@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AppContent from '@/components/theme/AppContent.vue'
 import AppShell from '@/components/theme/AppShell.vue'
-import Snackbar from '@/components/theme/Snackbar.vue'
 import AppSidebar from '@/components/theme/AppSidebar.vue'
 import AppSidebarHeader from '@/components/theme/AppSidebarHeader.vue'
+import Snackbar from '@/components/theme/Snackbar.vue'
 import type { BreadcrumbItemType } from '@/types'
 
 interface Props {

@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { trackSignUp } from '@/composables/useActivity'
 import AuthBase from '@/layouts/AuthLayout.vue'
 import { login } from '@/routes'
 import { store } from '@/routes/register'
 import { Form, Head } from '@inertiajs/vue3'
-import { trackSignUp } from '@/composables/useActivity'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import { trackSignUp } from '@/composables/useActivity'
 
     <Form
       v-slot="{ errors, processing }"
-      v-bind="store.form()"
+      v-bind="store()"
       :reset-on-success="['password', 'password_confirmation']"
       class="flex flex-col gap-6"
       @success="trackSignUp({ method: 'password' })"

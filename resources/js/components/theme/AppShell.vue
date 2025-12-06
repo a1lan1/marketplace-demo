@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
-import { onMounted, watch, getCurrentInstance } from 'vue'
-import { echo } from '@laravel/echo-vue'
-import { SidebarProvider } from '@/components/ui/sidebar'
 import ChatWidget from '@/components/chat/ChatWidget.vue'
-import type { AppPageProps, OrderCreatedEvent, FlashMessage } from '@/types'
+import { SidebarProvider } from '@/components/ui/sidebar'
+import type { AppPageProps, FlashMessage, OrderCreatedEvent } from '@/types'
+import { usePage } from '@inertiajs/vue3'
+import { echo } from '@laravel/echo-vue'
+import { getCurrentInstance, onMounted, watch } from 'vue'
 
 interface Props {
   variant?: 'header' | 'sidebar';
@@ -31,33 +31,37 @@ onMounted(() => {
   }
 })
 
-watch(() => page.props.flash, (flash: FlashMessage) => {
-  if (flash && flash.success) {
-    if (snackbar) {
-      snackbar.success({
-        text: flash.success,
-        location: 'top right'
-      })
+watch(
+  () => page.props.flash,
+  (flash: FlashMessage) => {
+    if (flash && flash.success) {
+      if (snackbar) {
+        snackbar.success({
+          text: flash.success,
+          location: 'top right'
+        })
+      }
     }
-  }
-  if (flash && flash.error) {
-    if (snackbar) {
-      snackbar.error({
-        text: flash.error,
-        location: 'top right'
-      })
+    if (flash && flash.error) {
+      if (snackbar) {
+        snackbar.error({
+          text: flash.error,
+          location: 'top right'
+        })
+      }
     }
-  }
-  if (flash && flash.message) { // For general messages
-    if (snackbar) {
-      snackbar.info({
-        text: flash.message,
-        location: 'top right'
-      })
+    if (flash && flash.message) {
+      // For general messages
+      if (snackbar) {
+        snackbar.info({
+          text: flash.message,
+          location: 'top right'
+        })
+      }
     }
-  }
-}, { deep: true })
-
+  },
+  { deep: true }
+)
 </script>
 
 <template>

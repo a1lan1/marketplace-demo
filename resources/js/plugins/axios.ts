@@ -1,10 +1,10 @@
 import axios, { type AxiosInstance } from 'axios'
-import type { App } from 'vue'
 import type { PiniaPluginContext } from 'pinia'
+import type { App } from 'vue'
 
 declare module 'vue' {
   interface ComponentCustomProperties {
-    $axios: AxiosInstance
+    $axios: AxiosInstance;
   }
 }
 

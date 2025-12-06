@@ -68,9 +68,7 @@ export const useTwoFactorAuth = () => {
   const fetchRecoveryCodes = async(): Promise<void> => {
     try {
       clearErrors()
-      recoveryCodesList.value = await fetchJson<string[]>(
-        recoveryCodes.url()
-      )
+      recoveryCodesList.value = await fetchJson<string[]>(recoveryCodes.url())
     } catch {
       errors.value.push('Failed to fetch recovery codes')
       recoveryCodesList.value = []

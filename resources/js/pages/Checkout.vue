@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue'
-import { Head, useForm } from '@inertiajs/vue3'
+import { index as ordersIndex, store as storeOrder } from '@/routes/orders'
 import { useCartStore } from '@/stores/cart'
-import { storeToRefs } from 'pinia'
-import { router } from '@inertiajs/vue3'
-import { store as storeOrder, index as ordersIndex } from '@/routes/orders'
-import { formatCurrency } from '@/utils/formatters'
 import type { CartItem } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
+import { Head, router, useForm } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia'
 
 const cartStore = useCartStore()
 const { items, totalPrice } = storeToRefs(cartStore)
 const { clearCart, removeFromCart } = cartStore
 
-const form = useForm<{ cart: Pick<CartItem, 'product_id' | 'quantity'>[] }>({
+interface CheckoutForm {
+  cart: Pick<CartItem, 'product_id' | 'quantity'>[];
+  purchase?: string;
+}
+
+const form = useForm<CheckoutForm>({
   cart: []
 })
 
@@ -44,7 +48,7 @@ const cartHeaders = [
   { title: 'Quantity', key: 'quantity' },
   { title: 'Total', key: 'total', align: 'end' },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
-]
+] as const
 </script>
 
 <template>

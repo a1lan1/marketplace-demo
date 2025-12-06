@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { usePage } from '@inertiajs/vue3'
 import Messenger from '@/components/chat/Messenger.vue'
 import type { User } from '@/types'
+import { usePage } from '@inertiajs/vue3'
+import { ref } from 'vue'
 
 const page = usePage()
 const currentUser = page.props.auth.user as User | null
@@ -13,7 +13,7 @@ const dialog = ref(false)
 <template>
   <v-btn
     v-if="currentUser"
-    class="fixed bottom-4 right-4 z-50"
+    class="fixed right-4 bottom-4 z-50"
     color="primary"
     icon="mdi-message-text"
     size="large"

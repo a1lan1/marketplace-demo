@@ -4,8 +4,8 @@ import { AlertCircle } from 'lucide-vue-next'
 import { computed } from 'vue'
 
 interface Props {
-    errors: string[];
-    title?: string;
+  errors: string[];
+  title?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -1,13 +1,18 @@
-import { watch } from 'vue'
-import { router, usePage } from '@inertiajs/vue3'
-import { useDebounceFn, useOnline, useStorage, useEventListener } from '@vueuse/core'
 import { api } from '@/plugins/axios'
+import { router, usePage } from '@inertiajs/vue3'
+import {
+  useDebounceFn,
+  useEventListener,
+  useOnline,
+  useStorage
+} from '@vueuse/core'
+import { watch } from 'vue'
 
 type ActivityPayload = {
-    event_type: string
-    page: string
-    props?: Record<string, unknown>
-}
+  event_type: string;
+  page: string;
+  props?: Record<string, unknown>;
+};
 
 // Debounce interval for rapid route changes / duplicate events
 const MIN_INTERVAL_MS = 500
@@ -50,9 +55,14 @@ const sendDebounced = useDebounceFn((payload: ActivityPayload) => {
   void send(payload)
 }, MIN_INTERVAL_MS)
 
-export function trackEvent(event_type: string, pageUrl?: string, props?: Record<string, unknown>) {
+export function trackEvent(
+  event_type: string,
+  pageUrl?: string,
+  props?: Record<string, unknown>
+) {
   const currentPage = usePage()
-  const page = pageUrl ?? currentPage.url ?? `${location.pathname}${location.search}`
+  const page =
+    pageUrl ?? currentPage.url ?? `${location.pathname}${location.search}`
 
   sendDebounced({
     event_type,
@@ -66,9 +76,13 @@ export function initActivityAutoTrack() {
   trackEvent('page_view')
 
   // flush queued when back online (reactive)
-  watch(online, (isOnline) => {
-    if (isOnline) void flushQueue()
-  }, { immediate: true })
+  watch(
+    online,
+    (isOnline) => {
+      if (isOnline) void flushQueue()
+    },
+    { immediate: true }
+  )
 
   // track on every inertia navigation
   router.on('navigate', () => trackEvent('page_view'))

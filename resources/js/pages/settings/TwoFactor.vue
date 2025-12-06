@@ -14,8 +14,8 @@ import { ShieldBan, ShieldCheck } from 'lucide-vue-next'
 import { onUnmounted, ref } from 'vue'
 
 interface Props {
-    requiresConfirmation?: boolean;
-    twoFactorEnabled?: boolean;
+  requiresConfirmation?: boolean;
+  twoFactorEnabled?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -57,10 +57,9 @@ onUnmounted(() => {
           </Badge>
 
           <p class="text-muted-foreground">
-            When you enable two-factor authentication, you will be
-            prompted for a secure pin during login. This pin can be
-            retrieved from a TOTP-supported application on your
-            phone.
+            When you enable two-factor authentication, you will be prompted for
+            a secure pin during login. This pin can be retrieved from a
+            TOTP-supported application on your phone.
           </p>
 
           <div>
@@ -73,7 +72,7 @@ onUnmounted(() => {
             <Form
               v-else
               v-slot="{ processing }"
-              v-bind="enable.form()"
+              v-bind="enable()"
               @success="showSetupModal = true"
             >
               <Button
@@ -95,10 +94,9 @@ onUnmounted(() => {
           </Badge>
 
           <p class="text-muted-foreground">
-            With two-factor authentication enabled, you will be
-            prompted for a secure, random pin during login, which
-            you can retrieve from the TOTP-supported application on
-            your phone.
+            With two-factor authentication enabled, you will be prompted for a
+            secure, random pin during login, which you can retrieve from the
+            TOTP-supported application on your phone.
           </p>
 
           <TwoFactorRecoveryCodes />
@@ -106,7 +104,7 @@ onUnmounted(() => {
           <div class="relative inline">
             <Form
               v-slot="{ processing }"
-              v-bind="disable.form()"
+              v-bind="disable()"
             >
               <Button
                 variant="destructive"

@@ -5,11 +5,11 @@ export const orderStatusOptions = [
   'cancelled'
 ] as const
 
-export type OrderStatus = typeof orderStatusOptions[number]
+export type OrderStatus = (typeof orderStatusOptions)[number];
 
 export enum StatusVariant {
   cancelled = 'error',
   pending = 'warning',
   processing = 'info',
-  completed = 'success'
+  completed = 'success',
 }

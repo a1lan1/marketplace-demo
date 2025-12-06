@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, computed, onUnmounted } from 'vue'
-import { echo } from '@laravel/echo-vue'
-import { usePage } from '@inertiajs/vue3'
-import { storeToRefs } from 'pinia'
-import { useScroll } from '@vueuse/core'
-import { z } from 'zod'
 import { useZodValidation } from '@/composables/useZodValidation'
-import { useOrderStore } from '@/stores/order'
-import { useChatStore } from '@/stores/chat'
 import { snackbar } from '@/plugins/snackbar'
-import ChatMessage from './ChatMessage.vue'
+import { useChatStore } from '@/stores/chat'
+import { useOrderStore } from '@/stores/order'
 import type { Message, User } from '@/types'
+import { usePage } from '@inertiajs/vue3'
+import { echo } from '@laravel/echo-vue'
+import { useScroll } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import { z } from 'zod'
+import ChatMessage from './ChatMessage.vue'
 
 const orderStore = useOrderStore()
 const { activeOrder } = storeToRefs(orderStore)
@@ -34,7 +34,10 @@ const formDataForValidation = computed(() => ({
   message: currentMessage.value
 }))
 
-const { validate, errors: validationErrors } = useZodValidation(messageSchema, formDataForValidation)
+const { validate, errors: validationErrors } = useZodValidation(
+  messageSchema,
+  formDataForValidation
+)
 
 const sendMessage = async() => {
   if (!activeOrder.value || !validate()) {
@@ -58,21 +61,26 @@ const scrollToBottom = () => {
   })
 }
 
-watch(activeOrder, (newOrder, oldOrder) => {
-  if (oldOrder) {
-    echo().leave(`chat.${oldOrder.id}`)
-  }
+watch(
+  activeOrder,
+  (newOrder, oldOrder) => {
+    if (oldOrder) {
+      echo().leave(`chat.${oldOrder.id}`)
+    }
 
-  if (newOrder) {
-    fetchMessages(newOrder.id)
+    if (newOrder) {
+      fetchMessages(newOrder.id)
 
-    echo().private(`chat.${newOrder.id}`)
-      .listen('.order.message.sent', (e: { message: Message }) => {
-        addMessage(e.message)
-        scrollToBottom()
-      })
-  }
-}, { immediate: true })
+      echo()
+        .private(`chat.${newOrder.id}`)
+        .listen('.order.message.sent', (e: { message: Message }) => {
+          addMessage(e.message)
+          scrollToBottom()
+        })
+    }
+  },
+  { immediate: true }
+)
 
 watch(() => messages.value.length, scrollToBottom)
 
@@ -89,12 +97,12 @@ onUnmounted(() => {
 <template>
   <div
     v-if="activeOrder"
-    class="grow p-0 flex flex-col h-full"
+    class="flex h-full grow flex-col p-0"
   >
     <!-- Header -->
     <v-sheet
       color="surface-variant"
-      class="p-4 flex-shrink-0"
+      class="flex-shrink-0 p-4"
     >
       <h2 class="text-h6">
         Chat for Order #{{ activeOrder.id }}
@@ -104,7 +112,7 @@ onUnmounted(() => {
     <!-- Messages -->
     <div
       ref="chatContainer"
-      class="grow p-4 overflow-y-auto flex flex-col"
+      class="flex grow flex-col overflow-y-auto p-4"
       style="height: calc(100vh - 260px)"
     >
       <ChatMessage
@@ -115,7 +123,7 @@ onUnmounted(() => {
       />
       <div
         v-if="loading"
-        class="text-center mt-4"
+        class="mt-4 text-center"
       >
         <v-progress-circular
           indeterminate
@@ -125,7 +133,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Message Input -->
-    <v-sheet class="p-4 border-t flex-shrink-0">
+    <v-sheet class="flex-shrink-0 border-t p-4">
       <v-form @submit.prevent="sendMessage">
         <v-text-field
           v-model="currentMessage"
@@ -145,9 +153,9 @@ onUnmounted(() => {
   </div>
   <div
     v-else
-    class="flex grow justify-center items-center"
+    class="flex grow items-center justify-center"
   >
-    <div class="text-center text-grey">
+    <div class="text-grey text-center">
       <v-icon
         size="64"
         class="mb-2"

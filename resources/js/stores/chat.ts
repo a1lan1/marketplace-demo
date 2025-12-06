@@ -1,5 +1,5 @@
+import { Message, Pagination } from '@/types'
 import { defineStore } from 'pinia'
-import  { Message, Pagination } from '@/types'
 
 interface State {
   loading: boolean;

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue'
-import { Head } from '@inertiajs/vue3'
-import { store as productStore } from '@/routes/products'
 import ProductForm from '@/components/product/ProductForm.vue'
+import AppLayout from '@/layouts/AppLayout.vue'
+import {
+  index as productsIndex,
+  store as productStore
+} from '@/routes/products'
 import type { BreadcrumbItem } from '@/types'
-import { index as productsIndex } from '@/routes/products'
+import { Head } from '@inertiajs/vue3'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {

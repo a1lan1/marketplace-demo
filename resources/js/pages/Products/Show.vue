@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue'
-import { Head } from '@inertiajs/vue3'
-import type { BreadcrumbItem, Product } from '@/types'
-import { formatCurrency } from '@/utils/formatters'
-import { catalog as catalogIndex } from '@/routes/products'
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
 import ProductAutocomplete from '@/components/product/ProductAutocomplete.vue'
+import AppLayout from '@/layouts/AppLayout.vue'
+import { catalog as catalogIndex } from '@/routes/products'
+import type { BreadcrumbItem, Product } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
+import { Head } from '@inertiajs/vue3'
 
 const props = defineProps<{
   product: Product;

@@ -14,17 +14,29 @@ class OrderPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->isBuyer() || $user->isAdminOrManager();
+        if ($user->isBuyer()) {
+            return true;
+        }
+
+        return $user->isAdminOrManager();
     }
 
     public function view(User $user, Order $order): bool
     {
-        return $this->isProductOwner($user, $order) || $user->isAdminOrManager();
+        if ($this->isProductOwner($user, $order)) {
+            return true;
+        }
+
+        return $user->isAdminOrManager();
     }
 
     public function create(User $user): bool
     {
-        return $user->isBuyer() || $user->isAdminOrManager();
+        if ($user->isBuyer()) {
+            return true;
+        }
+
+        return $user->isAdminOrManager();
     }
 
     public function update(User $user): bool

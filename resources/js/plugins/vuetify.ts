@@ -1,7 +1,7 @@
+import '@mdi/font/css/materialdesignicons.css'
+import type { App } from 'vue'
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
-import type { App } from 'vue'
-import '@mdi/font/css/materialdesignicons.css'
 
 export default {
   install(app: App) {

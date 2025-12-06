@@ -2,6 +2,7 @@
 import AppLogo from '@/components/theme/AppLogo.vue'
 import AppLogoIcon from '@/components/theme/AppLogoIcon.vue'
 import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
+import UserMenuContent from '@/components/theme/UserMenuContent.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -28,7 +29,6 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import UserMenuContent from '@/components/theme/UserMenuContent.vue'
 import { getInitials } from '@/composables/useInitials'
 import { toUrl, urlIsActive } from '@/lib/utils'
 import { dashboard } from '@/routes'
@@ -38,7 +38,7 @@ import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next'
 import { computed } from 'vue'
 
 interface Props {
-    breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -106,7 +106,9 @@ const rightNavItems: NavItem[] = [
                 Navigation Menu
               </SheetTitle>
               <SheetHeader class="flex justify-start text-left">
-                <AppLogoIcon class="size-6 fill-current text-black dark:text-white" />
+                <AppLogoIcon
+                  class="size-6 fill-current text-black dark:text-white"
+                />
               </SheetHeader>
               <div class="flex h-full flex-1 flex-col justify-between space-y-4 py-6">
                 <nav class="-mx-3 space-y-1">
@@ -157,9 +159,7 @@ const rightNavItems: NavItem[] = [
         <!-- Desktop Menu -->
         <div class="hidden h-full lg:flex lg:flex-1">
           <NavigationMenu class="ml-10 flex h-full items-stretch">
-            <NavigationMenuList
-              class="flex h-full items-stretch space-x-2"
-            >
+            <NavigationMenuList class="flex h-full items-stretch space-x-2">
               <NavigationMenuItem
                 v-for="(item, index) in mainNavItems"
                 :key="index"
@@ -196,9 +196,7 @@ const rightNavItems: NavItem[] = [
               size="icon"
               class="group h-9 w-9 cursor-pointer"
             >
-              <Search
-                class="size-5 opacity-80 group-hover:opacity-100"
-              />
+              <Search class="size-5 opacity-80 group-hover:opacity-100" />
             </Button>
 
             <div class="hidden space-x-1 lg:flex">
@@ -220,9 +218,7 @@ const rightNavItems: NavItem[] = [
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <span class="sr-only">{{
-                            item.title
-                          }}</span>
+                          <span class="sr-only">{{ item.title }}</span>
                           <component
                             :is="item.icon"
                             class="size-5 opacity-80 group-hover:opacity-100"
@@ -246,9 +242,7 @@ const rightNavItems: NavItem[] = [
                 size="icon"
                 class="relative size-10 w-auto rounded-full p-1 focus-within:ring-2 focus-within:ring-primary"
               >
-                <Avatar
-                  class="size-8 overflow-hidden rounded-full"
-                >
+                <Avatar class="size-8 overflow-hidden rounded-full">
                   <AvatarImage
                     v-if="auth.user.avatar"
                     :src="auth.user.avatar"

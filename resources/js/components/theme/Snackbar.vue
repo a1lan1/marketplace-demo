@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useSnackbarStore } from '@/stores/snackbar'
 import { storeToRefs } from 'pinia'
 import { VSnackbarQueue } from 'vuetify/components'
-import { useSnackbarStore } from '@/stores/snackbar'
 
 const snackbarStore = useSnackbarStore()
 const { messages } = storeToRefs(snackbarStore)

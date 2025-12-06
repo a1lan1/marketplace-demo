@@ -11,7 +11,7 @@ const isCurrentUser = props.message.user.id === props.currentUser.id
 
 <template>
   <div
-    class="flex mb-4"
+    class="mb-4 flex"
     :class="isCurrentUser ? 'justify-end' : 'justify-start'"
   >
     <v-avatar
@@ -28,7 +28,7 @@ const isCurrentUser = props.message.user.id === props.currentUser.id
       flat
     >
       <div class="px-2 py-1">
-        <div class="flex justify-between items-baseline align-center mb-1">
+        <div class="align-center mb-1 flex items-baseline justify-between">
           <span class="font-weight-bold text-caption">
             {{ isCurrentUser ? 'You' : message.user.name }}
           </span>

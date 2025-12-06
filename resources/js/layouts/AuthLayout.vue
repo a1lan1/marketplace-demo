@@ -2,8 +2,8 @@
 import AuthLayout from '@/layouts/auth/AuthSimpleLayout.vue'
 
 defineProps<{
-    title?: string;
-    description?: string;
+  title?: string;
+  description?: string;
 }>()
 </script>
 

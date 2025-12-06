@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue'
-import { Head, router } from '@inertiajs/vue3'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { echo } from '@laravel/echo-vue'
 import { usePermissions } from '@/composables/usePermissions'
-import { formatCurrency, formatDate } from '@/utils/formatters'
-import { update as updateOrderStatusRoute } from '@/routes/orders/status'
 import { orderStatusOptions, StatusVariant } from '@/enums/OrderStatus'
+import AppLayout from '@/layouts/AppLayout.vue'
+import { update as updateOrderStatusRoute } from '@/routes/orders/status'
 import {
+  type BreadcrumbItem,
   type Order,
-  type Pagination,
   type OrderStatusChangedEvent,
-  type BreadcrumbItem
+  type Pagination
 } from '@/types'
+import { formatCurrency, formatDate } from '@/utils/formatters'
+import { Head, router } from '@inertiajs/vue3'
+import { echo } from '@laravel/echo-vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const props = defineProps<{
   orders: Pagination<Order>;
@@ -44,10 +44,11 @@ const orderStatusColor = (status: Order['status']) => {
 }
 
 onMounted(() => {
-  orders.value.forEach(order => {
-    echo().private(`orders.${order.id}`)
+  orders.value.forEach((order) => {
+    echo()
+      .private(`orders.${order.id}`)
       .listen('OrderStatusChanged', (e: OrderStatusChangedEvent) => {
-        const updatedOrder = orders.value.find(o => o.id === e.order_id)
+        const updatedOrder = orders.value.find((o) => o.id === e.order_id)
         if (updatedOrder) {
           updatedOrder.status = e.status
         }
@@ -56,7 +57,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  orders.value.forEach(order => {
+  orders.value.forEach((order) => {
     echo().leave(`orders.${order.id}`)
   })
 })

@@ -25,7 +25,7 @@ class ProductController extends Controller
 
     public function catalog(Request $request): Response
     {
-        $request->validate(['search' => 'sometimes|string|nullable|min:3|max:255']);
+        $request->validate(['search' => ['sometimes', 'string', 'nullable', 'min:3', 'max:255']]);
 
         $products = $this->productService->getPaginatedProducts(
             $request->input('search')

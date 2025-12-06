@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue'
-import { Head, Link, router } from '@inertiajs/vue3'
 import { usePermissions } from '@/composables/usePermissions'
+import AppLayout from '@/layouts/AppLayout.vue'
 import {
   create as productsCreate,
-  edit as productsEdit,
-  destroy as productsDestroy
+  destroy as productsDestroy,
+  edit as productsEdit
 } from '@/routes/products'
-import type { Product, Pagination, BreadcrumbItem } from '@/types'
+import type { BreadcrumbItem, Pagination, Product } from '@/types'
+import { Head, Link, router } from '@inertiajs/vue3'
 
 defineProps<{
   products: Pagination<Product>;
@@ -36,7 +36,7 @@ const tableHeaders = [
   { title: 'Price', value: 'price.formatted' },
   { title: 'Stock', value: 'stock' },
   { title: 'Actions', value: 'actions', sortable: false, align: 'end' }
-]
+] as const
 </script>
 
 <template>
@@ -72,7 +72,7 @@ const tableHeaders = [
               />
             </template>
             <template #[`item.actions`]="{ item }: { item: Product }">
-              <div class="d-flex justify-end align-center">
+              <div class="d-flex align-center justify-end">
                 <Link
                   v-if="hasPermission('products.edit-own')"
                   :href="productsEdit(item.id).url"
@@ -86,7 +86,7 @@ const tableHeaders = [
                   v-if="hasPermission('products.delete-own')"
                   small
                   color="error"
-                  style="cursor: pointer;"
+                  style="cursor: pointer"
                   @click="deleteProduct(item)"
                 >
                   mdi-delete

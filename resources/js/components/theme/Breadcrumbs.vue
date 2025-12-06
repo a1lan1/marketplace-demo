@@ -10,12 +10,12 @@ import {
 import { Link } from '@inertiajs/vue3'
 
 interface BreadcrumbItemType {
-    title: string;
-    href?: string;
+  title: string;
+  href?: string;
 }
 
 defineProps<{
-    breadcrumbs: BreadcrumbItemType[];
+  breadcrumbs: BreadcrumbItemType[];
 }>()
 </script>
 
@@ -33,9 +33,7 @@ defineProps<{
           <template v-else>
             <BreadcrumbLink as-child>
               <Link :href="item.href ?? '#'">
-                {{
-                  item.title
-                }}
+                {{ item.title }}
               </Link>
             </BreadcrumbLink>
           </template>

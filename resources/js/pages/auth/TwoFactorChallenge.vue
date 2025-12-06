@@ -13,25 +13,23 @@ import { Form, Head } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 
 interface AuthConfigContent {
-    title: string;
-    description: string;
-    toggleText: string;
+  title: string;
+  description: string;
+  toggleText: string;
 }
 
 const authConfigContent = computed<AuthConfigContent>(() => {
   if (showRecoveryInput.value) {
     return {
       title: 'Recovery Code',
-      description:
-                'Please confirm access to your account by entering one of your emergency recovery codes.',
+      description: 'Please confirm access to your account by entering one of your emergency recovery codes.',
       toggleText: 'login using an authentication code'
     }
   }
 
   return {
     title: 'Authentication Code',
-    description:
-            'Enter the authentication code provided by your authenticator application.',
+    description: 'Enter the authentication code provided by your authenticator application.',
     toggleText: 'login using a recovery code'
   }
 })
@@ -59,7 +57,7 @@ const codeValue = computed<string>(() => code.value.join(''))
       <template v-if="!showRecoveryInput">
         <Form
           v-slot="{ errors, processing, clearErrors }"
-          v-bind="store.form()"
+          v-bind="store()"
           class="space-y-4"
           reset-on-error
           @error="code = []"
@@ -116,7 +114,7 @@ const codeValue = computed<string>(() => code.value.join(''))
       <template v-else>
         <Form
           v-slot="{ errors, processing, clearErrors }"
-          v-bind="store.form()"
+          v-bind="store()"
           class="space-y-4"
           reset-on-error
         >

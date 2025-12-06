@@ -11,7 +11,7 @@ import { email } from '@/routes/password'
 import { Form, Head } from '@inertiajs/vue3'
 
 defineProps<{
-    status?: string;
+  status?: string;
 }>()
 </script>
 
@@ -32,7 +32,7 @@ defineProps<{
     <div class="space-y-6">
       <Form
         v-slot="{ errors, processing }"
-        v-bind="email.form()"
+        v-bind="email()"
       >
         <div class="grid gap-2">
           <Label for="email">Email address</Label>

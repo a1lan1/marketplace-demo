@@ -6,7 +6,7 @@ defineOptions({
 })
 
 interface Props {
-    className?: HTMLAttributes['class'];
+  className?: HTMLAttributes['class'];
 }
 
 defineProps<Props>()

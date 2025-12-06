@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted } from 'vue'
 import { useOrderStore } from '@/stores/order'
 import type { Order } from '@/types'
+import { storeToRefs } from 'pinia'
+import { computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
   orders?: Order[];
@@ -29,7 +29,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="flex flex-col w-1/5"
+    class="flex w-1/5 flex-col"
     style="height: calc(100vh - 110px)"
   >
     <v-list-item
@@ -40,7 +40,7 @@ onUnmounted(() => {
 
     <v-divider />
 
-    <div class="overflow-y-auto flex-grow min-h-0">
+    <div class="min-h-0 flex-grow overflow-y-auto">
       <v-skeleton-loader
         v-if="loading"
         type="list-item-two-line"

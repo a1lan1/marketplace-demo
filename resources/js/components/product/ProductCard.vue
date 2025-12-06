@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Product } from '@/types'
-import { show as showProduct } from '@/routes/products'
-import { formatCurrency } from '@/utils/formatters'
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
+import { show as showProduct } from '@/routes/products'
+import type { Product } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
 
 defineProps<{
   product: Product;

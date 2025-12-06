@@ -1,6 +1,6 @@
+import type { OrderStatus } from '@/enums/OrderStatus'
 import { InertiaLinkProps } from '@inertiajs/vue3'
 import type { LucideIcon } from 'lucide-vue-next'
-import type { OrderStatus } from '@/enums/OrderStatus'
 
 export interface Auth {
   user: User;
@@ -66,11 +66,11 @@ export interface ProductInOrder extends Product {
 }
 
 export interface ProductFormData {
-  name: string
-  description: string | null
-  price: number
-  stock: number
-  cover_image: File | null
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  cover_image: File | null;
 }
 
 export interface Order {

@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
 import type { SnackbarMessage } from '@/plugins/snackbar'
+import { defineStore } from 'pinia'
 
 interface State {
-  messages: SnackbarMessage[]
+  messages: SnackbarMessage[];
 }
 
 export const useSnackbarStore = defineStore('snackbar', {

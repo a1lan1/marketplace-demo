@@ -4,8 +4,8 @@ import { Head, Link } from '@inertiajs/vue3'
 
 withDefaults(
   defineProps<{
-        canRegister: boolean;
-    }>(),
+    canRegister: boolean;
+  }>(),
   {
     canRegister: true
   }
@@ -67,16 +67,13 @@ withDefaults(
             Let's get started
           </h1>
           <p class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-            Laravel has an incredibly rich ecosystem. <br>We
-            suggest starting with the following.
+            Laravel has an incredibly rich ecosystem. <br>We suggest starting with the following.
           </p>
           <ul class="mb-4 flex flex-col lg:mb-6">
             <li
               class="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]"
             >
-              <span
-                class="relative bg-white py-1 dark:bg-[#161615]"
-              >
+              <span class="relative bg-white py-1 dark:bg-[#161615]">
                 <span
                   class="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]"
                 >
@@ -113,9 +110,7 @@ withDefaults(
             <li
               class="relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]"
             >
-              <span
-                class="relative bg-white py-1 dark:bg-[#161615]"
-              >
+              <span class="relative bg-white py-1 dark:bg-[#161615]">
                 <span
                   class="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]"
                 >

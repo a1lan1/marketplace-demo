@@ -5,7 +5,7 @@ import AppShell from '@/components/theme/AppShell.vue'
 import type { BreadcrumbItemType } from '@/types'
 
 interface Props {
-    breadcrumbs?: BreadcrumbItemType[];
+  breadcrumbs?: BreadcrumbItemType[];
 }
 
 withDefaults(defineProps<Props>(), {

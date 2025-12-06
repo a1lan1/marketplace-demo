@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { watchDebounced } from '@vueuse/core'
 import { api } from '@/plugins/axios'
 import { show as productShow } from '@/routes/products'
-import type { Product, AutocompleteItem } from '@/types'
+import type { AutocompleteItem, Product } from '@/types'
+import { router } from '@inertiajs/vue3'
+import { watchDebounced } from '@vueuse/core'
+import { ref } from 'vue'
 
 const searchQuery = ref('')
 const items = ref<AutocompleteItem[]>([])

@@ -15,8 +15,8 @@ import SettingsLayout from '@/layouts/settings/Layout.vue'
 import { type BreadcrumbItem } from '@/types'
 
 interface Props {
-    mustVerifyEmail: boolean;
-    status?: string;
+  mustVerifyEmail: boolean;
+  status?: string;
 }
 
 defineProps<Props>()
@@ -45,7 +45,7 @@ const user = page.props.auth.user
 
         <Form
           v-slot="{ errors, processing, recentlySuccessful }"
-          v-bind="ProfileController.update.form()"
+          v-bind="ProfileController.update()"
           class="space-y-6"
         >
           <div class="grid gap-2">
@@ -99,8 +99,7 @@ const user = page.props.auth.user
               v-if="status === 'verification-link-sent'"
               class="mt-2 text-sm font-medium text-green-600"
             >
-              A new verification link has been sent to your email
-              address.
+              A new verification link has been sent to your email address.
             </div>
           </div>
 

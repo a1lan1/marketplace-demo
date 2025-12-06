@@ -6,17 +6,17 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { trackSignIn } from '@/composables/useActivity'
 import AuthBase from '@/layouts/AuthLayout.vue'
 import { register } from '@/routes'
 import { store } from '@/routes/login'
 import { request } from '@/routes/password'
 import { Form, Head } from '@inertiajs/vue3'
-import { trackSignIn } from '@/composables/useActivity'
 
 defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
+  status?: string;
+  canResetPassword: boolean;
+  canRegister: boolean;
 }>()
 </script>
 
@@ -36,7 +36,7 @@ defineProps<{
 
     <Form
       v-slot="{ errors, processing }"
-      v-bind="store.form()"
+      v-bind="store()"
       :reset-on-success="['password']"
       class="flex flex-col gap-6"
       @success="trackSignIn({ method: 'password' })"

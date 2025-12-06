@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue'
-import { Head } from '@inertiajs/vue3'
 import ProductAutocomplete from '@/components/product/ProductAutocomplete.vue'
 import ProductCard from '@/components/product/ProductCard.vue'
-import type { Product, Pagination, BreadcrumbItem } from '@/types'
+import AppLayout from '@/layouts/AppLayout.vue'
+import type { BreadcrumbItem, Pagination, Product } from '@/types'
+import { Head } from '@inertiajs/vue3'
 
 defineProps<{
   products: Pagination<Product>;

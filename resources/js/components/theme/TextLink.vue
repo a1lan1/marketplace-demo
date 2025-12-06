@@ -3,10 +3,10 @@ import { LinkComponentBaseProps, Method } from '@inertiajs/core'
 import { Link } from '@inertiajs/vue3'
 
 interface Props {
-    href: LinkComponentBaseProps['href'];
-    tabindex?: number;
-    method?: Method;
-    as?: string;
+  href: LinkComponentBaseProps['href'];
+  tabindex?: number;
+  method?: Method;
+  as?: string;
 }
 
 defineProps<Props>()

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import type { Product } from '@/types'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 
 const props = defineProps<{
   product: Product;
@@ -14,7 +14,7 @@ const { items } = storeToRefs(cartStore)
 const { addToCart } = cartStore
 
 const getCartQuantity = (productId: number) => {
-  const item = items.value.find(item => item.product_id === productId)
+  const item = items.value.find((item) => item.product_id === productId)
 
   return item ? item.quantity : 0
 }

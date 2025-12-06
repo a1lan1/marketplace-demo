@@ -1,7 +1,7 @@
-import { ref, watch } from 'vue'
-import { useForm } from '@inertiajs/vue3'
-import { z } from 'zod'
 import type { Product, ProductFormData } from '@/types'
+import { useForm } from '@inertiajs/vue3'
+import { ref, watch } from 'vue'
+import { z } from 'zod'
 
 export const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters long'),
@@ -34,7 +34,7 @@ export function useProductForm(initial?: Product) {
 
     if (!parsed.success) {
       errors.value = Object.fromEntries(
-        parsed.error.issues.map(i => [i.path[0], i.message])
+        parsed.error.issues.map((i) => [i.path[0], i.message])
       )
 
       return false
@@ -59,16 +59,19 @@ export function useProductForm(initial?: Product) {
     return fd
   }
 
-  watch(() => initial, newVal => {
-    if (!newVal) return
+  watch(
+    () => initial,
+    (newVal) => {
+      if (!newVal) return
 
-    form.name = newVal.name
-    form.description = newVal.description
-    form.price = newVal.price.amount / 100
-    form.stock = newVal.stock
-    form.cover_image = null
-  },
-  { deep: true })
+      form.name = newVal.name
+      form.description = newVal.description
+      form.price = newVal.price.amount / 100
+      form.stock = newVal.stock
+      form.cover_image = null
+    },
+    { deep: true }
+  )
 
   return {
     form,

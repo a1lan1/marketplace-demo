@@ -1,4 +1,4 @@
-import { ref, computed, watch, type Ref } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 import { z, type ZodType } from 'zod'
 
 export function useZodValidation<T extends ZodType>(
@@ -27,10 +27,13 @@ export function useZodValidation<T extends ZodType>(
 
   const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
-  watch(formData, () => {
-    errors.value = {}
-  },
-  { deep: true })
+  watch(
+    formData,
+    () => {
+      errors.value = {}
+    },
+    { deep: true }
+  )
 
   return {
     errors,

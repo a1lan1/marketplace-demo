@@ -2,7 +2,6 @@
 import AlertError from '@/components/theme/AlertError.vue'
 import InputError from '@/components/theme/InputError.vue'
 import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,7 @@ import {
   PinInputGroup,
   PinInputSlot
 } from '@/components/ui/pin-input'
+import { Spinner } from '@/components/ui/spinner'
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth'
 import { confirm } from '@/routes/two-factor'
 import { Form } from '@inertiajs/vue3'
@@ -23,16 +23,15 @@ import { Check, Copy, ScanLine } from 'lucide-vue-next'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 
 interface Props {
-    requiresConfirmation: boolean;
-    twoFactorEnabled: boolean;
+  requiresConfirmation: boolean;
+  twoFactorEnabled: boolean;
 }
 
 const props = defineProps<Props>()
 const isOpen = defineModel<boolean>('isOpen')
 
 const { copy, copied } = useClipboard()
-const { qrCodeSvg, manualSetupKey, clearSetupData, fetchSetupData, errors } =
-    useTwoFactorAuth()
+const { qrCodeSvg, manualSetupKey, clearSetupData, fetchSetupData, errors } = useTwoFactorAuth()
 
 const showVerificationStep = ref(false)
 const code = ref<number[]>([])
@@ -41,15 +40,14 @@ const codeValue = computed<string>(() => code.value.join(''))
 const pinInputContainerRef = useTemplateRef('pinInputContainerRef')
 
 const modalConfig = computed<{
-    title: string;
-    description: string;
-    buttonText: string;
+  title: string;
+  description: string;
+  buttonText: string;
 }>(() => {
   if (props.twoFactorEnabled) {
     return {
       title: 'Two-Factor Authentication Enabled',
-      description:
-                'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
+      description: 'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
       buttonText: 'Close'
     }
   }
@@ -64,8 +62,7 @@ const modalConfig = computed<{
 
   return {
     title: 'Enable Two-Factor Authentication',
-    description:
-            'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
+    description: 'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
     buttonText: 'Continue'
   }
 })
@@ -120,30 +117,22 @@ watch(
         <div
           class="mb-3 w-auto rounded-full border border-border bg-card p-0.5 shadow-sm"
         >
-          <div
-            class="relative overflow-hidden rounded-full border border-border bg-muted p-2.5"
-          >
-            <div
-              class="absolute inset-0 grid grid-cols-5 opacity-50"
-            >
+          <div class="relative overflow-hidden rounded-full border border-border bg-muted p-2.5">
+            <div class="absolute inset-0 grid grid-cols-5 opacity-50">
               <div
                 v-for="i in 5"
                 :key="`col-${i}`"
                 class="border-r border-border last:border-r-0"
               />
             </div>
-            <div
-              class="absolute inset-0 grid grid-rows-5 opacity-50"
-            >
+            <div class="absolute inset-0 grid grid-rows-5 opacity-50">
               <div
                 v-for="i in 5"
                 :key="`row-${i}`"
                 class="border-b border-border last:border-b-0"
               />
             </div>
-            <ScanLine
-              class="relative z-20 size-6 text-foreground"
-            />
+            <ScanLine class="relative z-20 size-6 text-foreground" />
           </div>
         </div>
         <DialogTitle>{{ modalConfig.title }}</DialogTitle>
@@ -234,11 +223,10 @@ watch(
             </div>
           </template>
         </template>
-
         <template v-else>
           <Form
             v-slot="{ errors: e, processing }"
-            v-bind="confirm.form()"
+            v-bind="confirm()"
             reset-on-error
             @finish="code = []"
             @success="isOpen = false"
@@ -272,7 +260,9 @@ watch(
                     />
                   </PinInputGroup>
                 </PinInput>
-                <InputError :message="e?.confirmTwoFactorAuthentication?.code" />
+                <InputError
+                  :message="e.code"
+                />
               </div>
 
               <div class="flex w-full items-center space-x-5">
@@ -288,9 +278,7 @@ watch(
                 <Button
                   type="submit"
                   class="w-auto flex-1"
-                  :disabled="
-                    processing || codeValue.length < 6
-                  "
+                  :disabled="processing || codeValue.length < 6"
                 >
                   Confirm
                 </Button>

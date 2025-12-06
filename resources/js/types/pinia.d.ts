@@ -1,10 +1,10 @@
-import 'pinia'
-import type { AxiosInstance } from 'axios'
 import type { snackbar } from '@/plugins/snackbar'
+import type { AxiosInstance } from 'axios'
+import 'pinia'
 
 declare module 'pinia' {
   export interface PiniaCustomProperties {
     $axios: AxiosInstance;
-    $snackbar: typeof snackbar
+    $snackbar: typeof snackbar;
   }
 }

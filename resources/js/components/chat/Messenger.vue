@@ -12,13 +12,13 @@ defineProps<{
   <v-card elevation="20">
     <v-container
       fluid
-      class="h-full p-0 m-0 flex flex-col"
-      style="height: 100%;"
+      class="m-0 flex h-full flex-col p-0"
+      style="height: 100%"
     >
-      <div class="flex flex-grow min-h-0">
+      <div class="flex min-h-0 flex-grow">
         <ChatOrderList :orders />
 
-        <div class="flex flex-col flex-grow min-h-0">
+        <div class="flex min-h-0 flex-grow flex-col">
           <ChatPanel />
         </div>
       </div>
