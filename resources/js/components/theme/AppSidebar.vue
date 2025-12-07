@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { dashboard, telescope } from '@/routes'
+import { telescope, home } from '@/routes'
 import { index as chatIndex } from '@/routes/chat'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
 import { index as horizon } from '@/routes/horizon'
@@ -35,11 +35,6 @@ import {
 import AppLogo from './AppLogo.vue'
 
 const mainNavItems: NavItem[] = [
-  {
-    title: 'Dashboard',
-    href: dashboard(),
-    icon: LayoutGrid
-  },
   {
     title: 'Catalog',
     href: catalogIndex(),
@@ -128,7 +123,7 @@ const footerNavItems: NavItem[] = [
             size="lg"
             as-child
           >
-            <Link :href="dashboard()">
+            <Link :href="home()">
               <AppLogo />
             </Link>
           </SidebarMenuButton>
