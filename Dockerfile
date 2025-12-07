@@ -6,6 +6,7 @@ RUN apk add --no-cache \
     $PHPIZE_DEPS \
     libzip-dev \
     postgresql-dev \
+    postgresql-client \
     git \
     libpq \
     python3 \

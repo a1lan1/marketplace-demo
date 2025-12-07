@@ -18,7 +18,7 @@ chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
 # 2. Install Composer dependencies
-if [ ! -d "vendor" ]; then
+if [ ! -f "vendor/autoload.php" ]; then
   echo "Installing composer dependencies..."
   composer install --no-interaction --no-progress --prefer-dist
 fi
