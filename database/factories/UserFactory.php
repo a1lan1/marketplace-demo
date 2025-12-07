@@ -85,4 +85,45 @@ class UserFactory extends Factory
             ]);
         });
     }
+
+    /**
+     * Indicate that the user should have an admin role.
+     */
+    public function withAdminRole(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(RoleEnum::ADMIN->value);
+        });
+    }
+
+    /**
+     * Indicate that the user should have a manager role.
+     */
+    public function withManagerRole(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(RoleEnum::MANAGER->value);
+        });
+    }
+
+    /**
+     * Indicate that the user should have a buyer role.
+     */
+    public function withBuyerRole(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(RoleEnum::BUYER->value);
+        });
+    }
+
+    /**
+     * Indicate that the user should have a seller role.
+     */
+    public function withSellerRole(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(RoleEnum::SELLER->value);
+        });
+    }
+
 }
