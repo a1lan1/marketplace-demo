@@ -66,7 +66,7 @@ const cartHeaders = [
         <v-card-title>Order Summary</v-card-title>
         <v-card-text>
           <v-alert
-            v-if="form.errors.purchase"
+            v-if="'purchase' in form.errors"
             type="error"
             variant="tonal"
             class="mb-4"
