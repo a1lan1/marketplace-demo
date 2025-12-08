@@ -29,7 +29,7 @@ it('can deposit money', function (): void {
     assertDatabaseHas('transactions', [
         'id' => $transaction->id,
         'user_id' => $user->id,
-        'amount' => '50.00', // Changed to string
+        'amount' => '50.00',
         'type' => TransactionType::DEPOSIT->value,
         'description' => 'Test Deposit',
     ]);
@@ -48,7 +48,7 @@ it('can withdraw money', function (): void {
     assertDatabaseHas('transactions', [
         'id' => $transaction->id,
         'user_id' => $user->id,
-        'amount' => '-50.00', // Changed to string
+        'amount' => '-50.00',
         'type' => TransactionType::WITHDRAWAL->value,
         'description' => 'Test Withdrawal',
     ]);

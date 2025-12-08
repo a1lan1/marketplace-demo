@@ -125,5 +125,4 @@ class UserFactory extends Factory
             $user->assignRole(RoleEnum::SELLER->value);
         });
     }
-
 }

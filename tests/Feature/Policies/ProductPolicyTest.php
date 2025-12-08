@@ -61,6 +61,7 @@ test('seller with permission can update own product', function (): void {
 test('seller without permission cannot update own product', function (): void {
     $sellerWithoutEditPermission = User::factory()->create();
     $sellerWithoutEditPermission->givePermissionTo(['products.create', 'products.delete-own']);
+
     $productOfSellerWithoutPermission = Product::factory()->create(['user_id' => $sellerWithoutEditPermission->id]);
 
     expect($this->policy->update($sellerWithoutEditPermission, $productOfSellerWithoutPermission))->toBeFalse();
@@ -90,6 +91,7 @@ test('seller with permission can delete own product', function (): void {
 test('seller without permission cannot delete own product', function (): void {
     $sellerWithoutDeletePermission = User::factory()->create();
     $sellerWithoutDeletePermission->givePermissionTo(['products.create', 'products.edit-own']);
+
     $productOfSellerWithoutPermission = Product::factory()->create(['user_id' => $sellerWithoutDeletePermission->id]);
 
     expect($this->policy->delete($sellerWithoutDeletePermission, $productOfSellerWithoutPermission))->toBeFalse();

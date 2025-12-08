@@ -1,4 +1,4 @@
-i:
+install:
 	@make build
 	@make up
 

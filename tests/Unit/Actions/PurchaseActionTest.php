@@ -63,7 +63,7 @@ it('executes purchase successfully', function (): void {
     // Check Order Created
     assertDatabaseHas('orders', [
         'user_id' => $buyer->id,
-        'total_amount' => '250.00', // Changed to string
+        'total_amount' => '250.00',
     ]);
 
     // Check Transactions

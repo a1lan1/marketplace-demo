@@ -95,7 +95,7 @@ docker compose exec app php artisan tinker
 
 ## Links
 
-- **[Laravel Octane](https://laravel.com/docs/11.x/octane)**: Official Laravel Octane documentation.
+- **[Laravel Octane](https://laravel.com/docs/12.x/octane)**: Official Laravel Octane documentation.
 - **[Swoole](https://www.swoole.co.uk/)**: Asynchronous PHP extension.
 - **[mateusjunges/laravel-kafka](https://laravelkafka.com/docs/v2.9/introduction)**: This package provides a nice way of producing and consuming kafka messages in Laravel projects.
 - **[Visualising Laravel and Horizon metrics using Prometheus and Grafana](https://freek.dev/2507-visualising-laravel-and-horizon-metrics-using-prometheus-and-grafana)**: A step-by-step guide to visualising Laravel and Horizon metrics using Prometheus and Grafana.
