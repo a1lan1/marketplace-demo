@@ -6,10 +6,13 @@ namespace App\Providers;
 
 use App\Contracts\BalanceServiceInterface;
 use App\Contracts\ChatServiceInterface;
+use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
+use App\Contracts\RecommendationServiceInterface;
 use App\Services\BalanceService;
 use App\Services\ChatService;
+use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
 use App\Services\ProductService;
 use App\Services\RecommendationService;
@@ -33,9 +36,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
         $this->app->bind(ChatServiceInterface::class, ChatService::class);
 
-        $this->app->bind(function (): RecommendationService {
+        $this->app->bind(RecommendationServiceInterface::class, function (): RecommendationService {
             return new RecommendationService(
                 baseUrl: config('services.recommendation.url'),
+            );
+        });
+
+        $this->app->bind(NlpSearchPreprocessingServiceInterface::class, function (): NlpSearchPreprocessingService {
+            return new NlpSearchPreprocessingService(
+                baseUrl: config('services.nlp_search_preprocessing.url'),
+                timeout: config('services.nlp_search_preprocessing.timeout'),
             );
         });
 

@@ -272,6 +272,18 @@ services:
       clickhouse:
         condition: service_healthy
 
+  nlp_search_preprocessing:
+    build:
+      context: ./services/nlp_search_preprocessing
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    networks:
+      - marketplace_app
+    depends_on:
+      app:
+        condition: service_healthy
+
 networks:
   marketplace_app:
     driver: bridge

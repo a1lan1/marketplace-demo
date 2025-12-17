@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\ProductServiceInterface;
+use App\Contracts\RecommendationServiceInterface;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 use App\Models\User;
@@ -14,10 +16,11 @@ use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
-class ProductService implements ProductServiceInterface
+readonly class ProductService implements ProductServiceInterface
 {
     public function __construct(
-        private readonly RecommendationService $recommendationService,
+        private RecommendationServiceInterface $recommendationService,
+        private NlpSearchPreprocessingServiceInterface $nlpSearchPreprocessingService,
     ) {}
 
     public function getPaginatedProducts(?string $searchQuery = null, int $perPage = 12): LengthAwarePaginator
@@ -37,7 +40,9 @@ class ProductService implements ProductServiceInterface
             return collect();
         }
 
-        return Product::search($searchQuery)
+        $processedQuery = $this->nlpSearchPreprocessingService->preprocessQuery($searchQuery);
+
+        return Product::search($processedQuery)
             ->take($limit)
             ->get();
     }

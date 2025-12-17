@@ -40,4 +40,9 @@ return [
         'timeout' => env('RECOMMENDATION_SERVICE_TIMEOUT', 5),
     ],
 
+    'nlp_search_preprocessing' => [
+        'url' => env('NLP_SEARCH_PREPROCESSING_URL', 'http://nlp_search_preprocessing:8001'),
+        'timeout' => env('NLP_SEARCH_PREPROCESSING_TIMEOUT', 5),
+    ],
+
 ];
