@@ -6,7 +6,7 @@ namespace App\Models;
 
 use App\Enums\TransactionType;
 use Carbon\CarbonImmutable;
-use Cknow\Money\Casts\MoneyDecimalCast;
+use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,7 +56,7 @@ class Transaction extends Model
     protected function casts(): array
     {
         return [
-            'amount' => MoneyDecimalCast::class,
+            'amount' => MoneyIntegerCast::class,
             'type' => TransactionType::class,
         ];
     }

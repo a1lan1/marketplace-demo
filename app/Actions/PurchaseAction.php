@@ -102,7 +102,7 @@ readonly class PurchaseAction
 
             $order->products()->attach($product->id, [
                 'quantity' => $item->quantity,
-                'price' => $product->price,
+                'price' => $product->price->getAmount(),
             ]);
 
             $product->decrement('stock', $item->quantity);

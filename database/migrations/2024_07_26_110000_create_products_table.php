@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->comment('Seller ID')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->bigInteger('price');
             $table->unsignedInteger('stock')->default(0);
             $table->timestamps();
         });

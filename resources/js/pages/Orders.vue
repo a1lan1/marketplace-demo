@@ -82,7 +82,7 @@ onUnmounted(() => {
           </template>
 
           <template #[`item.total_amount`]="{ item }">
-            {{ formatCurrency(item.total_amount) }}
+            {{ formatCurrency(Number(item.total_amount) / 100) }}
           </template>
 
           <template #[`item.created_at`]="{ item }">

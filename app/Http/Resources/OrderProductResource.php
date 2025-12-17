@@ -22,7 +22,7 @@ class OrderProductResource extends JsonResource
     {
         return [
             'quantity' => $this->quantity,
-            'price' => $this->price,
+            'price' => $this->price->getAmount(),
         ];
     }
 }

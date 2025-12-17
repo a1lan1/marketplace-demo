@@ -48,7 +48,8 @@ test('a buyer can place an order', function (): void {
 
     assertDatabaseHas('orders', [
         'user_id' => $this->buyer->id,
-        'total_amount' => '200.00',
+        'total_amount' => 20000, // 200.00 * 100
+        'status' => OrderStatusEnum::PENDING->value,
     ]);
     assertDatabaseHas('products', [
         'id' => $this->product->id,

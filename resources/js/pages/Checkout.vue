@@ -38,7 +38,7 @@ const placeOrder = () => {
 }
 
 const getItemTotalPrice = (item: CartItem): string => {
-  return formatCurrency((item.price.amount / 100) * item.quantity)
+  return formatCurrency(Number(item.price) * item.quantity)
 }
 
 const cartHeaders = [
@@ -98,7 +98,7 @@ const cartHeaders = [
             </template>
 
             <template #[`item.price`]="{ item }">
-              {{ formatCurrency(item.price.amount / 100) }}
+              {{ formatCurrency(Number(item.price)) }}
             </template>
 
             <template #[`item.quantity`]="{ item }">

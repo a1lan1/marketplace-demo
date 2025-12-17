@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->comment('Buyer ID')->constrained()->onDelete('cascade');
-            $table->decimal('total_amount', 10, 2);
+            $table->bigInteger('total_amount');
             $table->enum('status', OrderStatusEnum::values())->default(OrderStatusEnum::PENDING->value);
             $table->timestamps();
         });
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->unsignedInteger('quantity')->default(1);
-            $table->decimal('price', 10, 2);
+            $table->bigInteger('price');
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ import {
   edit as productsEdit
 } from '@/routes/products'
 import type { BreadcrumbItem, Pagination, Product } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
 import { Head, Link, router } from '@inertiajs/vue3'
 
 defineProps<{
@@ -33,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 const tableHeaders = [
   { title: '', key: 'cover_image', align: 'start' },
   { title: 'Name', value: 'name' },
-  { title: 'Price', value: 'price.formatted' },
+  { title: 'Price', value: 'price' },
   { title: 'Stock', value: 'stock' },
   { title: 'Actions', value: 'actions', sortable: false, align: 'end' }
 ] as const
@@ -70,6 +71,9 @@ const tableHeaders = [
                 rounded
                 class="my-2"
               />
+            </template>
+            <template #[`item.price`]="{ item }">
+              {{ formatCurrency(Number(item.price)) }}
             </template>
             <template #[`item.actions`]="{ item }: { item: Product }">
               <div class="d-flex align-center justify-end">

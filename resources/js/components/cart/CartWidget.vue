@@ -15,7 +15,7 @@ const goToCheckout = () => {
 }
 
 const getItemTotalPrice = (item: CartItem): string => {
-  return formatCurrency((item.price.amount / 100) * item.quantity)
+  return formatCurrency(Number(item.price) * item.quantity)
 }
 </script>
 

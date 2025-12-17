@@ -7,7 +7,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\RoleEnum;
 use Carbon\CarbonImmutable;
-use Cknow\Money\Casts\MoneyDecimalCast;
+use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
@@ -132,7 +132,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
-            'balance' => MoneyDecimalCast::class,
+            'balance' => MoneyIntegerCast::class,
         ];
     }
 

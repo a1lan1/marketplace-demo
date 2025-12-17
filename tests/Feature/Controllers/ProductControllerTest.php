@@ -73,11 +73,11 @@ test('a seller can create a product', function (): void {
     ];
 
     actingAs($this->seller)
-        ->post(route('products.store'), $productData)
+        ->post(route('products.store'), array_merge($productData, ['price' => 19999]))
         ->assertRedirect(route('products.index'))
         ->assertSessionHas('success');
 
-    assertDatabaseHas('products', ['name' => 'New Test Product', 'price' => '199.99']);
+    assertDatabaseHas('products', ['name' => 'New Test Product', 'price' => 19999]);
 });
 
 test('product creation requires valid data', function (array $badData, array|string $errors): void {
@@ -93,11 +93,11 @@ test('a seller can update their own product', function (): void {
     $product = Product::factory()->create(['user_id' => $this->seller->id]);
 
     actingAs($this->seller)
-        ->put(route('products.update', $product), ['name' => 'Updated Name', 'price' => 123.45, 'stock' => 5])
+        ->put(route('products.update', $product), ['name' => 'Updated Name', 'price' => 12345, 'stock' => 5])
         ->assertRedirect(route('products.index'))
         ->assertSessionHas('success');
 
-    assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Name', 'price' => '123.45']);
+    assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Name', 'price' => 12345]);
 });
 
 test('a seller cannot update another user product', function (): void {

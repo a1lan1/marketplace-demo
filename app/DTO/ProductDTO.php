@@ -13,7 +13,7 @@ class ProductDTO
         public User $user,
         public string $name,
         public ?string $description,
-        public float $price,
+        public int $price,
         public int $stock,
         public ?UploadedFile $coverImage = null,
         public ?int $productId = null

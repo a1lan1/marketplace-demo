@@ -22,7 +22,7 @@ class OrderSeeder extends Seeder
                 foreach ($productsForOrder as $product) {
                     $order->products()->attach($product->id, [
                         'quantity' => fake()->numberBetween(1, 5),
-                        'price' => $product->price,
+                        'price' => $product->price->getAmount(),
                     ]);
                 }
             });

@@ -27,7 +27,7 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => (float) $this->price->getAmount() / 100,
             'stock' => $this->stock,
             'user_id' => $this->user_id,
             'cover_image' => $this->cover_image,
@@ -35,7 +35,7 @@ class ProductResource extends JsonResource
             'updated_at' => $this->updated_at,
             'seller' => UserResource::make($this->whenLoaded('seller')),
             'quantity' => $this->when(isset($this->pivot), fn () => $this->pivot?->quantity),
-            'total_price' => $this->when(isset($this->pivot), fn () => $this->pivot?->price),
+            'total_price' => $this->when(isset($this->pivot), fn (): float => (float) $this->pivot?->price->getAmount() / 100),
         ];
     }
 }

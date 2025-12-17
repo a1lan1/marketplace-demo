@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions;
 
 use App\Actions\PurchaseAction;
+use App\Actions\Transactions\CreateTransactionAction;
 use App\DTO\CartItemDTO;
 use App\DTO\PurchaseDTO;
 use App\Enums\TransactionType;
@@ -13,29 +14,28 @@ use App\Exceptions\NotEnoughStockException;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\BalanceService;
-use Cknow\Money\Money;
 use Spatie\LaravelData\DataCollection;
 
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function (): void {
-    $this->purchaseAction = new PurchaseAction(new BalanceService);
+    $this->purchaseAction = new PurchaseAction(new BalanceService(new CreateTransactionAction));
 });
 
 it('executes purchase successfully', function (): void {
     // Arrange
-    $buyer = User::factory()->create(['balance' => Money::USD(100000)]); // $1000.00
-    $seller = User::factory()->create(['balance' => Money::USD(0)]);
+    $buyer = User::factory()->create(['balance' => 100000]); // $1000.00
+    $seller = User::factory()->create(['balance' => 0]);
 
     $product1 = Product::factory()->create([
         'user_id' => $seller->id,
-        'price' => Money::USD(10000), // $100.00
+        'price' => 10000, // $100.00
         'stock' => 10,
     ]);
 
     $product2 = Product::factory()->create([
         'user_id' => $seller->id,
-        'price' => Money::USD(5000), // $50.00
+        'price' => 5000, // $50.00
         'stock' => 5,
     ]);
 
@@ -63,26 +63,26 @@ it('executes purchase successfully', function (): void {
     // Check Order Created
     assertDatabaseHas('orders', [
         'user_id' => $buyer->id,
-        'total_amount' => '250.00',
+        'total_amount' => 25000,
     ]);
 
     // Check Transactions
     assertDatabaseHas('transactions', [
         'user_id' => $buyer->id,
-        'amount' => '-250.00', // Stored as decimal
+        'amount' => 25000,
         'type' => TransactionType::WITHDRAWAL->value,
     ]);
 
     assertDatabaseHas('transactions', [
         'user_id' => $seller->id,
-        'amount' => '250.00', // Stored as decimal
+        'amount' => 25000,
         'type' => TransactionType::DEPOSIT->value,
     ]);
 });
 
 it('throws exception if not enough stock', function (): void {
     // Arrange
-    $buyer = User::factory()->create(['balance' => Money::USD(1000)]);
+    $buyer = User::factory()->create(['balance' => 100000]);
     $product = Product::factory()->create(['stock' => 1]);
 
     $cart = new DataCollection(CartItemDTO::class, [
@@ -97,8 +97,8 @@ it('throws exception if not enough stock', function (): void {
 
 it('throws exception if insufficient funds', function (): void {
     // Arrange
-    $buyer = User::factory()->create(['balance' => Money::USD(10)]);
-    $product = Product::factory()->create(['price' => Money::USD(100), 'stock' => 10]);
+    $buyer = User::factory()->create(['balance' => 1000]);
+    $product = Product::factory()->create(['price' => 10000, 'stock' => 10]);
 
     $cart = new DataCollection(CartItemDTO::class, [
         new CartItemDTO($product->id, 1),

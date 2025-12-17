@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
-use Cknow\Money\Casts\MoneyDecimalCast;
+use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -39,7 +39,7 @@ class OrderProduct extends Pivot
     protected function casts(): array
     {
         return [
-            'price' => MoneyDecimalCast::class,
+            'price' => MoneyIntegerCast::class,
         ];
     }
 }

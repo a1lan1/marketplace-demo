@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null');
-            $table->decimal('amount', 10, 2);
+            $table->bigInteger('amount');
             $table->enum('type', TransactionType::values());
             $table->string('description')->nullable();
             $table->timestamps();

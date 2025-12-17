@@ -18,10 +18,10 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::factory()->withBaseRoles(),
             'name' => fake()->words(3, true),
             'description' => fake()->paragraph(),
-            'price' => fake()->randomFloat(2, 10, 1000),
+            'price' => fake()->numberBetween(1000, 100000),
             'stock' => fake()->numberBetween(0, 100),
         ];
     }

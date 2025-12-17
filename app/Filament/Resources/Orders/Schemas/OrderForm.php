@@ -27,7 +27,8 @@ class OrderForm
                             ->disabled(),
                         TextInput::make('total_amount.amount')
                             ->label('Total Amount')
-                            ->hint('USD')
+                            ->numeric()
+                            ->prefix('$')
                             ->disabled(),
                         Select::make('status')
                             ->options(OrderStatusEnum::class)

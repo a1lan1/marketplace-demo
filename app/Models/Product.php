@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
-use Cknow\Money\Casts\MoneyDecimalCast;
+use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,7 +75,7 @@ class Product extends Model implements HasMedia
     protected function casts(): array
     {
         return [
-            'price' => MoneyDecimalCast::class,
+            'price' => MoneyIntegerCast::class,
         ];
     }
 

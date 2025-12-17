@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ProductServiceInterface;
 use App\DTO\ProductDTO;
+use App\Http\Requests\ProductFilterRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
@@ -23,16 +24,14 @@ class ProductController extends Controller
 
     public function __construct(protected ProductServiceInterface $productService) {}
 
-    public function catalog(Request $request): Response
+    public function catalog(ProductFilterRequest $request): Response
     {
-        $request->validate(['search' => ['sometimes', 'string', 'nullable', 'min:3', 'max:255']]);
-
         $products = $this->productService->getPaginatedProducts(
-            $request->input('search')
+            $request->validated('search')
         );
 
         return Inertia::render('Products/Catalog', [
-            'products' => $products,
+            'products' => ProductResource::collection($products)->response()->getData(true),
             'filters' => $request->only(['search']),
         ]);
     }
@@ -40,7 +39,7 @@ class ProductController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function show(Product $product): Response
+    public function show(Product $product, Request $request): Response
     {
         $this->authorize('view', $product);
 
@@ -61,7 +60,7 @@ class ProductController extends Controller
         $products = $this->productService->getUserProducts($request->user());
 
         return Inertia::render('Products/Index', [
-            'products' => $products,
+            'products' => ProductResource::collection($products),
         ]);
     }
 
@@ -86,7 +85,7 @@ class ProductController extends Controller
             user: $request->user(),
             name: $request->validated('name'),
             description: $request->validated('description'),
-            price: (float) $request->validated('price'),
+            price: (int) $request->validated('price'),
             stock: (int) $request->validated('stock'),
             coverImage: $request->file('cover_image'),
         );
@@ -104,7 +103,7 @@ class ProductController extends Controller
         $this->authorize('update', $product);
 
         return Inertia::render('Products/Edit', [
-            'product' => $product,
+            'product' => ProductResource::make($product),
         ]);
     }
 
@@ -119,7 +118,7 @@ class ProductController extends Controller
             user: $request->user(),
             name: $request->validated('name'),
             description: $request->validated('description'),
-            price: (float) $request->validated('price'),
+            price: (int) $request->validated('price'),
             stock: (int) $request->validated('stock'),
             coverImage: $request->file('cover_image'),
             productId: $product->id,

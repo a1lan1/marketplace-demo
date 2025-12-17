@@ -18,7 +18,7 @@ beforeEach(function (): void {
 
     $this->order = Order::factory()->create(['user_id' => $this->buyer->id]);
     $product = Product::factory()->create(['user_id' => $this->seller->id]);
-    $this->order->products()->attach($product->id, ['quantity' => 1, 'price' => $product->price]);
+    $this->order->products()->attach($product->id, ['quantity' => 1, 'price' => $product->price->getAmount()]);
 
     $this->otherOrder = Order::factory()->create();
 });

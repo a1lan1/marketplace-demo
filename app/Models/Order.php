@@ -6,7 +6,7 @@ namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
 use Carbon\CarbonImmutable;
-use Cknow\Money\Casts\MoneyDecimalCast;
+use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,7 +57,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'total_amount' => MoneyDecimalCast::class,
+            'total_amount' => MoneyIntegerCast::class,
             'status' => OrderStatusEnum::class,
         ];
     }

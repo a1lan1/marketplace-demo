@@ -22,8 +22,8 @@ class TransactionFactory extends Factory
         return [
             'user_id' => User::factory(),
             'order_id' => Order::factory(),
-            'amount' => fake()->randomFloat(2, -1000, 1000),
-            'type' => fake()->randomElement(TransactionType::values()),
+            'amount' => fake()->numberBetween(10000, 100000),
+            'type' => fake()->randomElement(TransactionType::cases()),
         ];
     }
 }

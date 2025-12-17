@@ -23,7 +23,7 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'total_amount' => $this->total_amount,
+            'total_amount' => $this->total_amount->getAmount(),
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
+use App\Actions\Transactions\CreateTransactionAction;
 use App\Enums\TransactionType;
 use App\Exceptions\InsufficientFundsException;
 use App\Models\User;
@@ -13,12 +14,12 @@ use Cknow\Money\Money;
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function (): void {
-    $this->balanceService = new BalanceService;
+    $this->balanceService = new BalanceService(new CreateTransactionAction);
 });
 
 it('can deposit money', function (): void {
     // Arrange
-    $user = User::factory()->create(['balance' => Money::USD(10000)]); // $100.00
+    $user = User::factory()->create(['balance' => 10000]); // $100.00
     $amount = Money::USD(5000); // $50.00
 
     // Act
@@ -29,7 +30,7 @@ it('can deposit money', function (): void {
     assertDatabaseHas('transactions', [
         'id' => $transaction->id,
         'user_id' => $user->id,
-        'amount' => '50.00',
+        'amount' => 5000,
         'type' => TransactionType::DEPOSIT->value,
         'description' => 'Test Deposit',
     ]);
@@ -37,7 +38,7 @@ it('can deposit money', function (): void {
 
 it('can withdraw money', function (): void {
     // Arrange
-    $user = User::factory()->create(['balance' => Money::USD(10000)]); // $100.00
+    $user = User::factory()->create(['balance' => 10000]); // $100.00
     $amount = Money::USD(5000); // $50.00
 
     // Act
@@ -48,7 +49,7 @@ it('can withdraw money', function (): void {
     assertDatabaseHas('transactions', [
         'id' => $transaction->id,
         'user_id' => $user->id,
-        'amount' => '-50.00',
+        'amount' => 5000,
         'type' => TransactionType::WITHDRAWAL->value,
         'description' => 'Test Withdrawal',
     ]);
@@ -56,8 +57,8 @@ it('can withdraw money', function (): void {
 
 it('throws exception when withdrawing insufficient funds', function (): void {
     // Arrange
-    $user = User::factory()->create(['balance' => Money::USD(10)]);
-    $amount = Money::USD(50);
+    $user = User::factory()->create(['balance' => 1000]);
+    $amount = Money::USD(5000);
 
     // Act & Assert
     $this->balanceService->withdraw($user, $amount);
@@ -65,10 +66,10 @@ it('throws exception when withdrawing insufficient funds', function (): void {
 
 it('checks sufficient funds correctly', function (): void {
     // Arrange
-    $user = User::factory()->create(['balance' => Money::USD(100)]);
+    $user = User::factory()->create(['balance' => 10000]);
 
     // Assert
-    expect($this->balanceService->hasSufficientFunds($user, Money::USD(50)))->toBeTrue();
-    expect($this->balanceService->hasSufficientFunds($user, Money::USD(100)))->toBeTrue();
-    expect($this->balanceService->hasSufficientFunds($user, Money::USD(150)))->toBeFalse();
+    expect($this->balanceService->hasSufficientFunds($user, Money::USD(5000)))->toBeTrue();
+    expect($this->balanceService->hasSufficientFunds($user, Money::USD(10000)))->toBeTrue();
+    expect($this->balanceService->hasSufficientFunds($user, Money::USD(15000)))->toBeFalse();
 });
