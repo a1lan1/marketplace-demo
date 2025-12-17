@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'recommendation' => [
+        'url' => env('RECOMMENDATION_SERVICE_URL', 'http://recommendation_service:8000'),
+        'timeout' => env('RECOMMENDATION_SERVICE_TIMEOUT', 5),
+    ],
+
 ];

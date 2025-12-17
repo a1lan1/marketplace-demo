@@ -13,6 +13,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -139,5 +140,12 @@ class ProductController extends Controller
         $this->productService->deleteProduct($product);
 
         return to_route('products.index')->with('success', 'Product deleted.');
+    }
+
+    public function getRecommendedProducts(Request $request): JsonResponse
+    {
+        $recommendations = $this->productService->getRecommendedProducts($request->user()->id);
+
+        return ProductResource::collection($recommendations)->response();
     }
 }

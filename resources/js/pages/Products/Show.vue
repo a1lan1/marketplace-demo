@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
 import ProductAutocomplete from '@/components/product/ProductAutocomplete.vue'
+import RecommendedProducts from '@/components/product/RecommendedProducts.vue'
+import { trackEvent } from '@/composables/useActivity'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { catalog as catalogIndex } from '@/routes/products'
 import type { BreadcrumbItem, Product } from '@/types'
 import { formatCurrency } from '@/utils/formatters'
 import { Head } from '@inertiajs/vue3'
+import { onMounted } from 'vue'
 
 const props = defineProps<{
   product: Product;
+  recommendations: Product[];
 }>()
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,6 +25,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '#'
   }
 ]
+
+onMounted(() => {
+  trackEvent('page_view', undefined, {
+    product_id: props.product.id
+  })
+})
 </script>
 
 <template>
@@ -78,7 +88,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                   label
                   class="text-uppercase"
                 >
-                  {{ product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock' }}
+                  {{
+                    product.stock > 0
+                      ? `In Stock: ${product.stock}`
+                      : 'Out of Stock'
+                  }}
                 </v-chip>
               </div>
 
@@ -90,6 +104,12 @@ const breadcrumbs: BreadcrumbItem[] = [
           </v-card>
         </v-col>
       </v-row>
+
+      <!-- Recommendations Section -->
+      <RecommendedProducts
+        :products="recommendations"
+        class="mt-8"
+      />
     </v-container>
   </AppLayout>
 </template>

@@ -16,6 +16,10 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class ProductService implements ProductServiceInterface
 {
+    public function __construct(
+        private readonly RecommendationService $recommendationService,
+    ) {}
+
     public function getPaginatedProducts(?string $searchQuery = null, int $perPage = 12): LengthAwarePaginator
     {
         if ($searchQuery) {
@@ -29,7 +33,7 @@ class ProductService implements ProductServiceInterface
 
     public function getAutocompleteSuggestions(string $searchQuery, int $limit = 5): Collection
     {
-        if ($searchQuery === '' || $searchQuery === '0') {
+        if (blank($searchQuery)) {
             return collect();
         }
 
@@ -65,5 +69,10 @@ class ProductService implements ProductServiceInterface
     public function deleteProduct(Product $product): void
     {
         $product->delete();
+    }
+
+    public function getRecommendedProducts(int $userId, ?int $excludedProductId = null): Collection
+    {
+        return $this->recommendationService->getRecommendedProducts($userId, $excludedProductId);
     }
 }

@@ -21,4 +21,6 @@ interface ProductServiceInterface
     public function storeProduct(ProductDTO $productDTO): Product;
 
     public function deleteProduct(Product $product): void;
+
+    public function getRecommendedProducts(int $userId, ?int $excludedProductId = null): Collection;
 }

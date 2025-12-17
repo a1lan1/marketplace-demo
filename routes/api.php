@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductController as ApiProductController;
 use App\Http\Controllers\Api\UserActivityController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +15,7 @@ Route::post('user-activities', [UserActivityController::class, 'store'])
 Route::middleware('auth:sanctum')
     ->get('user', fn (Request $request) => $request->user());
 
-Route::get('catalog/search', [ProductController::class, 'autocomplete'])->name('api.catalog.autocomplete');
+Route::get('catalog/search', [ApiProductController::class, 'autocomplete'])->name('api.catalog.autocomplete');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('user/orders', [OrderController::class, 'getUserOrders'])->name('api.user.orders.index');
@@ -25,4 +26,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
             ->middleware('throttle:60,1')
             ->name('api.chat.store');
     });
+
+    Route::get('products/recommendations', [ProductController::class, 'getRecommendedProducts'])->name('api.products.recommendations');
 });

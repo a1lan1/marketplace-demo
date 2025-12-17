@@ -21,15 +21,15 @@ services:
       - "registry.yarnpkg.com:104.16.0.35"
       - "packagist.org:138.199.36.11"
       - "registry-1.docker.io:44.205.109.198"
-    container_name: laravel_app
+    container_name: marketplace_app
     restart: unless-stopped
     volumes:
       - .:/var/www/html
       - './docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini'
     networks:
-      - laravel
+      - marketplace_app
     healthcheck:
-      test: ["CMD", "php", "artisan", "about", "--only=environment"]
+      test: [ "CMD", "php", "artisan", "about", "--only=environment" ]
       interval: 10s
       timeout: 10s
       retries: 15
@@ -50,7 +50,7 @@ services:
     volumes:
       - .:/var/www/html
     networks:
-      - laravel
+      - marketplace_app
     depends_on:
       app:
         condition: service_healthy
@@ -68,9 +68,9 @@ services:
       - 'pgsql-data:/var/lib/postgresql/data'
       - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
     networks:
-      - laravel
+      - marketplace_app
     healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
       retries: 3
       timeout: 5s
 
@@ -81,9 +81,9 @@ services:
     volumes:
       - 'redis-data:/data'
     networks:
-      - laravel
+      - marketplace_app
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       retries: 3
       timeout: 5s
 
@@ -93,14 +93,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: scheduler
     restart: unless-stopped
     command: >
       php artisan schedule:work
     volumes:
       - .:/var/www/html
     networks:
-      - laravel
+      - marketplace_app
     depends_on:
       app:
         condition: service_healthy
@@ -113,7 +112,7 @@ services:
       - '${FORWARD_MAILPIT_PORT:-1025}:1025'
       - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
     networks:
-      - laravel
+      - marketplace_app
 
   meilisearch:
     image: 'getmeili/meilisearch:latest'
@@ -122,9 +121,9 @@ services:
     volumes:
       - 'meilisearch-data:/meili_data'
     networks:
-      - laravel
+      - marketplace_app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:7700/health" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -134,10 +133,9 @@ services:
     profiles:
       - kafka
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
     restart: unless-stopped
     ports:
-      - "9092:9092"
+      - "9094:9092"
       - "9093:9093"
     environment:
       KAFKA_NODE_ID: 1
@@ -152,21 +150,22 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
     volumes:
       - 'kafka-data:/var/lib/kafka/data'
     networks:
-      - laravel
+      - marketplace_app
     healthcheck:
-      test: [ "CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server kafka:9092 || exit 1" ]
-      interval: 15s
+      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server 127.0.0.1:9092 --list || exit 1" ]
+      interval: 10s
       timeout: 10s
-      retries: 10
+      retries: 20
+      start_period: 30s
 
   horizon:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: horizon
     restart: unless-stopped
     environment:
       APP_ENV: ${APP_ENV}
@@ -182,7 +181,7 @@ services:
     volumes:
       - .:/var/www/html
     networks:
-      - laravel
+      - marketplace_app
     depends_on:
       app:
         condition: service_healthy
@@ -201,7 +200,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
-      - laravel
+      - marketplace_app
     depends_on:
       app:
         condition: service_healthy
@@ -222,7 +221,7 @@ services:
       - GF_DATASOURCE_HTTP_CLIENT_ALLOW_HOST_REGEX=clickhouse
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
-      - laravel
+      - marketplace_app
     depends_on:
       prometheus:
         condition: service_started
@@ -230,10 +229,9 @@ services:
         condition: service_healthy
 
   clickhouse:
-    profiles:
-      - monitoring
+    # profiles:
+    #   - monitoring
     image: clickhouse/clickhouse-server:latest
-    container_name: clickhouse
     restart: unless-stopped
     ports:
       - "8123:8123" # HTTP interface
@@ -246,9 +244,9 @@ services:
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: "password"
     networks:
-      - laravel
+      - marketplace_app
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q 'Ok'"]
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q 'Ok'" ]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -256,8 +254,26 @@ services:
       app:
         condition: service_healthy
 
+  recommendation_service:
+    profiles:
+      - kafka
+    build:
+      context: ./services/recommendation_service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CLICKHOUSE_PORT: 9000
+    networks:
+      - marketplace_app
+    depends_on:
+      kafka:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+
 networks:
-  laravel:
+  marketplace_app:
     driver: bridge
 
 volumes:
