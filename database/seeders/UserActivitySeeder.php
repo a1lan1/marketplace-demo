@@ -64,7 +64,7 @@ class UserActivitySeeder extends Seeder
         );
 
         try {
-            app(UserActivityProducer::class)->publish($dto);
+            resolve(UserActivityProducer::class)->publish($dto);
         } catch (Exception $exception) {
             $this->command->warn('UserActivitySeeder: failed to publish event - '.$exception->getMessage());
         }

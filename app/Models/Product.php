@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
 use Laravel\Scout\Searchable;
+use Override;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -79,6 +80,7 @@ class Product extends Model implements HasMedia
         'cover_image',
     ];
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();
