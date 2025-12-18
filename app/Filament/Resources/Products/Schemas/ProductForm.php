@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Enums\MediaCollection;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -37,7 +38,7 @@ class ProductForm
                     ->columns(1)
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('cover_image')
-                            ->collection('product.cover-image')
+                            ->collection(MediaCollection::ProductCoverImage->value)
                             ->image()
                             ->hiddenLabel()
                             ->columnSpanFull(),

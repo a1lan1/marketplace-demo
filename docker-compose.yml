@@ -170,6 +170,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       APP_DEBUG: ${APP_DEBUG:-false}
+      KAFKA_BROKERS: kafka:9092
       REVERB_APP_ID: ${REVERB_APP_ID}
       REVERB_APP_KEY: ${REVERB_APP_KEY}
       REVERB_APP_SECRET: ${REVERB_APP_SECRET}
@@ -282,6 +283,48 @@ services:
       - marketplace_app
     depends_on:
       app:
+        condition: service_healthy
+
+  image_analysis_service:
+    profiles:
+      - kafka
+    build:
+      context: ./services/image_analysis_service
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      KAFKA_BROKER: kafka:9092
+      LARAVEL_APP_HOST: app:8585
+    networks:
+      - marketplace_app
+    depends_on:
+      app:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  image_analysis_consumer:
+    profiles:
+      - kafka
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: >
+      php artisan kafka:consume --topics=image_analysis_completed --consumer=App\\Kafka\\Consumers\\ImageAnalysisConsumer
+    volumes:
+      - .:/var/www/html
+    networks:
+      - marketplace_app
+    depends_on:
+      app:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      pgsql:
         condition: service_healthy
 
 networks:

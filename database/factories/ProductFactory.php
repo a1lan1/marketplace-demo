@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\MediaCollection;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -30,7 +31,7 @@ class ProductFactory extends Factory
     {
         return $this->afterCreating(function (Product $product): void {
             $product->addMediaFromUrl('https://picsum.photos/600')
-                ->toMediaCollection('product.cover-image');
+                ->toMediaCollection(MediaCollection::ProductCoverImage->value);
         });
     }
 }

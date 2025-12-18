@@ -15,6 +15,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->bigInteger('price');
             $table->unsignedInteger('stock')->default(0);
+            $table->json('image_tags')->nullable();
+            $table->string('image_moderation_status')->nullable()->default('pending');
             $table->timestamps();
         });
     }

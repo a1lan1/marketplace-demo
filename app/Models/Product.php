@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\MediaCollection;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
@@ -19,7 +20,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
-use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection as SpatieMediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
@@ -29,10 +30,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string|null $description
  * @property Money $price
  * @property int $stock
+ * @property array<array-key, mixed>|null $image_tags
+ * @property string|null $image_moderation_status
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read string $cover_image
- * @property-read MediaCollection<int, Media> $media
+ * @property-read SpatieMediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read User $seller
  *
@@ -43,6 +46,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder<static>|Product whereCreatedAt($value)
  * @method static Builder<static>|Product whereDescription($value)
  * @method static Builder<static>|Product whereId($value)
+ * @method static Builder<static>|Product whereImageModerationStatus($value)
+ * @method static Builder<static>|Product whereImageTags($value)
  * @method static Builder<static>|Product whereName($value)
  * @method static Builder<static>|Product wherePrice($value)
  * @method static Builder<static>|Product whereStock($value)
@@ -63,6 +68,8 @@ class Product extends Model implements HasMedia
         'description',
         'price',
         'stock',
+        'image_tags',
+        'image_moderation_status',
     ];
 
     /**
@@ -76,6 +83,8 @@ class Product extends Model implements HasMedia
     {
         return [
             'price' => MoneyIntegerCast::class,
+            'image_tags' => 'array',
+            'image_moderation_status' => 'string',
         ];
     }
 
@@ -91,6 +100,8 @@ class Product extends Model implements HasMedia
      */
     public function toSearchableArray(): array
     {
+        $this->loadMissing('seller');
+
         return [
             'id' => (string) $this->id,
             'name' => $this->name,
@@ -98,18 +109,21 @@ class Product extends Model implements HasMedia
             'price' => $this->price->getAmount(),
             'stock' => $this->stock,
             'cover_image' => $this->cover_image,
+            'seller_name' => $this->seller->name,
+            'image_tags' => $this->image_tags,
+            'image_moderation_status' => $this->image_moderation_status,
         ];
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('product.cover-image-thumb')
+        $this->addMediaConversion(MediaCollection::ProductCoverImageThumb->value)
             ->crop(400, 400);
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('product.cover-image')
+        $this->addMediaCollection(MediaCollection::ProductCoverImage->value)
             ->acceptsMimeTypes(['image/jpeg', 'image/png'])
             ->singleFile();
     }
@@ -122,14 +136,14 @@ class Product extends Model implements HasMedia
     {
         $this->addMedia($file)
             ->usingFileName($file->hashName())
-            ->toMediaCollection('product.cover-image');
+            ->toMediaCollection(MediaCollection::ProductCoverImage->value);
     }
 
     protected function coverImage(): Attribute
     {
         return Attribute::get(function (): string {
-            return $this->hasMedia('product.cover-image')
-                ? $this->getFirstMediaUrl('product.cover-image')
+            return $this->hasMedia(MediaCollection::ProductCoverImage->value)
+                ? $this->getFirstMediaUrl(MediaCollection::ProductCoverImage->value)
                 : 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($this->name))).'?s=200&d=identicon';
         })->shouldCache();
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Products\Infolists;
 
+use App\Enums\MediaCollection;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -19,7 +20,7 @@ class ProductInfolist
                     ->columns(1)
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('cover_image')
-                            ->collection('product.cover-image')
+                            ->collection(MediaCollection::ProductCoverImage->value)
                             ->imageWidth('100%')
                             ->imageHeight('100%')
                             ->hiddenLabel(),
@@ -34,6 +35,13 @@ class ProductInfolist
                         TextEntry::make('stock'),
                         TextEntry::make('seller.name')
                             ->label('Seller'),
+                        TextEntry::make('image_tags')
+                            ->badge()
+                            ->separator(',')
+                            ->label('Image Tags'),
+                        TextEntry::make('image_moderation_status')
+                            ->badge()
+                            ->label('Image Moderation Status'),
                         TextEntry::make('created_at')
                             ->dateTime(),
                         TextEntry::make('updated_at')
