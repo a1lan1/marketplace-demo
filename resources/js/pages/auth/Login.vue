@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
-import { trackSignIn } from '@/composables/useActivity'
+import { trackError, trackSignIn } from '@/composables/useActivity'
 import AuthBase from '@/layouts/AuthLayout.vue'
 import { register } from '@/routes'
 import { store } from '@/routes/login'
@@ -40,6 +40,7 @@ defineProps<{
       :reset-on-success="['password']"
       class="flex flex-col gap-6"
       @success="trackSignIn({ method: 'password' })"
+      @error="trackError('Error registering user')"
     >
       <div class="grid gap-6">
         <div class="grid gap-2">

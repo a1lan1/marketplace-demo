@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
-import { trackSignUp } from '@/composables/useActivity'
+import { trackError, trackSignUp } from '@/composables/useActivity'
 import AuthBase from '@/layouts/AuthLayout.vue'
 import { login } from '@/routes'
 import { store } from '@/routes/register'
@@ -25,6 +25,7 @@ import { Form, Head } from '@inertiajs/vue3'
       :reset-on-success="['password', 'password_confirmation']"
       class="flex flex-col gap-6"
       @success="trackSignUp({ method: 'password' })"
+      @error="trackError('Error registering user')"
     >
       <div class="grid gap-6">
         <div class="grid gap-2">

@@ -6,6 +6,7 @@ import type { BreadcrumbItem, CartItem, CheckoutForm } from '@/types'
 import { formatCurrency } from '@/utils/formatters'
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
+import { trackError } from '@/composables/useActivity'
 
 const cartStore = useCartStore()
 const { items, totalPrice } = storeToRefs(cartStore)
@@ -35,6 +36,7 @@ const placeOrder = () => {
     },
     onError: (errors: any) => {
       console.error(errors)
+      trackError('Error placing order')
     }
   })
 }
