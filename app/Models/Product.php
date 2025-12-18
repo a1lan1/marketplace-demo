@@ -79,6 +79,17 @@ class Product extends Model implements HasMedia
         'cover_image',
     ];
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (self $product): void {
+            if (auth()->check()) {
+                $product->user_id = auth()->id();
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [
