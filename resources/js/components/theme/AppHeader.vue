@@ -110,7 +110,9 @@ const rightNavItems: NavItem[] = [
                   class="size-6 fill-current text-black dark:text-white"
                 />
               </SheetHeader>
-              <div class="flex h-full flex-1 flex-col justify-between space-y-4 py-6">
+              <div
+                class="flex h-full flex-1 flex-col justify-between space-y-4 py-6"
+              >
                 <nav class="-mx-3 space-y-1">
                   <Link
                     v-for="item in mainNavItems"

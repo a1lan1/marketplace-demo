@@ -31,7 +31,8 @@ const props = defineProps<Props>()
 const isOpen = defineModel<boolean>('isOpen')
 
 const { copy, copied } = useClipboard()
-const { qrCodeSvg, manualSetupKey, clearSetupData, fetchSetupData, errors } = useTwoFactorAuth()
+const { qrCodeSvg, manualSetupKey, clearSetupData, fetchSetupData, errors } =
+  useTwoFactorAuth()
 
 const showVerificationStep = ref(false)
 const code = ref<number[]>([])
@@ -47,7 +48,8 @@ const modalConfig = computed<{
   if (props.twoFactorEnabled) {
     return {
       title: 'Two-Factor Authentication Enabled',
-      description: 'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
+      description:
+        'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
       buttonText: 'Close'
     }
   }
@@ -62,7 +64,8 @@ const modalConfig = computed<{
 
   return {
     title: 'Enable Two-Factor Authentication',
-    description: 'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
+    description:
+      'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
     buttonText: 'Continue'
   }
 })
@@ -117,7 +120,9 @@ watch(
         <div
           class="mb-3 w-auto rounded-full border border-border bg-card p-0.5 shadow-sm"
         >
-          <div class="relative overflow-hidden rounded-full border border-border bg-muted p-2.5">
+          <div
+            class="relative overflow-hidden rounded-full border border-border bg-muted p-2.5"
+          >
             <div class="absolute inset-0 grid grid-cols-5 opacity-50">
               <div
                 v-for="i in 5"
@@ -191,7 +196,9 @@ watch(
             </div>
 
             <div class="flex w-full items-center justify-center space-x-2">
-              <div class="flex w-full items-stretch overflow-hidden rounded-xl border border-border">
+              <div
+                class="flex w-full items-stretch overflow-hidden rounded-xl border border-border"
+              >
                 <div
                   v-if="!manualSetupKey"
                   class="flex h-full w-full items-center justify-center bg-muted p-3"
@@ -260,9 +267,7 @@ watch(
                     />
                   </PinInputGroup>
                 </PinInput>
-                <InputError
-                  :message="e.code"
-                />
+                <InputError :message="e.code" />
               </div>
 
               <div class="flex w-full items-center space-x-5">

@@ -53,7 +53,7 @@ class RecommendationService implements RecommendationServiceInterface
             $recommendedIds = array_diff($recommendedIds, [$excludedProductId]);
         }
 
-        if (empty($recommendedIds)) {
+        if ($recommendedIds === []) {
             return new Collection;
         }
 

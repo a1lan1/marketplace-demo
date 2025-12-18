@@ -36,13 +36,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
         $this->app->bind(ChatServiceInterface::class, ChatService::class);
 
-        $this->app->bind(RecommendationServiceInterface::class, function (): RecommendationService {
+        $this->app->bind(function (): RecommendationServiceInterface {
             return new RecommendationService(
                 baseUrl: config('services.recommendation.url'),
             );
         });
 
-        $this->app->bind(NlpSearchPreprocessingServiceInterface::class, function (): NlpSearchPreprocessingService {
+        $this->app->bind(function (): NlpSearchPreprocessingServiceInterface {
             return new NlpSearchPreprocessingService(
                 baseUrl: config('services.nlp_search_preprocessing.url'),
                 timeout: config('services.nlp_search_preprocessing.timeout'),

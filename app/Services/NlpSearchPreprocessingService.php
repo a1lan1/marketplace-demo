@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class NlpSearchPreprocessingService implements NlpSearchPreprocessingServiceInterface
 {
-    public function __construct(protected string $baseUrl, protected int $timeout){}
+    public function __construct(protected string $baseUrl, protected int $timeout) {}
 
     public function preprocessQuery(string $query): string
     {

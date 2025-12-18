@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { catalog } from '@/routes/products'
 import { login, register } from '@/routes'
+import { catalog } from '@/routes/products'
 import { Head, Link } from '@inertiajs/vue3'
 
 withDefaults(
@@ -24,7 +24,9 @@ withDefaults(
       href="https://rsms.me/inter/inter.css"
     >
   </Head>
-  <div class="flex min-h-screen flex-col items-center bg-gray-100 p-6 text-gray-800 lg:justify-center lg:p-8 dark:bg-gray-900 dark:text-gray-200">
+  <div
+    class="flex min-h-screen flex-col items-center bg-gray-100 p-6 text-gray-800 lg:justify-center lg:p-8 dark:bg-gray-900 dark:text-gray-200"
+  >
     <header class="mb-8 w-full max-w-6xl text-sm">
       <nav class="flex items-center justify-end gap-4">
         <Link
@@ -50,9 +52,7 @@ withDefaults(
         </template>
       </nav>
     </header>
-    <div
-      class="flex w-full flex-grow items-center justify-center"
-    >
+    <div class="flex w-full flex-grow items-center justify-center">
       <main
         class="w-full max-w-6xl overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-gray-800"
       >
@@ -65,12 +65,17 @@ withDefaults(
             >
           </div>
           <div class="p-8 text-center md:p-12 md:text-left">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+            <h1
+              class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl dark:text-white"
+            >
               <span class="block">Welcome to our</span>
               <span class="block text-indigo-600">Marketplace!</span>
             </h1>
-            <p class="mx-auto mt-6 max-w-md text-lg text-gray-500 dark:text-gray-400 md:mx-0">
-              The best place to buy and sell amazing products. Explore our catalog and find what you need.
+            <p
+              class="mx-auto mt-6 max-w-md text-lg text-gray-500 md:mx-0 dark:text-gray-400"
+            >
+              The best place to buy and sell amazing products. Explore our
+              catalog and find what you need.
             </p>
             <div class="mt-8">
               <Link

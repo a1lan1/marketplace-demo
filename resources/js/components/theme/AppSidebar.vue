@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { telescope, home } from '@/routes'
+import { home, telescope } from '@/routes'
 import { index as chatIndex } from '@/routes/chat'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
 import { index as horizon } from '@/routes/horizon'
