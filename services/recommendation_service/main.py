@@ -17,7 +17,7 @@ logger.info("Starting Recommendation Service v2 (Auto-Topic-Creation Enabled)")
 # Kafka Consumer configuration
 KAFKA_BROKER = os.getenv("KAFKA_BROKER", "kafka:9092")
 KAFKA_GROUP_ID = os.getenv("KAFKA_GROUP_ID", "recommendation_service_group")
-KAFKA_TOPICS = os.getenv("KAFKA_TOPICS", "user_activity_page_view,user_activity_click").split(',')
+KAFKA_TOPICS = os.getenv("KAFKA_TOPICS", "user_activity").split(',')
 
 # ClickHouse configuration
 CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")

@@ -16,12 +16,16 @@ class UserActivityProducer
      */
     public function publish(UserActivityData $data): void
     {
-        Kafka::publish(config('kafka.brokers'))
+        $producer = Kafka::publish(config('kafka.brokers'))
             ->onTopic('user_activity')
-            ->withHeaders(['source' => 'frontend'])
-            ->withMessage(
-                new Message(body: $data->toArray())
-            )
-            ->send();
+            ->withHeaders(['source' => 'frontend']);
+
+        $message = new Message(body: $data->toArray());
+
+        if ($data->user_id) {
+            $message->withKey((string) $data->user_id);
+        }
+
+        $producer->withMessage($message)->send();
     }
 }
