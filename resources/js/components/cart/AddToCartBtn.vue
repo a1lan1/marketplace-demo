@@ -7,6 +7,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   product: Product;
   block?: boolean;
+  iconOnly?: boolean;
 }>()
 
 const cartStore = useCartStore()
@@ -26,14 +27,22 @@ const isAddToCartDisabled = computed(() => {
 
 <template>
   <v-btn
-    :color="isAddToCartDisabled ? 'danger' : 'primary'"
+    :color="isAddToCartDisabled ? 'danger' : 'success'"
     :disabled="isAddToCartDisabled"
-    variant="elevated"
+    variant="flat"
     :block="block"
-    prepend-icon="mdi-cart"
+    :icon="iconOnly"
+    :size="iconOnly ? 'small' : undefined"
     :class="isAddToCartDisabled ? 'cursor-not-allowed' : 'cursor-pointer'"
     @click.prevent="addToCart(product)"
   >
-    {{ isAddToCartDisabled ? 'No more stock' : 'Add to Cart' }}
+    <v-icon
+      icon="mdi-cart"
+      :class="{ 'mr-1': !iconOnly }"
+    />
+
+    <template v-if="!iconOnly">
+      {{ isAddToCartDisabled ? 'No more stock' : 'Add to Cart' }}
+    </template>
   </v-btn>
 </template>

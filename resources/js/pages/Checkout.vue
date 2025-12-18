@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { index as ordersIndex, store as storeOrder } from '@/routes/orders'
 import { useCartStore } from '@/stores/cart'
-import type { CartItem } from '@/types'
+import type { BreadcrumbItem, CartItem, CheckoutForm } from '@/types'
 import { formatCurrency } from '@/utils/formatters'
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
@@ -11,10 +11,12 @@ const cartStore = useCartStore()
 const { items, totalPrice } = storeToRefs(cartStore)
 const { clearCart, removeFromCart } = cartStore
 
-interface CheckoutForm {
-  cart: Pick<CartItem, 'product_id' | 'quantity'>[];
-  purchase?: string;
-}
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Checkout',
+    href: '#'
+  }
+]
 
 const form = useForm<CheckoutForm>({
   cart: []
@@ -31,7 +33,7 @@ const placeOrder = () => {
       clearCart()
       router.visit(ordersIndex().url)
     },
-    onError: (errors) => {
+    onError: (errors: any) => {
       console.error(errors)
     }
   })
@@ -54,13 +56,7 @@ const cartHeaders = [
 <template>
   <Head title="Checkout" />
 
-  <AppLayout>
-    <template #header>
-      <h2 class="text-h5">
-        Checkout
-      </h2>
-    </template>
-
+  <AppLayout :breadcrumbs>
     <v-container>
       <v-card>
         <v-card-title>Order Summary</v-card-title>

@@ -131,6 +131,11 @@ export interface CartItem {
   stock: number;
 }
 
+export interface CheckoutForm {
+  cart: Pick<CartItem, 'product_id' | 'quantity'>[];
+  purchase?: string;
+}
+
 export interface AutocompleteItem {
   title: string;
   value: number;

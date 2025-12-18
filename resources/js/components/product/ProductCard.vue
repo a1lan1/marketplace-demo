@@ -6,6 +6,7 @@ import { formatCurrency } from '@/utils/formatters'
 
 defineProps<{
   product: Product;
+  compact?: boolean;
 }>()
 </script>
 
@@ -17,32 +18,38 @@ defineProps<{
       cover
     >
       <v-card-actions>
+        <v-chip
+          :color="product.stock > 0 ? 'success' : 'error'"
+          variant="flat"
+          size="small"
+          label
+        >
+          {{
+            product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'
+          }}
+        </v-chip>
         <v-spacer />
         <v-chip
           color="primary"
           variant="flat"
         >
-          {{ formatCurrency(product.price) }}
+          {{ formatCurrency(Number(product.price)) }}
         </v-chip>
       </v-card-actions>
     </v-img>
 
     <v-card-title>{{ product.name }}</v-card-title>
-    <v-card-text>{{ product.description }}</v-card-text>
+    <v-card-text v-if="!compact">
+      {{ product.description }}
+    </v-card-text>
 
     <v-card-actions>
-      <v-chip
-        :color="product.stock > 0 ? 'success' : 'error'"
-        variant="flat"
-        label
-        class="text-uppercase"
-      >
-        {{ product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock' }}
-      </v-chip>
-
       <v-spacer />
 
-      <AddToCartBtn :product />
+      <AddToCartBtn
+        :product
+        :icon-only="compact"
+      />
     </v-card-actions>
   </v-card>
 </template>

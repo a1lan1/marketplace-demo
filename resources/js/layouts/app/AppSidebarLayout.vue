@@ -19,10 +19,10 @@ withDefaults(defineProps<Props>(), {
   <AppShell variant="sidebar">
     <Snackbar />
     <AppSidebar v-if="$page.props.auth.user" />
-    <div class="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+    <div class="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
       <AppSidebarHeader
         :breadcrumbs="breadcrumbs"
-        class="sticky top-0 z-10 flex-shrink-0 backdrop-blur dark:border-gray-800 dark:bg-gray-900/25"
+        class="dark:border-gray-1000 sticky top-0 z-10 flex-shrink-0 backdrop-blur dark:bg-gray-900/10"
       />
       <AppContent variant="sidebar">
         <slot />
