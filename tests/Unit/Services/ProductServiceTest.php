@@ -4,21 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
+use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\ProductService;
+use App\Services\RecommendationService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\UploadedFile;
 use Mockery\MockInterface;
 
-beforeEach(function (): void {
-    $this->productService = new ProductService;
-});
-
 test('get paginated products', function (): void {
     // Arrange
+    $this->recommendationServiceMock = $this->mock(RecommendationService::class);
+    $this->nlpSearchPreprocessingServiceMock = $this->mock(NlpSearchPreprocessingServiceInterface::class);
+
+    $this->productService = new ProductService(
+        $this->recommendationServiceMock,
+        $this->nlpSearchPreprocessingServiceMock
+    );
+
     Product::factory()->count(15)->create();
 
     // Act
@@ -32,6 +38,14 @@ test('get paginated products', function (): void {
 
 test('get user products returns paginated list', function (): void {
     // Arrange
+    $this->recommendationServiceMock = $this->mock(RecommendationService::class);
+    $this->nlpSearchPreprocessingServiceMock = $this->mock(NlpSearchPreprocessingServiceInterface::class);
+
+    $this->productService = new ProductService(
+        $this->recommendationServiceMock,
+        $this->nlpSearchPreprocessingServiceMock
+    );
+
     $userMock = $this->mock(User::class);
     $paginatorMock = $this->mock(LengthAwarePaginator::class);
     $relationMock = $this->mock(HasMany::class, function (MockInterface $mock) use ($paginatorMock): void {
@@ -50,12 +64,20 @@ test('get user products returns paginated list', function (): void {
 
 test('store product creates or updates product and uploads image', function (): void {
     // Arrange
+    $this->recommendationServiceMock = $this->mock(RecommendationService::class);
+    $this->nlpSearchPreprocessingServiceMock = $this->mock(NlpSearchPreprocessingServiceInterface::class);
+
+    $this->productService = new ProductService(
+        $this->recommendationServiceMock,
+        $this->nlpSearchPreprocessingServiceMock
+    );
+
     $userMock = $this->mock(User::class);
     $productDTO = new ProductDTO(
         user: $userMock,
         name: 'New Product',
         description: 'A new product description',
-        price: 100.00,
+        price: 10000,
         stock: 10,
         coverImage: UploadedFile::fake()->image('cover.jpg')
     );
@@ -80,6 +102,14 @@ test('store product creates or updates product and uploads image', function (): 
 
 test('delete product calls delete on the model', function (): void {
     // Arrange
+    $this->recommendationServiceMock = $this->mock(RecommendationService::class);
+    $this->nlpSearchPreprocessingServiceMock = $this->mock(NlpSearchPreprocessingServiceInterface::class);
+
+    $this->productService = new ProductService(
+        $this->recommendationServiceMock,
+        $this->nlpSearchPreprocessingServiceMock
+    );
+
     $productMock = $this->mock(Product::class);
     $productMock->shouldReceive('delete')->once();
 
