@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Enums\MediaCollection;
 use App\Enums\RoleEnum;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -26,7 +27,7 @@ class UsersTable
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('avatar')
-                    ->collection('user.avatar')
+                    ->collection(MediaCollection::UserAvatar->value)
                     ->circular(),
                 TextColumn::make('name')
                     ->searchable(),

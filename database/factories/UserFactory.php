@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\MediaCollection;
 use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -68,7 +69,7 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user): void {
             $user->addMediaFromUrl('https://picsum.photos/500')
-                ->toMediaCollection('user.avatar');
+                ->toMediaCollection(MediaCollection::UserAvatar->value);
         });
     }
 

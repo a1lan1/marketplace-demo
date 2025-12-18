@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Enums\MediaCollection;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -19,7 +20,7 @@ class UserInfolist
                     ->columns(2)
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('avatar')
-                            ->collection('user.avatar')
+                            ->collection(MediaCollection::UserAvatar->value)
                             ->circular()
                             ->hiddenLabel(),
                         TextEntry::make('name'),

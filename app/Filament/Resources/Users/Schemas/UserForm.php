@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Enums\MediaCollection;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -16,7 +17,7 @@ class UserForm
         return $schema
             ->components([
                 SpatieMediaLibraryFileUpload::make('avatar')
-                    ->collection('user.avatar')
+                    ->collection(MediaCollection::UserAvatar->value)
                     ->avatar()
                     ->imageEditor()
                     ->columnSpanFull(),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\MediaCollection;
 use App\Enums\RoleEnum;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
@@ -27,7 +28,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
-use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection as SpatieMediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -47,7 +48,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $two_factor_recovery_codes
  * @property CarbonImmutable|null $two_factor_confirmed_at
  * @property-read string $avatar
- * @property-read MediaCollection<int, Media> $media
+ * @property-read SpatieMediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -178,13 +179,13 @@ class User extends Authenticatable implements FilamentUser, HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('user.avatar-thumb')
+        $this->addMediaConversion(MediaCollection::UserAvatarThumb->value)
             ->crop(400, 400);
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('user.avatar')
+        $this->addMediaCollection(MediaCollection::UserAvatar->value)
             ->acceptsMimeTypes(['image/jpeg', 'image/png'])
             ->singleFile();
     }
@@ -197,14 +198,14 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     {
         $this->addMedia($file)
             ->usingFileName($file->hashName())
-            ->toMediaCollection('user.avatar');
+            ->toMediaCollection(MediaCollection::UserAvatar->value);
     }
 
     protected function avatar(): Attribute
     {
         return Attribute::get(function (): string {
-            return $this->hasMedia('user.avatar')
-                ? $this->getFirstMediaUrl('user.avatar')
+            return $this->hasMedia(MediaCollection::UserAvatar->value)
+                ? $this->getFirstMediaUrl(MediaCollection::UserAvatar->value)
                 : 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($this->name))).'?s=200&d=identicon';
         })->shouldCache();
     }
