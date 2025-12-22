@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AuthButtons from '@/components/AuthButtons.vue'
 import CartWidget from '@/components/cart/CartWidget.vue'
 import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
 import { SidebarTrigger } from '@/components/ui/sidebar'
@@ -35,13 +36,15 @@ const userBalance = computed(() =>
       />
     </div>
 
-    <div>
+    <div class="flex items-center gap-4">
       <v-chip
+        v-if="page.props.auth.user"
         class="mr-2"
         color="primary"
       >
         Balance: {{ userBalance }}
       </v-chip>
+      <AuthButtons v-else />
       <CartWidget />
     </div>
   </header>
