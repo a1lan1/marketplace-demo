@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
                 MessageSeeder::class,
                 UserActivitySeeder::class,
                 GeoSeeder::class,
+                FeedbackSeeder::class,
             ]);
         }
     }
