@@ -151,6 +151,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_FLUSH_INTERVAL_MESSAGES: 10000
+      KAFKA_LOG_FLUSH_INTERVAL_MS: 1000
     volumes:
       - 'kafka-data:/var/lib/kafka/data'
     networks:
@@ -325,6 +327,46 @@ services:
       redis:
         condition: service_healthy
       pgsql:
+        condition: service_healthy
+
+  geo_reviews_consumer:
+    profiles:
+      - kafka
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: >
+      php artisan kafka:consume --topics=geo_reviews --consumer=App\\Kafka\\Consumers\\GeoReviewsConsumer
+    volumes:
+      - .:/var/www/html
+    networks:
+      - marketplace_app
+    depends_on:
+      app:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      pgsql:
+        condition: service_healthy
+
+  geo_collector:
+    profiles:
+      - kafka
+    build:
+      context: ./services/geo_collector
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    environment:
+      KAFKA_BROKER: kafka:9092
+      KAFKA_TOPIC: geo_reviews
+    networks:
+      - marketplace_app
+    depends_on:
+      kafka:
         condition: service_healthy
 
 networks:
