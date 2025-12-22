@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Carbon\CarbonImmutable;
+use Database\Factories\FeedbackFactory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $feedbackable_type
+ * @property int $feedbackable_id
+ * @property int $rating
+ * @property string|null $comment
+ * @property bool $is_verified_purchase
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read User $author
+ * @property-read Model|\Eloquent $feedbackable
+ *
+ * @method static FeedbackFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Feedback newModelQuery()
+ * @method static Builder<static>|Feedback newQuery()
+ * @method static Builder<static>|Feedback query()
+ * @method static Builder<static>|Feedback whereComment($value)
+ * @method static Builder<static>|Feedback whereCreatedAt($value)
+ * @method static Builder<static>|Feedback whereId($value)
+ * @method static Builder<static>|Feedback whereIsVerifiedPurchase($value)
+ * @method static Builder<static>|Feedback whereRating($value)
+ * @method static Builder<static>|Feedback whereFeedbackableId($value)
+ * @method static Builder<static>|Feedback whereFeedbackableType($value)
+ * @method static Builder<static>|Feedback whereUpdatedAt($value)
+ * @method static Builder<static>|Feedback whereUserId($value)
+ *
+ * @mixin \Eloquent
+ */
+class Feedback extends Model
+{
+    use HasFactory;
+
+    protected $table = 'feedbacks';
+
+    protected $fillable = [
+        'user_id',
+        'feedbackable_id',
+        'feedbackable_type',
+        'rating',
+        'comment',
+        'is_verified_purchase',
+    ];
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function feedbackable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'integer',
+            'is_verified_purchase' => 'boolean',
+        ];
+    }
+}

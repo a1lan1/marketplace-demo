@@ -7,6 +7,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\MediaCollection;
 use App\Enums\RoleEnum;
+use App\Traits\HasFeedback;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
@@ -48,6 +49,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $two_factor_recovery_codes
  * @property CarbonImmutable|null $two_factor_confirmed_at
  * @property-read string $avatar
+ * @property-read Collection<int, Feedback> $feedbacks
+ * @property-read int|null $feedbacks_count
  * @property-read Collection<int, Location> $locations
  * @property-read int|null $locations_count
  * @property-read SpatieMediaCollection<int, Media> $media
@@ -91,6 +94,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
+    use HasFeedback;
     use HasRoles;
     use InteractsWithMedia;
     use Notifiable;
