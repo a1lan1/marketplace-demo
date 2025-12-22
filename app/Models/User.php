@@ -48,6 +48,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $two_factor_recovery_codes
  * @property CarbonImmutable|null $two_factor_confirmed_at
  * @property-read string $avatar
+ * @property-read Collection<int, Location> $locations
+ * @property-read int|null $locations_count
  * @property-read SpatieMediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
@@ -150,6 +152,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function locations(): HasMany
+    {
+        return $this->hasMany(Location::class, 'seller_id');
     }
 
     public function isAdmin(): bool
