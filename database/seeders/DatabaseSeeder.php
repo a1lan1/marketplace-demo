@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
                 OrderSeeder::class,
                 MessageSeeder::class,
                 UserActivitySeeder::class,
+                GeoSeeder::class,
             ]);
         }
     }
