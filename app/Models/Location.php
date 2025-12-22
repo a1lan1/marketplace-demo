@@ -10,9 +10,11 @@ use App\ValueObjects\Address;
 use Carbon\CarbonImmutable;
 use Database\Factories\LocationFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 
 /**
@@ -26,6 +28,8 @@ use Laravel\Scout\Searchable;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property LocationTypeEnum $type
+ * @property-read Collection<int, Review> $reviews
+ * @property-read int|null $reviews_count
  * @property-read User $seller
  *
  * @method static LocationFactory factory($count = null, $state = [])
@@ -63,6 +67,11 @@ class Location extends Model
     public function seller(): BelongsTo
     {
         return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 
     /**
