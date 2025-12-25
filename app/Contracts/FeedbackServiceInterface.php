@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Contracts;
+
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
+interface FeedbackServiceInterface
+{
+    public function getFeedbacksForTarget(string $type, int $id): LengthAwarePaginator;
+
+    public function getSellerFeedbacks(int $userId): LengthAwarePaginator;
+}
