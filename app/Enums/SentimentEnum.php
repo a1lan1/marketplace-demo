@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Enums\Geo;
+namespace App\Enums;
 
-enum ReviewSentimentEnum: string
+enum SentimentEnum: string
 {
     case POSITIVE = 'positive';
     case NEUTRAL = 'neutral';

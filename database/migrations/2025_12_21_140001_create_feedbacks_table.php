@@ -14,6 +14,7 @@ return new class extends Migration
             $table->morphs('feedbackable');
             $table->unsignedTinyInteger('rating');
             $table->text('comment')->nullable();
+            $table->string('sentiment')->nullable();
             $table->boolean('is_verified_purchase')->default(false);
             $table->timestamps();
 

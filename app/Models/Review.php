@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\Geo\ReviewSentimentEnum;
+use App\Contracts\Sentimentable;
 use App\Enums\Geo\ReviewSourceEnum;
+use App\Enums\SentimentEnum;
 use Carbon\CarbonImmutable;
 use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $author_name
  * @property string|null $text
  * @property int $rating
- * @property ReviewSentimentEnum|null $sentiment
+ * @property SentimentEnum|null $sentiment
  * @property CarbonImmutable $published_at
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -45,7 +46,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
-class Review extends Model
+class Review extends Model implements Sentimentable
 {
     use HasFactory;
 
@@ -69,9 +70,14 @@ class Review extends Model
     {
         return [
             'source' => ReviewSourceEnum::class,
-            'sentiment' => ReviewSentimentEnum::class,
+            'sentiment' => SentimentEnum::class,
             'published_at' => 'datetime',
             'rating' => 'integer',
         ];
+    }
+
+    public function getRecipient(): ?User
+    {
+        return $this->location->seller;
     }
 }
