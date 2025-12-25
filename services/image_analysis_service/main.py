@@ -4,6 +4,7 @@ import io
 import logging
 import os
 from confluent_kafka import Consumer, KafkaException, KafkaError, Producer
+from confluent_kafka.admin import AdminClient, NewTopic
 import asyncio
 import json
 from datetime import datetime
@@ -30,6 +31,35 @@ producer = None
 
 def get_kafka_producer():
     return Producer({'bootstrap.servers': KAFKA_BROKER})
+
+async def create_topic_with_retry(topic_name):
+    """
+    Attempts to create a Kafka topic with retries.
+    """
+    admin_client = AdminClient({'bootstrap.servers': KAFKA_BROKER})
+    topic_list = [NewTopic(topic_name, num_partitions=1, replication_factor=1)]
+
+    for i in range(30): # Try for 60 seconds
+        try:
+            logger.info(f"Attempting to create topic {topic_name} (Attempt {i+1}/30)...")
+            fs = admin_client.create_topics(topic_list)
+
+            for topic, f in fs.items():
+                try:
+                    f.result()
+                    logger.info(f"Topic {topic} created successfully")
+                    return
+                except Exception as e:
+                    if "Topic with this name already exists" in str(e):
+                         logger.info(f"Topic {topic} already exists")
+                         return
+                    else:
+                        raise e
+        except Exception as e:
+            logger.warning(f"Failed to create topic {topic_name}: {e}. Retrying in 2 seconds...")
+            await asyncio.sleep(2)
+
+    logger.error(f"Failed to create topic {topic_name} after multiple attempts.")
 
 async def consume_kafka_messages():
     global consumer, producer
@@ -177,6 +207,10 @@ def delivery_report(err, msg):
 async def startup_event():
     global consumer_task
     logger.info("Starting Kafka consumer task for image analysis service...")
+
+    # Ensure output topic exists
+    asyncio.create_task(create_topic_with_retry(KAFKA_OUTPUT_TOPIC))
+
     consumer_task = asyncio.create_task(consume_kafka_messages())
 
 @app.on_event("shutdown")
