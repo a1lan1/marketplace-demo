@@ -45,4 +45,9 @@ return [
         'timeout' => env('NLP_SEARCH_PREPROCESSING_TIMEOUT', 5),
     ],
 
+    'geo_collector' => [
+        'url' => env('GEO_COLLECTOR_SERVICE_URL', 'http://geo_collector:8003'),
+        'timeout' => env('GEO_COLLECTOR_SERVICE_TIMEOUT', 5),
+    ],
+
 ];

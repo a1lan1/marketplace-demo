@@ -11,9 +11,11 @@ use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
+use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Services\BalanceService;
 use App\Services\ChatService;
 use App\Services\FeedbackService;
+use App\Services\Geo\GeoCollectorService;
 use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
 use App\Services\ProductService;
@@ -38,6 +40,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
         $this->app->bind(ChatServiceInterface::class, ChatService::class);
         $this->app->bind(FeedbackServiceInterface::class, FeedbackService::class);
+
+        $this->app->singleton(function (): GeoCollectorServiceInterface {
+            return new GeoCollectorService(
+                baseUrl: config('services.geo_collector.url'),
+                timeout: config('services.geo_collector.timeout'),
+            );
+        });
 
         $this->app->bind(function (): RecommendationServiceInterface {
             return new RecommendationService(

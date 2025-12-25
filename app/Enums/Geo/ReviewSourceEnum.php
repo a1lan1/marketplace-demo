@@ -6,6 +6,7 @@ namespace App\Enums\Geo;
 
 enum ReviewSourceEnum: string
 {
+    case INTERNAL = 'internal';
     case YELP = 'yelp';
     case GOOGLE = 'google';
     case AIRBNB = 'airbnb';
