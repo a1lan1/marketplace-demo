@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Actions\Geo;
 
 use App\DTO\Geo\ReviewData;
-use App\Enums\Geo\ReviewSentimentEnum;
-use App\Events\Geo\NewNegativeReviewReceived;
+use App\Enums\SentimentEnum;
+use App\Events\NegativeSentimentDetected;
 use App\Models\Review;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -30,8 +30,8 @@ class StoreReviewAction
             );
         });
 
-        if ($review->sentiment === ReviewSentimentEnum::NEGATIVE) {
-            event(new NewNegativeReviewReceived($review->loadMissing('location.seller')));
+        if ($review->sentiment === SentimentEnum::NEGATIVE) {
+            event(new NegativeSentimentDetected($review->loadMissing('location.seller')));
         }
 
         return $review;
