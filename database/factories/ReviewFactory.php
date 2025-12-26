@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\Geo\ReviewSentimentEnum;
 use App\Enums\Geo\ReviewSourceEnum;
+use App\Enums\SentimentEnum;
 use App\Models\Location;
 use App\Models\Review;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,7 +26,7 @@ class ReviewFactory extends Factory
             'author_name' => fake()->name,
             'text' => fake()->paragraph,
             'rating' => fake()->numberBetween(1, 5),
-            'sentiment' => fake()->randomElement(ReviewSentimentEnum::cases()),
+            'sentiment' => fake()->randomElement(SentimentEnum::cases()),
             'published_at' => fake()->dateTimeThisYear,
         ];
     }

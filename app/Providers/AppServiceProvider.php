@@ -14,11 +14,13 @@ use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
+use App\Contracts\Services\Geo\ReviewServiceInterface;
 use App\Services\BalanceService;
 use App\Services\ChatService;
 use App\Services\FeedbackService;
 use App\Services\Geo\GeoCollectorService;
 use App\Services\Geo\LocationService;
+use App\Services\Geo\ReviewService;
 use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
 use App\Services\ProductService;
@@ -46,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LocationServiceInterface::class, LocationService::class);
         $this->app->bind(SellerServiceInterface::class, SellerService::class);
         $this->app->bind(FeedbackServiceInterface::class, FeedbackService::class);
+        $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
 
         $this->app->singleton(function (): GeoCollectorServiceInterface {
             return new GeoCollectorService(

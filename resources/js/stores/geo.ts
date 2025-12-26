@@ -1,6 +1,10 @@
+import type { Feedback } from '@/types'
 import type {
   Location,
-  LocationForm
+  LocationForm,
+  Review,
+  ReviewFilters,
+  ReviewMetrics
 } from '@/types/geo'
 import { defineStore } from 'pinia'
 
@@ -21,9 +25,14 @@ const defaultForm: LocationForm = {
 
 interface State {
   locations: Location[];
+  reviews: Review[];
+  feedbacks: Feedback[];
+  metrics: ReviewMetrics | null;
   form: LocationForm;
   loading: boolean;
   storing: boolean;
+  reviewsLoading: boolean;
+  feedbacksLoading: boolean;
   pagination: {
     current_page: number;
     last_page: number;
@@ -34,9 +43,14 @@ interface State {
 export const useGeoStore = defineStore('geo', {
   state: (): State => ({
     locations: [],
+    reviews: [],
+    feedbacks: [],
+    metrics: null,
     form: { ...defaultForm },
     loading: false,
     storing: false,
+    reviewsLoading: false,
+    feedbacksLoading: false,
     pagination: {
       current_page: 1,
       last_page: 1,
@@ -108,6 +122,53 @@ export const useGeoStore = defineStore('geo', {
         throw e
       } finally {
         this.storing = false
+      }
+    },
+    async fetchReviews(filters: ReviewFilters = {}) {
+      this.reviewsLoading = true
+      try {
+        const { data } = await this.$axios.get('/geo/reviews', {
+          params: filters
+        })
+        this.reviews = data.data
+        this.pagination = {
+          current_page: data.meta.current_page,
+          last_page: data.meta.last_page,
+          total: data.meta.total
+        }
+      } catch (e: any) {
+        this.$snackbar.error({
+          text: e.response?.data?.message || 'Failed to fetch reviews'
+        })
+      } finally {
+        this.reviewsLoading = false
+      }
+    },
+    async fetchFeedbacks(filters: any = {}) {
+      this.feedbacksLoading = true
+      try {
+        const { data } = await this.$axios.get('/feedbacks', {
+          params: filters
+        })
+        this.feedbacks = data.data
+      } catch (e: any) {
+        this.$snackbar.error({
+          text: e.response?.data?.message || 'Failed to fetch feedbacks'
+        })
+      } finally {
+        this.feedbacksLoading = false
+      }
+    },
+    async fetchMetrics(filters: Omit<ReviewFilters, 'page'> = {}) {
+      try {
+        const { data } = await this.$axios.get('/geo/metrics', {
+          params: filters
+        })
+        this.metrics = data
+      } catch (e: any) {
+        this.$snackbar.error({
+          text: e.response?.data?.message || 'Failed to fetch metrics'
+        })
       }
     },
     resetForm() {

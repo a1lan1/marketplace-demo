@@ -14,6 +14,7 @@ import {
 import { home, telescope } from '@/routes'
 import { index as chatIndex } from '@/routes/chat'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
+import { dashboard as geoDashboard } from '@/routes/geo'
 import { index as geoLocations } from '@/routes/geo/locations'
 import { index as horizon } from '@/routes/horizon'
 import { index as logViewer } from '@/routes/log-viewer'
@@ -32,6 +33,7 @@ import {
   MapPin,
   MessageSquare,
   Package,
+  Radar,
   ShoppingCart
 } from 'lucide-vue-next'
 import AppLogo from './AppLogo.vue'
@@ -60,6 +62,11 @@ const mainNavItems: NavItem[] = [
 ]
 
 const geoNavItems: NavItem[] = [
+  {
+    title: 'Dashboard',
+    href: geoDashboard(),
+    icon: Radar
+  },
   {
     title: 'My Locations',
     href: geoLocations(),

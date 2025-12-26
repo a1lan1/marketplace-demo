@@ -1,3 +1,5 @@
+import { Sentiment } from '@/types/index'
+
 export type Coordinates = [number, number];
 
 export interface Address {
@@ -32,4 +34,35 @@ export interface LocationForm {
   address: Address;
   latitude: number | null;
   longitude: number | null;
+}
+
+export interface Review {
+  id: number;
+  location_id: number;
+  source: string;
+  author_name: string;
+  text: string | null;
+  rating: number;
+  sentiment: Sentiment;
+  published_at: string;
+  created_at: string;
+}
+
+export interface ReviewMetrics {
+  average_rating: number;
+  total_reviews: number;
+  sentiment_distribution: {
+    positive: number;
+    neutral: number;
+    negative: number;
+  };
+  source_distribution: Record<string, number>;
+  rating_dynamics: { date: string; average_rating: number }[];
+}
+
+export interface ReviewFilters {
+  location_id?: number;
+  source?: string;
+  sentiment?: string;
+  page?: number;
 }

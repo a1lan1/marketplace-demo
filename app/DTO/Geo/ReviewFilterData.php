@@ -11,16 +11,11 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapInputName(SnakeCaseMapper::class)]
-class ReviewData extends Data
+class ReviewFilterData extends Data
 {
     public function __construct(
-        public ?int $locationId,
-        public ReviewSourceEnum $source,
-        public string $externalId,
-        public string $authorName,
-        public ?string $text,
-        public int $rating,
-        public ?SentimentEnum $sentiment,
-        public string $publishedAt,
+        public ?int $locationId = null,
+        public ?ReviewSourceEnum $source = null,
+        public ?SentimentEnum $sentiment = null,
     ) {}
 }

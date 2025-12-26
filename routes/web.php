@@ -45,6 +45,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     Route::prefix('geo')->name('geo.')->group(function (): void {
+        Route::get('dashboard', function () {
+            return Inertia::render('Geo/Dashboard');
+        })->name('dashboard');
+
         Route::get('locations', [LocationController::class, 'index'])->name('locations.index');
     });
 });

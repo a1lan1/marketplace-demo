@@ -30,6 +30,7 @@ readonly class ProductService implements ProductServiceInterface
         }
 
         return Product::query()
+            ->with('seller')
             ->latest()
             ->paginate($perPage);
     }
