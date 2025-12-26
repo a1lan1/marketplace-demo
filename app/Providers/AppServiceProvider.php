@@ -11,6 +11,7 @@ use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
+use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Services\BalanceService;
 use App\Services\ChatService;
@@ -20,6 +21,7 @@ use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
 use App\Services\ProductService;
 use App\Services\RecommendationService;
+use App\Services\SellerService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderServiceInterface::class, OrderService::class);
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
         $this->app->bind(ChatServiceInterface::class, ChatService::class);
+        $this->app->bind(SellerServiceInterface::class, SellerService::class);
         $this->app->bind(FeedbackServiceInterface::class, FeedbackService::class);
 
         $this->app->singleton(function (): GeoCollectorServiceInterface {

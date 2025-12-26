@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -19,6 +20,8 @@ Route::prefix('catalog')->group(function (): void {
         ->name('products.show')
         ->where('product', '[0-9]+');
 });
+
+Route::get('sellers/{seller}', [SellerController::class, 'show'])->name('sellers.show');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', function () {
