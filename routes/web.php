@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
@@ -41,6 +42,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('chat')->group(function (): void {
         Route::get('', [ChatController::class, 'index'])->name('chat.index');
         Route::get('{order}', [ChatController::class, 'show'])->name('chat.show');
+    });
+
+    Route::prefix('geo')->name('geo.')->group(function (): void {
+        Route::get('locations', [LocationController::class, 'index'])->name('locations.index');
     });
 });
 

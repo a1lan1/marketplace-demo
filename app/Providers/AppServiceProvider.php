@@ -13,10 +13,12 @@ use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
+use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\Services\BalanceService;
 use App\Services\ChatService;
 use App\Services\FeedbackService;
 use App\Services\Geo\GeoCollectorService;
+use App\Services\Geo\LocationService;
 use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
 use App\Services\ProductService;
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderServiceInterface::class, OrderService::class);
         $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
         $this->app->bind(ChatServiceInterface::class, ChatService::class);
+        $this->app->bind(LocationServiceInterface::class, LocationService::class);
         $this->app->bind(SellerServiceInterface::class, SellerService::class);
         $this->app->bind(FeedbackServiceInterface::class, FeedbackService::class);
 

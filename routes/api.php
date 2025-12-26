@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\Geo\LocationController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserActivityController;
@@ -29,6 +30,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     });
 
     Route::get('products/recommendations', [ProductController::class, 'getRecommendedProducts'])->name('api.products.recommendations');
+
+    Route::prefix('geo')->name('api.geo.')->group(function (): void {
+        Route::apiResource('locations', LocationController::class);
+    });
 
     Route::get('feedbacks', [FeedbackController::class, 'list'])->name('api.feedbacks.list');
     Route::post('feedbacks', [FeedbackController::class, 'store'])->name('api.feedbacks.store');

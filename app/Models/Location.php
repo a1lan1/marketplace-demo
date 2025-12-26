@@ -21,13 +21,13 @@ use Laravel\Scout\Searchable;
  * @property int $id
  * @property int $seller_id
  * @property string $name
+ * @property LocationTypeEnum $type
  * @property Address|null $address
  * @property float $latitude
  * @property float $longitude
  * @property array<array-key, mixed>|null $external_ids
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- * @property LocationTypeEnum $type
  * @property-read Collection<int, Review> $reviews
  * @property-read int|null $reviews_count
  * @property-read User $seller

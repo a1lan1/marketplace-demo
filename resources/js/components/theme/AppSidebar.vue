@@ -14,6 +14,7 @@ import {
 import { home, telescope } from '@/routes'
 import { index as chatIndex } from '@/routes/chat'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
+import { index as geoLocations } from '@/routes/geo/locations'
 import { index as horizon } from '@/routes/horizon'
 import { index as logViewer } from '@/routes/log-viewer'
 import { index as ordersIndex } from '@/routes/orders'
@@ -28,6 +29,7 @@ import {
   Folder,
   LayoutGrid,
   ListOrdered,
+  MapPin,
   MessageSquare,
   Package,
   ShoppingCart
@@ -54,7 +56,18 @@ const mainNavItems: NavItem[] = [
     title: 'Support',
     href: chatIndex(),
     icon: MessageSquare
-  },
+  }
+]
+
+const geoNavItems: NavItem[] = [
+  {
+    title: 'My Locations',
+    href: geoLocations(),
+    icon: MapPin
+  }
+]
+
+const devNavItems: NavItem[] = [
   {
     title: 'Filament',
     href: filament(),
@@ -132,7 +145,20 @@ const footerNavItems: NavItem[] = [
     </SidebarHeader>
 
     <SidebarContent>
-      <NavMain :items="mainNavItems" />
+      <NavMain
+        title="Platform"
+        :items="mainNavItems"
+      />
+      <NavMain
+        title="GeoInsight"
+        :items="geoNavItems"
+        class="mt-4"
+      />
+      <NavMain
+        title="Development"
+        :items="devNavItems"
+        class="mt-4"
+      />
     </SidebarContent>
 
     <SidebarFooter>
