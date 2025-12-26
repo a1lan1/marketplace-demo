@@ -50,6 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         })->name('dashboard');
 
         Route::get('locations', [LocationController::class, 'index'])->name('locations.index');
+
+        Route::get('map', function () {
+            return Inertia::render('Geo/Map');
+        })->name('map');
     });
 });
 

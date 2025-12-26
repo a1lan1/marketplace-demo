@@ -14,7 +14,7 @@ import {
 import { home, telescope } from '@/routes'
 import { index as chatIndex } from '@/routes/chat'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
-import { dashboard as geoDashboard } from '@/routes/geo'
+import { dashboard as geoDashboard, map as geoMap } from '@/routes/geo'
 import { index as geoLocations } from '@/routes/geo/locations'
 import { index as horizon } from '@/routes/horizon'
 import { index as logViewer } from '@/routes/log-viewer'
@@ -30,6 +30,7 @@ import {
   Folder,
   LayoutGrid,
   ListOrdered,
+  Map,
   MapPin,
   MessageSquare,
   Package,
@@ -71,6 +72,11 @@ const geoNavItems: NavItem[] = [
     title: 'My Locations',
     href: geoLocations(),
     icon: MapPin
+  },
+  {
+    title: 'Locations Map',
+    href: geoMap(),
+    icon: Map
   }
 ]
 
@@ -157,7 +163,7 @@ const footerNavItems: NavItem[] = [
         :items="mainNavItems"
       />
       <NavMain
-        title="GeoInsight"
+        title="Geo"
         :items="geoNavItems"
         class="mt-4"
       />

@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 import axios from './axios'
 import './echo'
+import './leaflet'
 import pinia from './pinia'
 import snackbar from './snackbar'
 import vuetify from './vuetify'
