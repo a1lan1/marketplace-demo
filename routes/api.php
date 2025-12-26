@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\Api\Geo\LocationController;
+use App\Http\Controllers\Api\Geo\ResponseTemplateController;
 use App\Http\Controllers\Api\Geo\ReviewController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
@@ -34,6 +35,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
 
     Route::prefix('geo')->name('api.geo.')->group(function (): void {
         Route::apiResource('locations', LocationController::class);
+        Route::apiResource('response-templates', ResponseTemplateController::class);
 
         Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
         Route::get('metrics', [ReviewController::class, 'metrics'])->name('metrics');

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DashboardMetrics from '@/components/Geo/DashboardMetrics.vue'
 import FeedbacksList from '@/components/Geo/FeedbacksList.vue'
+import ReviewReplyDialog from '@/components/Geo/ReviewReplyDialog.vue'
 import ReviewsList from '@/components/Geo/ReviewsList.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { dashboard as geoDashboard } from '@/routes/geo'
@@ -21,6 +22,7 @@ const {
   reviews,
   feedbacks,
   metrics,
+  templates,
   reviewsLoading,
   feedbacksLoading
 } = storeToRefs(geoStore)
@@ -28,7 +30,8 @@ const {
   fetchLocations,
   fetchReviews,
   fetchFeedbacks,
-  fetchMetrics
+  fetchMetrics,
+  fetchTemplates
 } = geoStore
 
 const showReplyDialog = ref(false)
@@ -58,6 +61,7 @@ const openReplyDialog = (review: Review) => {
 onMounted(async() => {
   await fetchLocations()
   await loadDashboardData()
+  await fetchTemplates()
 })
 </script>
 
@@ -116,5 +120,11 @@ onMounted(async() => {
         </VWindow>
       </div>
     </div>
+
+    <ReviewReplyDialog
+      v-model="showReplyDialog"
+      :review="selectedReview"
+      :templates="templates"
+    />
   </AppLayout>
 </template>

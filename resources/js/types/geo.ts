@@ -66,3 +66,9 @@ export interface ReviewFilters {
   sentiment?: string;
   page?: number;
 }
+
+export interface ResponseTemplate {
+  id: number;
+  title: string;
+  body: string;
+}

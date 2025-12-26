@@ -63,6 +63,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read Collection<int, Product> $products
  * @property-read int|null $products_count
+ * @property-read Collection<int, ResponseTemplate> $responseTemplates
+ * @property-read int|null $response_templates_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
  *
@@ -156,6 +158,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function responseTemplates(): HasMany
+    {
+        return $this->hasMany(ResponseTemplate::class, 'seller_id');
     }
 
     public function locations(): HasMany

@@ -2,6 +2,7 @@ import type { Feedback } from '@/types'
 import type {
   Location,
   LocationForm,
+  ResponseTemplate,
   Review,
   ReviewFilters,
   ReviewMetrics
@@ -28,11 +29,13 @@ interface State {
   reviews: Review[];
   feedbacks: Feedback[];
   metrics: ReviewMetrics | null;
+  templates: ResponseTemplate[];
   form: LocationForm;
   loading: boolean;
   storing: boolean;
   reviewsLoading: boolean;
   feedbacksLoading: boolean;
+  templatesLoading: boolean;
   pagination: {
     current_page: number;
     last_page: number;
@@ -46,11 +49,13 @@ export const useGeoStore = defineStore('geo', {
     reviews: [],
     feedbacks: [],
     metrics: null,
+    templates: [],
     form: { ...defaultForm },
     loading: false,
     storing: false,
     reviewsLoading: false,
     feedbacksLoading: false,
+    templatesLoading: false,
     pagination: {
       current_page: 1,
       last_page: 1,
@@ -169,6 +174,19 @@ export const useGeoStore = defineStore('geo', {
         this.$snackbar.error({
           text: e.response?.data?.message || 'Failed to fetch metrics'
         })
+      }
+    },
+    async fetchTemplates() {
+      this.templatesLoading = true
+      try {
+        const { data } = await this.$axios.get('/geo/response-templates')
+        this.templates = data.data
+      } catch (e: any) {
+        this.$snackbar.error({
+          text: e.response?.data?.message || 'Failed to fetch templates'
+        })
+      } finally {
+        this.templatesLoading = false
       }
     },
     resetForm() {
