@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
+import ProductPrice from '@/components/product/ProductPrice.vue'
+import ProductSeller from '@/components/product/ProductSeller.vue'
+import ProductStockStatus from '@/components/product/ProductStockStatus.vue'
 import { show as showProduct } from '@/routes/products'
 import type { Product } from '@/types'
-import { formatCurrency } from '@/utils/formatters'
 
 defineProps<{
   product: Product;
@@ -18,23 +20,20 @@ defineProps<{
       cover
     >
       <v-card-actions>
-        <v-chip
-          :color="product.stock > 0 ? 'success' : 'error'"
-          variant="flat"
-          size="small"
-          label
-        >
-          {{
-            product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'
-          }}
-        </v-chip>
+        <ProductSeller
+          v-if="product.seller"
+          :seller="product.seller"
+          variant="elevated"
+          chip
+          with-avatar
+        />
         <v-spacer />
-        <v-chip
-          color="primary"
-          variant="flat"
-        >
-          {{ formatCurrency(Number(product.price)) }}
-        </v-chip>
+        <ProductPrice
+          :price="product.price"
+          size="small"
+          chip
+          variant="elevated"
+        />
       </v-card-actions>
     </v-img>
 
@@ -44,8 +43,8 @@ defineProps<{
     </v-card-text>
 
     <v-card-actions>
+      <ProductStockStatus :stock="product.stock" />
       <v-spacer />
-
       <AddToCartBtn
         :product
         :icon-only="compact"
