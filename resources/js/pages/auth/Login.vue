@@ -40,7 +40,7 @@ defineProps<{
       :reset-on-success="['password']"
       class="flex flex-col gap-6"
       @success="trackSignIn({ method: 'password' })"
-      @error="trackError('Error registering user')"
+      @error="trackError('Error logging user')"
     >
       <div class="grid gap-6">
         <div class="grid gap-2">

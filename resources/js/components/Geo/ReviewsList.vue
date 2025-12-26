@@ -44,16 +44,22 @@ defineEmits<{
             <div>
               <div class="font-bold">
                 {{ review.author_name }}
-              </div>
-              <div class="text-xs text-gray-500">
+
                 <v-chip
                   size="small"
                   color="primary"
                   density="compact"
                 >
                   {{ review.source }}
-                </v-chip> •
-                {{ new Date(review.published_at).toLocaleDateString() }}
+                </v-chip>
+
+                <v-chip
+                  size="small"
+                  color="success"
+                  density="compact"
+                >
+                  {{ new Date(review.published_at).toLocaleDateString() }}
+                </v-chip>
               </div>
             </div>
             <div class="flex items-center gap-2">

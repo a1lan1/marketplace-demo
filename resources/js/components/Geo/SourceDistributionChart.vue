@@ -13,7 +13,17 @@ const chartData = computed(() => ({
   labels: Object.keys(props.data),
   datasets: [
     {
-      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+      backgroundColor: [
+        '#42A5F5',
+        '#66BB6A',
+        '#FFA726',
+        '#AB47BC',
+        '#26C6DA',
+        '#FF7043',
+        '#5C6BC0',
+        '#D4E157',
+        '#8D6E63'
+      ],
       data: Object.values(props.data)
     }
   ]
@@ -21,7 +31,12 @@ const chartData = computed(() => ({
 
 const chartOptions = {
   responsive: true,
-  maintainAspectRatio: false
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom' as const
+    }
+  }
 }
 </script>
 

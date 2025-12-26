@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { trackError } from '@/composables/useActivity'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { index as ordersIndex, store as storeOrder } from '@/routes/orders'
 import { useCartStore } from '@/stores/cart'
@@ -6,7 +7,6 @@ import type { BreadcrumbItem, CartItem, CheckoutForm } from '@/types'
 import { formatCurrency } from '@/utils/formatters'
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
-import { trackError } from '@/composables/useActivity'
 
 const cartStore = useCartStore()
 const { items, totalPrice } = storeToRefs(cartStore)

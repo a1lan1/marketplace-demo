@@ -12,7 +12,7 @@ import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'GeoInsight', href: '#' },
+  { title: 'Geo', href: '#' },
   { title: 'Dashboard', href: geoDashboard().url }
 ]
 
@@ -46,7 +46,6 @@ const loadDashboardData = async() => {
 
   await Promise.all([
     fetchReviews(filters),
-    fetchFeedbacks(),
     fetchMetrics(filters)
   ])
 }
@@ -59,9 +58,12 @@ const openReplyDialog = (review: Review) => {
 }
 
 onMounted(async() => {
-  await fetchLocations()
-  await loadDashboardData()
-  await fetchTemplates()
+  await Promise.all([
+    fetchLocations(),
+    fetchFeedbacks(),
+    fetchTemplates(),
+    loadDashboardData()
+  ])
 })
 </script>
 
@@ -87,19 +89,21 @@ onMounted(async() => {
 
           <v-spacer />
 
-          <VSelect
-            v-if="activeTab === 'external' && locations.length"
-            v-model="selectedLocationId"
-            :items="locations"
-            item-title="name"
-            item-value="id"
-            label="Filter by Location"
-            clearable
-            variant="solo"
-            density="compact"
-            class="max-w-xs"
-            hide-details
-          />
+          <template v-if="locations.length">
+            <VSelect
+              v-if="activeTab === 'external'"
+              v-model="selectedLocationId"
+              :items="locations"
+              item-title="name"
+              item-value="id"
+              label="Filter by Location"
+              clearable
+              variant="solo"
+              density="compact"
+              class="max-w-xs"
+              hide-details
+            />
+          </template>
         </VTabs>
 
         <VWindow v-model="activeTab">

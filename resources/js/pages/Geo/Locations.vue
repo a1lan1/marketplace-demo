@@ -13,7 +13,7 @@ defineProps<{
 }>()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'GeoInsight', href: '#' },
+  { title: 'Geo', href: '#' },
   { title: 'Locations', href: geoLocations().url }
 ]
 
@@ -59,141 +59,139 @@ const handleSaved = () => {
 
 <template>
   <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="py-12">
-      <div class="mx-auto max-w-8xl sm:px-6 lg:px-8">
-        <div
-          v-if="!locations.length && !loading"
-          class="mb-8"
+    <div class="m-2">
+      <div
+        v-if="!locations.length && !loading"
+        class="mb-8"
+      >
+        <VEmptyState
+          headline="No locations found"
+          title="Start by adding your first business location"
+          icon="mdi-map-marker-plus"
         >
-          <VEmptyState
-            headline="No locations found"
-            title="Start by adding your first business location"
-            icon="mdi-map-marker-plus"
-          >
-            <VBtn
-              color="primary"
-              @click="openCreateDialog"
-            >
-              Add Location
-            </VBtn>
-          </VEmptyState>
-        </div>
-        <div
-          v-else
-          class="mb-2 flex items-center justify-between"
-        >
-          <h2 class="text-2xl font-semibold">
-            My Locations
-          </h2>
           <VBtn
             color="primary"
-            prepend-icon="mdi-plus"
             @click="openCreateDialog"
           >
             Add Location
           </VBtn>
-        </div>
-
-        <VCard>
-          <VTable>
-            <thead>
-              <tr>
-                <th class="text-left">
-                  Name
-                </th>
-                <th class="text-left">
-                  Type
-                </th>
-                <th class="text-left">
-                  Address
-                </th>
-                <th class="text-left">
-                  Coordinates
-                </th>
-                <th class="text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="location in locations"
-                :key="location.id"
-              >
-                <td>{{ location.name }}</td>
-                <td>
-                  <VChip
-                    size="small"
-                    color="primary"
-                    variant="flat"
-                    prepend-icon="mdi-map-marker"
-                    class="capitalize"
-                  >
-                    {{ location.type }}
-                  </VChip>
-                </td>
-                <td>
-                  <div class="text-sm">
-                    {{ location.address.full_address }}
-                  </div>
-                  <div class="text-xs text-gray-500">
-                    {{ location.address.city }}, {{ location.address.country }}
-                  </div>
-                </td>
-                <td class="text-xs text-gray-500">
-                  {{ location.latitude }}, {{ location.longitude }}
-                </td>
-                <td class="content-center">
-                  <VTooltip
-                    text="Edit"
-                    location="top"
-                  >
-                    <template #activator="{ props }">
-                      <VBtn
-                        icon
-                        variant="tonal"
-                        color="primary"
-                        density="comfortable"
-                        class="mx-1"
-                        v-bind="props"
-                        @click="openEditDialog(location)"
-                      >
-                        <VIcon>mdi-pencil</VIcon>
-                      </VBtn>
-                    </template>
-                  </VTooltip>
-                  <VTooltip
-                    text="Delete"
-                    location="top"
-                  >
-                    <template #activator="{ props }">
-                      <VBtn
-                        icon
-                        variant="tonal"
-                        color="error"
-                        density="comfortable"
-                        class="mx-1"
-                        v-bind="props"
-                        @click="confirmDelete(location)"
-                      >
-                        <VIcon>mdi-delete</VIcon>
-                      </VBtn>
-                    </template>
-                  </VTooltip>
-                </td>
-              </tr>
-              <tr v-if="locations.length === 0">
-                <td
-                  colspan="5"
-                  class="py-8 text-center text-gray-500"
-                >
-                  No locations found. Click "Add Location" to create one.
-                </td>
-              </tr>
-            </tbody>
-          </VTable>
-        </VCard>
+        </VEmptyState>
       </div>
+      <div
+        v-else
+        class="mb-2 flex items-center justify-between"
+      >
+        <h2 class="text-2xl font-semibold">
+          My Locations
+        </h2>
+        <VBtn
+          color="primary"
+          prepend-icon="mdi-plus"
+          @click="openCreateDialog"
+        >
+          Add Location
+        </VBtn>
+      </div>
+
+      <VCard>
+        <VTable>
+          <thead>
+            <tr>
+              <th class="text-left">
+                Name
+              </th>
+              <th class="text-left">
+                Type
+              </th>
+              <th class="text-left">
+                Address
+              </th>
+              <th class="text-left">
+                Coordinates
+              </th>
+              <th class="text-right">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="location in locations"
+              :key="location.id"
+            >
+              <td>{{ location.name }}</td>
+              <td>
+                <VChip
+                  size="small"
+                  color="primary"
+                  variant="flat"
+                  prepend-icon="mdi-map-marker"
+                  class="capitalize"
+                >
+                  {{ location.type }}
+                </VChip>
+              </td>
+              <td>
+                <div class="text-sm">
+                  {{ location.address.full_address }}
+                </div>
+                <div class="text-xs text-gray-500">
+                  {{ location.address.city }}, {{ location.address.country }}
+                </div>
+              </td>
+              <td class="text-xs text-gray-500">
+                {{ location.latitude }}, {{ location.longitude }}
+              </td>
+              <td class="content-center">
+                <VTooltip
+                  text="Edit"
+                  location="top"
+                >
+                  <template #activator="{ props }">
+                    <VBtn
+                      icon
+                      variant="tonal"
+                      color="primary"
+                      density="comfortable"
+                      class="mx-1"
+                      v-bind="props"
+                      @click="openEditDialog(location)"
+                    >
+                      <VIcon>mdi-pencil</VIcon>
+                    </VBtn>
+                  </template>
+                </VTooltip>
+                <VTooltip
+                  text="Delete"
+                  location="top"
+                >
+                  <template #activator="{ props }">
+                    <VBtn
+                      icon
+                      variant="tonal"
+                      color="error"
+                      density="comfortable"
+                      class="mx-1"
+                      v-bind="props"
+                      @click="confirmDelete(location)"
+                    >
+                      <VIcon>mdi-delete</VIcon>
+                    </VBtn>
+                  </template>
+                </VTooltip>
+              </td>
+            </tr>
+            <tr v-if="locations.length === 0">
+              <td
+                colspan="5"
+                class="py-8 text-center text-gray-500"
+              >
+                No locations found. Click "Add Location" to create one.
+              </td>
+            </tr>
+          </tbody>
+        </VTable>
+      </VCard>
     </div>
 
     <LocationFormDialog

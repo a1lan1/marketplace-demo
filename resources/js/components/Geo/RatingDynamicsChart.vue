@@ -31,8 +31,8 @@ const chartData = computed(() => ({
   datasets: [
     {
       label: 'Average Rating',
-      backgroundColor: '#4A90E2',
-      borderColor: '#4A90E2',
+      backgroundColor: '#42A5F5',
+      borderColor: '#42A5F5',
       data: props.data.map((item) => item.average_rating),
       tension: 0.2
     }
@@ -47,6 +47,11 @@ const chartOptions = {
       beginAtZero: false,
       max: 5,
       min: 1
+    }
+  },
+  plugins: {
+    legend: {
+      position: 'bottom' as const
     }
   }
 }
