@@ -1,19 +1,37 @@
 <script setup lang="ts">
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
+import FeedbackForm from '@/components/Feedback/FeedbackForm.vue'
+import FeedbackList from '@/components/Feedback/FeedbackList.vue'
 import ProductAutocomplete from '@/components/product/ProductAutocomplete.vue'
+import ProductPrice from '@/components/product/ProductPrice.vue'
+import ProductSeller from '@/components/product/ProductSeller.vue'
+import ProductStockStatus from '@/components/product/ProductStockStatus.vue'
 import RecommendedProducts from '@/components/product/RecommendedProducts.vue'
 import { trackEvent } from '@/composables/useActivity'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { catalog as catalogIndex } from '@/routes/products'
+import { useFeedbackStore } from '@/stores/feedback'
 import type { BreadcrumbItem, Product } from '@/types'
-import { formatCurrency } from '@/utils/formatters'
-import { Head } from '@inertiajs/vue3'
-import { onMounted } from 'vue'
+import { Head, usePage } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia'
+import { computed, onMounted } from 'vue'
 
 const props = defineProps<{
   product: Product;
   recommendations: Product[];
 }>()
+
+const page = usePage()
+const auth = computed(() => page.props.auth)
+
+const feedbackStore = useFeedbackStore()
+const { feedbacks } = storeToRefs(feedbackStore)
+
+const userHasFeedback = computed(() => {
+  if (!auth.value.user) return false
+
+  return feedbacks.value.some((f) => f.author?.id === auth.value.user.id)
+})
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -47,7 +65,6 @@ onMounted(() => {
       <ProductAutocomplete />
 
       <v-row>
-        <!-- Product Image -->
         <v-col
           cols="12"
           md="6"
@@ -61,17 +78,20 @@ onMounted(() => {
           />
         </v-col>
 
-        <!-- Product Details -->
         <v-col
           cols="12"
           md="6"
         >
           <v-card flat>
-            <v-card-title class="text-h4 font-weight-bold mb-2">
+            <v-card-title class="text-h4 font-weight-bold">
               {{ product.name }}
             </v-card-title>
-            <v-card-subtitle class="text-subtitle-1">
-              Seller: {{ product.seller?.name || 'N/A' }}
+            <v-card-subtitle v-if="product.seller">
+              <ProductSeller
+                :seller="product.seller"
+                chip
+                with-avatar
+              />
             </v-card-subtitle>
 
             <v-card-text>
@@ -82,18 +102,15 @@ onMounted(() => {
               <v-divider class="my-4" />
 
               <div class="align-center mb-4 flex justify-between">
-                <span class="text-h5 font-weight-bold">Price: {{ formatCurrency(product.price ?? 0) }}</span>
-                <v-chip
-                  :color="product.stock > 0 ? 'success' : 'error'"
-                  label
-                  class="text-uppercase"
-                >
-                  {{
-                    product.stock > 0
-                      ? `In Stock: ${product.stock}`
-                      : 'Out of Stock'
-                  }}
-                </v-chip>
+                <div class="d-flex align-center">
+                  <ProductPrice
+                    :price="product.price"
+                    size="large"
+                    chip
+                  />
+                </div>
+
+                <ProductStockStatus :stock="product.stock" />
               </div>
 
               <AddToCartBtn
@@ -105,10 +122,45 @@ onMounted(() => {
         </v-col>
       </v-row>
 
-      <!-- Recommendations Section -->
+      <v-divider class="my-2" />
+
+      <v-row dense>
+        <v-col cols="12">
+          <template v-if="auth.user">
+            <FeedbackForm
+              v-if="!userHasFeedback"
+              :feedbackable-id="product.id"
+              feedbackable-type="product"
+            />
+            <v-alert
+              v-else
+              type="success"
+              variant="tonal"
+              class="mb-6"
+            >
+              You have already submitted feedback for this product.
+            </v-alert>
+          </template>
+          <v-alert
+            v-else
+            type="info"
+            variant="tonal"
+            class="mb-6"
+          >
+            You must be logged in to write a review.
+          </v-alert>
+
+          <FeedbackList
+            :feedbackable-id="product.id"
+            feedbackable-type="product"
+          />
+        </v-col>
+      </v-row>
+
       <RecommendedProducts
+        v-if="auth.user"
         :products="recommendations"
-        class="mt-8"
+        class="mt-4"
       />
     </v-container>
   </AppLayout>

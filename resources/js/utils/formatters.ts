@@ -2,7 +2,8 @@ import { MoneyData } from '@/types'
 
 export function formatCurrency(
   value: number | string | MoneyData,
-  currency: string = 'USD'
+  currency: string = 'USD',
+  formatted: boolean = true
 ): string {
   let num: number
 
@@ -17,12 +18,14 @@ export function formatCurrency(
     num = 0
   }
 
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(num)
+  return formatted
+    ? new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(num)
+    : num.toFixed(2)
 }
 
 export function formatDate(dateString: string): string {

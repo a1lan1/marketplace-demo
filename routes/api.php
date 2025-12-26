@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserActivityController;
@@ -15,6 +16,7 @@ Route::middleware('auth:sanctum')
     ->get('user', fn (Request $request) => $request->user());
 
 Route::get('catalog/search', [ProductController::class, 'autocomplete'])->name('api.catalog.autocomplete');
+Route::get('{type}/{id}/feedbacks', [FeedbackController::class, 'index'])->name('api.feedbacks.index');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('user/orders', [OrderController::class, 'getUserOrders'])->name('api.user.orders.index');
@@ -27,4 +29,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     });
 
     Route::get('products/recommendations', [ProductController::class, 'getRecommendedProducts'])->name('api.products.recommendations');
+
+    Route::get('feedbacks', [FeedbackController::class, 'list'])->name('api.feedbacks.list');
+    Route::post('feedbacks', [FeedbackController::class, 'store'])->name('api.feedbacks.store');
 });

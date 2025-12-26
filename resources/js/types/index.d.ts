@@ -47,6 +47,12 @@ export interface User {
   updated_at: string;
 }
 
+export interface Seller extends User {
+  average_rating: number;
+  reviews_count: number;
+  products?: Product[];
+}
+
 export interface Product {
   id: number;
   user_id: number;
@@ -140,6 +146,32 @@ export interface AutocompleteItem {
   title: string;
   value: number;
   product: Product;
+}
+
+export type Sentiment = 'positive' | 'neutral' | 'negative' | null;
+
+export interface Feedback {
+  id: number;
+  user_id: number;
+  feedbackable_type: string;
+  feedbackable_id: number;
+  rating: number;
+  comment: string | null;
+  sentiment: Sentiment;
+  is_verified_purchase: boolean;
+  created_at: string;
+  author?: {
+    id: number;
+    name: string;
+    avatar?: string;
+  };
+}
+
+export interface FeedbackForm {
+  feedbackable_type: 'product' | 'seller';
+  feedbackable_id: number;
+  rating: number;
+  comment: string;
 }
 
 // Echo Events
