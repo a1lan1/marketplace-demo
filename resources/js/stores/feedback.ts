@@ -1,10 +1,10 @@
-import type { Pagination } from '@/types'
+import { PaginationBasic } from '@/types'
 import { Feedback, FeedbackForm } from '@/types'
 import { defineStore } from 'pinia'
 
 interface State {
   feedbacks: Feedback[];
-  pagination: Pagination<Feedback> | null;
+  pagination: PaginationBasic<Feedback>['meta'] | null;
   loading: boolean;
   storing: boolean;
 }
@@ -21,7 +21,7 @@ export const useFeedbackStore = defineStore('feedback', {
     async fetchFeedbacks(type: 'product' | 'seller', id: number, page = 1) {
       this.loading = true
       try {
-        const { data } = await this.$axios.get(`/${type}/${id}/feedbacks`, {
+        const { data } = await this.$axios.get<PaginationBasic<Feedback>>(`/${type}/${id}/feedbacks`, {
           params: { page }
         })
         this.feedbacks = data.data

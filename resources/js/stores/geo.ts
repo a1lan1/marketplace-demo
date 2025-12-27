@@ -1,4 +1,4 @@
-import type { Feedback } from '@/types'
+import { Feedback, PaginationBasic, PaginationMeta } from '@/types'
 import type {
   Location,
   LocationForm,
@@ -36,11 +36,7 @@ interface State {
   reviewsLoading: boolean;
   feedbacksLoading: boolean;
   templatesLoading: boolean;
-  pagination: {
-    current_page: number;
-    last_page: number;
-    total: number;
-  };
+  pagination: PaginationMeta;
 }
 
 export const useGeoStore = defineStore('geo', {
@@ -67,7 +63,7 @@ export const useGeoStore = defineStore('geo', {
     async fetchLocations() {
       this.loading = true
       try {
-        const { data } = await this.$axios.get('/geo/locations')
+        const { data } = await this.$axios.get<Location[]>('/geo/locations')
         this.locations = data
       } catch (e: any) {
         this.$snackbar.error({
@@ -80,11 +76,11 @@ export const useGeoStore = defineStore('geo', {
     async createLocation(form: LocationForm) {
       this.storing = true
       try {
-        const { data } = await this.$axios.post('/geo/locations', form)
-        this.locations.unshift(data.data)
+        const { data } = await this.$axios.post<Location>('/geo/locations', form)
+        this.locations.unshift(data)
         this.$snackbar.success({ text: 'Location created successfully' })
 
-        return data.data
+        return data
       } catch (e: any) {
         this.$snackbar.error({
           text: e.response?.data?.message || 'Failed to create location'
@@ -97,14 +93,14 @@ export const useGeoStore = defineStore('geo', {
     async updateLocation(id: number, form: Partial<LocationForm>) {
       this.storing = true
       try {
-        const { data } = await this.$axios.put(`/geo/locations/${id}`, form)
+        const { data } = await this.$axios.put<Location>(`/geo/locations/${id}`, form)
         const index = this.locations.findIndex((l) => l.id === id)
         if (index !== -1) {
-          this.locations[index] = data.data
+          this.locations[index] = data
         }
         this.$snackbar.success({ text: 'Location updated successfully' })
 
-        return data.data
+        return data
       } catch (e: any) {
         this.$snackbar.error({
           text: e.response?.data?.message || 'Failed to update location'
@@ -132,7 +128,7 @@ export const useGeoStore = defineStore('geo', {
     async fetchReviews(filters: ReviewFilters = {}) {
       this.reviewsLoading = true
       try {
-        const { data } = await this.$axios.get('/geo/reviews', {
+        const { data } = await this.$axios.get<PaginationBasic<Review>>('/geo/reviews', {
           params: filters
         })
         this.reviews = data.data
@@ -152,7 +148,7 @@ export const useGeoStore = defineStore('geo', {
     async fetchFeedbacks(filters: any = {}) {
       this.feedbacksLoading = true
       try {
-        const { data } = await this.$axios.get('/feedbacks', {
+        const { data } = await this.$axios.get<PaginationBasic<Feedback>>('/feedbacks', {
           params: filters
         })
         this.feedbacks = data.data
@@ -166,7 +162,7 @@ export const useGeoStore = defineStore('geo', {
     },
     async fetchMetrics(filters: Omit<ReviewFilters, 'page'> = {}) {
       try {
-        const { data } = await this.$axios.get('/geo/metrics', {
+        const { data } = await this.$axios.get<ReviewMetrics>('/geo/metrics', {
           params: filters
         })
         this.metrics = data
@@ -179,8 +175,8 @@ export const useGeoStore = defineStore('geo', {
     async fetchTemplates() {
       this.templatesLoading = true
       try {
-        const { data } = await this.$axios.get('/geo/response-templates')
-        this.templates = data.data
+        const { data } = await this.$axios.get<ResponseTemplate[]>('/geo/response-templates')
+        this.templates = data
       } catch (e: any) {
         this.$snackbar.error({
           text: e.response?.data?.message || 'Failed to fetch templates'

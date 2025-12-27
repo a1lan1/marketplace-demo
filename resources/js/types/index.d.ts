@@ -122,6 +122,17 @@ export interface Pagination<T> {
   total: number;
 }
 
+export interface PaginationBasic<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
+export interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  total: number;
+}
+
 export interface FlashMessage {
   success?: string;
   error?: string;
