@@ -6,8 +6,10 @@ namespace App\Models;
 
 use App\Contracts\Sentimentable;
 use App\Enums\SentimentEnum;
+use App\Observers\FeedbackObserver;
 use Carbon\CarbonImmutable;
 use Database\Factories\FeedbackFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,6 +47,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([FeedbackObserver::class])]
 class Feedback extends Model implements Sentimentable
 {
     use HasFactory;

@@ -6,9 +6,11 @@ namespace App\Models;
 
 use App\Casts\AddressCast;
 use App\Enums\Geo\LocationTypeEnum;
+use App\Observers\LocationObserver;
 use App\ValueObjects\Address;
 use Carbon\CarbonImmutable;
 use Database\Factories\LocationFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,6 +51,7 @@ use Laravel\Scout\Searchable;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([LocationObserver::class])]
 class Location extends Model
 {
     use HasFactory;

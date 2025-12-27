@@ -7,8 +7,10 @@ namespace App\Models;
 use App\Contracts\Sentimentable;
 use App\Enums\Geo\ReviewSourceEnum;
 use App\Enums\SentimentEnum;
+use App\Observers\ReviewObserver;
 use Carbon\CarbonImmutable;
 use Database\Factories\ReviewFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([ReviewObserver::class])]
 class Review extends Model implements Sentimentable
 {
     use HasFactory;

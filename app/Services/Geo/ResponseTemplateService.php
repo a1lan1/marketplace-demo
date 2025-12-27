@@ -9,6 +9,7 @@ use App\DTO\Geo\ResponseTemplateData;
 use App\Models\ResponseTemplate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class ResponseTemplateService implements ResponseTemplateServiceInterface
 {
@@ -17,7 +18,11 @@ class ResponseTemplateService implements ResponseTemplateServiceInterface
      */
     public function getTemplatesForUser(User $user): Collection
     {
-        return $user->responseTemplates()->latest()->get();
+        $key = 'response_templates_user_'.$user->id;
+
+        return Cache::tags(['response_templates'])->remember($key, 86400, function () use ($user): Collection {
+            return $user->responseTemplates()->latest()->get();
+        });
     }
 
     public function storeTemplate(ResponseTemplateData $data): ResponseTemplate
