@@ -32,7 +32,6 @@ class FeedbackSeeder extends Seeder
                         'user_id' => $buyer->id,
                         'feedbackable_id' => $product->id,
                         'feedbackable_type' => Product::class,
-                        'is_verified_purchase' => (bool) rand(0, 1),
                     ]);
                 }
             }
@@ -55,7 +54,6 @@ class FeedbackSeeder extends Seeder
                     ]);
                 }
             }
-
         }
     }
 }

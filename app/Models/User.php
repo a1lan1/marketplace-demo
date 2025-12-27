@@ -160,11 +160,17 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         return $this->hasMany(Order::class);
     }
 
+    /**
+     * @return HasMany<ResponseTemplate, $this>
+     */
     public function responseTemplates(): HasMany
     {
         return $this->hasMany(ResponseTemplate::class, 'seller_id');
     }
 
+    /**
+     * @return HasMany<Location, $this>
+     */
     public function locations(): HasMany
     {
         return $this->hasMany(Location::class, 'seller_id');

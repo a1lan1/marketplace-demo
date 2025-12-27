@@ -25,9 +25,7 @@ Route::prefix('catalog')->group(function (): void {
 Route::get('sellers/{seller}', [SellerController::class, 'show'])->name('sellers.show');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
 
     Route::resource('products', ProductController::class)->except(['show']);
 
@@ -45,15 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     Route::prefix('geo')->name('geo.')->group(function (): void {
-        Route::get('dashboard', function () {
-            return Inertia::render('Geo/Dashboard');
-        })->name('dashboard');
+        Route::get('dashboard', fn () => Inertia::render('Geo/Dashboard'))->name('dashboard');
+        Route::get('map', fn () => Inertia::render('Geo/Map'))->name('map');
 
         Route::get('locations', [LocationController::class, 'index'])->name('locations.index');
-
-        Route::get('map', function () {
-            return Inertia::render('Geo/Map');
-        })->name('map');
     });
 });
 
