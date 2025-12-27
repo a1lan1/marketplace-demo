@@ -47,6 +47,7 @@ services:
     command: php artisan reverb:start --host=0.0.0.0 --port=${REVERB_SERVER_PORT:-8080}
     ports:
       - "${REVERB_SERVER_PORT:-8080}:${REVERB_SERVER_PORT:-8080}"
+    restart: unless-stopped
     volumes:
       - .:/var/www/html
     networks:
@@ -59,6 +60,7 @@ services:
     image: 'postgres:16-alpine'
     ports:
       - '${FORWARD_DB_PORT:-5432}:5432'
+    restart: unless-stopped
     environment:
       PGPASSWORD: '${DB_PASSWORD:-secret}'
       POSTGRES_DB: '${DB_DATABASE}'
@@ -78,6 +80,7 @@ services:
     image: 'redis:alpine'
     ports:
       - '${FORWARD_REDIS_PORT:-6379}:6379'
+    restart: unless-stopped
     volumes:
       - 'redis-data:/data'
     networks:
@@ -118,6 +121,7 @@ services:
     image: 'getmeili/meilisearch:latest'
     ports:
       - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
+    restart: unless-stopped
     volumes:
       - 'meilisearch-data:/meili_data'
     networks:
@@ -144,7 +148,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_LISTENERS: 'PLAINTEXT://:9092,CONTROLLER://:9093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
@@ -197,6 +201,7 @@ services:
     image: prom/prometheus:v2.47.2
     ports:
       - '9090:9090'
+    restart: unless-stopped
     volumes:
       - './prometheus:/etc/prometheus'
       - 'prometheus-data:/prometheus'
@@ -214,6 +219,7 @@ services:
     image: grafana/grafana:10.1.5
     ports:
       - '3000:3000'
+    restart: unless-stopped
     volumes:
       - 'grafana-data:/var/lib/grafana'
       - './grafana/provisioning:/etc/grafana/provisioning'
@@ -263,6 +269,7 @@ services:
     build:
       context: ./services/recommendation_service
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
@@ -279,6 +286,7 @@ services:
     build:
       context: ./services/nlp_search_preprocessing
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "8001:8001"
     networks:
@@ -293,6 +301,7 @@ services:
     build:
       context: ./services/image_analysis_service
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "8002:8002"
     environment:
@@ -358,6 +367,7 @@ services:
     build:
       context: ./services/geo_collector
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "8003:8003"
     environment:
