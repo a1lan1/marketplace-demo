@@ -6,6 +6,7 @@ reinstall:
 	make storage-clear
 	make prune
 	make destroy
+	make down-v
 	rm -rf vendor node_modules public/build public/storage storage/logs/.initialized
 	make install
 
@@ -13,7 +14,7 @@ build:
 	docker compose build
 
 up:
-	docker compose up -d
+	docker compose --profile '*' up -d
 
 storage-clear:
 	@docker compose exec app php artisan storage:clear || true
@@ -66,6 +67,9 @@ migrate:
 dbs: wait-for-app
 	docker compose exec app php artisan migrate:fresh --seed
 
+scout-reindex: wait-for-app
+	docker compose exec app php artisan scout:reimport-all
+
 optimize:
 	docker compose exec app php artisan optimize
 
@@ -108,6 +112,12 @@ horizon-clear:
 	docker compose exec app php artisan cache:clear
 	docker compose exec app php artisan horizon:clear
 	docker compose exec app php artisan horizon:forget --all
+
+kafka-reset:
+	docker compose stop kafka
+	docker compose rm -f kafka
+	docker volume rm marketplace-demo_kafka-data || echo "Volume not found or could not be removed"
+	docker compose --profile kafka up -d kafka
 
 ide:
 	@docker compose exec app php artisan clear-compiled
