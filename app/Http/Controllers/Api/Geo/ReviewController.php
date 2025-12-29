@@ -26,7 +26,8 @@ class ReviewController extends Controller
 
         $reviews = $this->reviewService->getReviewsForUser(
             $request->user(),
-            $filters
+            $filters,
+            $request->integer('page', 1)
         );
 
         return ReviewResource::collection($reviews);
@@ -36,7 +37,7 @@ class ReviewController extends Controller
     {
         $metrics = $this->geoMetricService->calculateForUser(
             $request->user(),
-            $request->input('location_id') ? (int) $request->input('location_id') : null
+            $request->has('location_id') ? $request->integer('location_id') : null
         );
 
         return new MetricsResource($metrics);

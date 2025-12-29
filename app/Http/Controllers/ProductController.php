@@ -27,7 +27,9 @@ class ProductController extends Controller
     public function catalog(ProductFilterRequest $request): Response
     {
         $products = $this->productService->getPaginatedProducts(
-            $request->validated('search')
+            $request->validated('search'),
+            $request->integer('per_page', 12),
+            $request->integer('page', 1)
         );
 
         return Inertia::render('Products/Catalog', [
@@ -57,7 +59,11 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $products = $this->productService->getUserProducts($request->user());
+        $products = $this->productService->getUserProducts(
+            $request->user(),
+            $request->integer('per_page', 10),
+            $request->integer('page', 1)
+        );
 
         return Inertia::render('Products/Index', [
             'products' => ProductResource::collection($products),
@@ -85,14 +91,15 @@ class ProductController extends Controller
             user: $request->user(),
             name: $request->validated('name'),
             description: $request->validated('description'),
-            price: (int) $request->validated('price'),
-            stock: (int) $request->validated('stock'),
+            price: $request->integer('price'),
+            stock: $request->integer('stock'),
             coverImage: $request->file('cover_image'),
         );
 
         $this->productService->storeProduct($productDTO);
 
-        return to_route('products.index')->with('success', 'Product created.');
+        return to_route('products.index')
+            ->with('success', 'Product created.');
     }
 
     /**
@@ -118,15 +125,16 @@ class ProductController extends Controller
             user: $request->user(),
             name: $request->validated('name'),
             description: $request->validated('description'),
-            price: (int) $request->validated('price'),
-            stock: (int) $request->validated('stock'),
+            price: $request->integer('price'),
+            stock: $request->integer('stock'),
             coverImage: $request->file('cover_image'),
             productId: $product->id,
         );
 
         $this->productService->storeProduct($productDTO);
 
-        return to_route('products.index')->with('success', 'Product updated.');
+        return to_route('products.index')
+            ->with('success', 'Product updated.');
     }
 
     /**
@@ -138,6 +146,7 @@ class ProductController extends Controller
 
         $this->productService->deleteProduct($product);
 
-        return to_route('products.index')->with('success', 'Product deleted.');
+        return to_route('products.index')
+            ->with('success', 'Product deleted.');
     }
 }

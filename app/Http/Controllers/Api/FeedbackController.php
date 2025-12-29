@@ -23,16 +23,19 @@ class FeedbackController extends Controller
 
     public function __construct(private readonly FeedbackServiceInterface $feedbackService) {}
 
-    public function index(string $type, int $id): AnonymousResourceCollection
+    public function index(Request $request, string $type, int $id): AnonymousResourceCollection
     {
-        $feedbacks = $this->feedbackService->getFeedbacksForTarget($type, $id);
+        $feedbacks = $this->feedbackService->getFeedbacksForTarget($type, $id, $request->integer('page', 1));
 
         return FeedbackResource::collection($feedbacks);
     }
 
     public function list(Request $request): AnonymousResourceCollection
     {
-        $feedbacks = $this->feedbackService->getSellerFeedbacks($request->user()->id);
+        $feedbacks = $this->feedbackService->getSellerFeedbacks(
+            $request->user()->id,
+            $request->integer('page', 1)
+        );
 
         return FeedbackResource::collection($feedbacks);
     }
