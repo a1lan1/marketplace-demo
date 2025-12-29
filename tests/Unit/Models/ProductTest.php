@@ -7,11 +7,13 @@ namespace Tests\Unit\Models;
 use App\Enums\MediaCollection;
 use App\Models\Product;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Mockery;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 it('can upload a cover image', function (): void {
+    Event::fake();
     // Arrange
     $product = Mockery::mock(Product::class)->makePartial();
     $product->id = 1;
@@ -44,6 +46,7 @@ it('can upload a cover image', function (): void {
 });
 
 it('returns the cover image URL', function (): void {
+    Event::fake();
     // Arrange
     $product = Product::factory()->create();
     $file = UploadedFile::fake()->image('cover.jpg');

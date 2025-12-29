@@ -8,7 +8,7 @@ use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 use App\Models\User;
-use App\Services\ProductService;
+use App\Services\Product\ProductService;
 use App\Services\RecommendationService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -47,10 +47,16 @@ test('get user products returns paginated list', function (): void {
     );
 
     $userMock = $this->mock(User::class);
+    // Mock the id attribute access
+    $userMock->shouldReceive('getAttribute')->with('id')->andReturn(1);
+
     $paginatorMock = $this->mock(LengthAwarePaginator::class);
     $relationMock = $this->mock(HasMany::class, function (MockInterface $mock) use ($paginatorMock): void {
         $mock->shouldReceive('latest')->once()->andReturnSelf();
-        $mock->shouldReceive('paginate')->with(10)->once()->andReturn($paginatorMock);
+        $mock->shouldReceive('paginate')
+            ->with(10, ['*'], 'page', 1)
+            ->once()
+            ->andReturn($paginatorMock);
     });
 
     $userMock->shouldReceive('products')->once()->andReturn($relationMock);
