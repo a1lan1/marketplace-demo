@@ -6,26 +6,20 @@ namespace App\Providers;
 
 use App\Contracts\BalanceServiceInterface;
 use App\Contracts\ChatServiceInterface;
-use App\Contracts\FeedbackServiceInterface;
 use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
-use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\Contracts\Services\Geo\ResponseTemplateServiceInterface;
-use App\Contracts\Services\Geo\ReviewServiceInterface;
 use App\Services\BalanceService;
 use App\Services\ChatService;
-use App\Services\FeedbackService;
 use App\Services\Geo\GeoCollectorService;
 use App\Services\Geo\LocationService;
 use App\Services\Geo\ResponseTemplateService;
-use App\Services\Geo\ReviewService;
 use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
-use App\Services\ProductService;
 use App\Services\RecommendationService;
 use App\Services\SellerService;
 use Carbon\CarbonImmutable;
@@ -38,27 +32,29 @@ use Override;
 class AppServiceProvider extends ServiceProvider
 {
     /**
+     * All of the container bindings that should be registered.
+     *
+     * @var array<string, string>
+     */
+    public array $bindings = [
+        OrderServiceInterface::class => OrderService::class,
+        BalanceServiceInterface::class => BalanceService::class,
+        ChatServiceInterface::class => ChatService::class,
+        LocationServiceInterface::class => LocationService::class,
+        SellerServiceInterface::class => SellerService::class,
+        ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
+    ];
+
+    /**
      * Register any application services.
      */
     #[Override]
     public function register(): void
     {
-        $this->app->bind(ProductServiceInterface::class, ProductService::class);
-        $this->app->bind(OrderServiceInterface::class, OrderService::class);
-        $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
-        $this->app->bind(ChatServiceInterface::class, ChatService::class);
-        $this->app->bind(LocationServiceInterface::class, LocationService::class);
-        $this->app->bind(SellerServiceInterface::class, SellerService::class);
-        $this->app->bind(FeedbackServiceInterface::class, FeedbackService::class);
-        $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
-        $this->app->bind(ResponseTemplateServiceInterface::class, ResponseTemplateService::class);
-
-        $this->app->singleton(function (): GeoCollectorServiceInterface {
-            return new GeoCollectorService(
-                baseUrl: config('services.geo_collector.url'),
-                timeout: config('services.geo_collector.timeout'),
-            );
-        });
+        if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
 
         $this->app->bind(function (): RecommendationServiceInterface {
             return new RecommendationService(
@@ -73,10 +69,12 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
-            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
-            $this->app->register(TelescopeServiceProvider::class);
-        }
+        $this->app->singleton(function (): GeoCollectorServiceInterface {
+            return new GeoCollectorService(
+                baseUrl: config('services.geo_collector.url'),
+                timeout: config('services.geo_collector.timeout'),
+            );
+        });
     }
 
     /**
@@ -87,5 +85,6 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
         Date::use(CarbonImmutable::class);
         Model::preventLazyLoading(! $this->app->isProduction());
+        Model::preventAccessingMissingAttributes(! $this->app->isProduction());
     }
 }
