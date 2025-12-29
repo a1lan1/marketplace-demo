@@ -14,12 +14,24 @@ use App\Exceptions\NotEnoughStockException;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\BalanceService;
+use App\Services\Purchase\CartCalculator;
+use App\Services\Purchase\InventoryService;
+use App\Services\Purchase\PayoutDistributor;
 use Spatie\LaravelData\DataCollection;
 
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function (): void {
-    $this->purchaseAction = new PurchaseAction(new BalanceService(new CreateTransactionAction));
+    $this->cartCalculator = new CartCalculator;
+    $this->inventoryService = new InventoryService;
+    $this->payoutDistributor = new PayoutDistributor(new BalanceService(new CreateTransactionAction));
+
+    $this->purchaseAction = new PurchaseAction(
+        new BalanceService(new CreateTransactionAction),
+        $this->cartCalculator,
+        $this->inventoryService,
+        $this->payoutDistributor
+    );
 });
 
 it('executes purchase successfully', function (): void {
