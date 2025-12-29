@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
+use App\Enums\RoleEnum;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $products_count
  *
  * @method static OrderFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Order forUser(User $user)
  * @method static Builder<static>|Order newModelQuery()
  * @method static Builder<static>|Order newQuery()
  * @method static Builder<static>|Order query()
@@ -78,5 +80,19 @@ class Order extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    protected function scopeForUser(Builder $query, User $user): void
+    {
+        if ($user->hasRole([RoleEnum::ADMIN, RoleEnum::MANAGER])) {
+            return;
+        }
+
+        $query->where(function (Builder $query) use ($user): void {
+            $query->where('user_id', $user->id)
+                ->orWhereHas('products.seller', function (Builder $query) use ($user): void {
+                    $query->where('id', $user->id);
+                });
+        });
     }
 }
