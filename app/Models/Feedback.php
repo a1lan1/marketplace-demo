@@ -31,6 +31,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property-read Model|\Eloquent $feedbackable
  *
  * @method static FeedbackFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Feedback forEntity(string $type, int $id)
+ * @method static Builder<static>|Feedback forUser(int $userId)
  * @method static Builder<static>|Feedback newModelQuery()
  * @method static Builder<static>|Feedback newQuery()
  * @method static Builder<static>|Feedback query()
@@ -81,6 +83,26 @@ class Feedback extends Model implements Sentimentable
             'is_verified_purchase' => 'boolean',
             'sentiment' => SentimentEnum::class,
         ];
+    }
+
+    protected function scopeForEntity(Builder $query, string $type, int $id): void
+    {
+        $query->where('feedbackable_type', $type)
+            ->where('feedbackable_id', $id);
+    }
+
+    protected function scopeForUser(Builder $query, int $userId): void
+    {
+        $query->where(function (Builder $query) use ($userId): void {
+            /** @var Builder|Feedback $query */
+            $query->forEntity(User::class, $userId);
+
+            $query->orWhereHasMorph(
+                'feedbackable',
+                [Product::class],
+                fn (Builder $productQuery) => $productQuery->where('user_id', $userId)
+            );
+        });
     }
 
     public function getFeedbackableSlug(): ?string

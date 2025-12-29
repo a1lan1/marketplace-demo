@@ -8,7 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface FeedbackServiceInterface
 {
-    public function getFeedbacksForTarget(string $type, int $id): LengthAwarePaginator;
+    public function getFeedbacksForTarget(string $type, int $id, int $page = 1): LengthAwarePaginator;
 
-    public function getSellerFeedbacks(int $userId): LengthAwarePaginator;
+    public function getSellerFeedbacks(int $userId, int $page = 1): LengthAwarePaginator;
 }

@@ -94,7 +94,7 @@ class Product extends Model implements HasMedia
         parent::boot();
 
         static::creating(function (self $product): void {
-            if (auth()->check()) {
+            if (auth()->check() && $product->getAttribute('user_id') === null) {
                 $product->user_id = auth()->id();
             }
         });

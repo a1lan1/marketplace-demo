@@ -10,5 +10,5 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ReviewServiceInterface
 {
-    public function getReviewsForUser(User $user, ReviewFilterData $filters): LengthAwarePaginator;
+    public function getReviewsForUser(User $user, ReviewFilterData $filters, int $page = 1): LengthAwarePaginator;
 }

@@ -6,24 +6,37 @@ namespace App\Providers;
 
 use App\Contracts\BalanceServiceInterface;
 use App\Contracts\ChatServiceInterface;
+use App\Contracts\FeedbackServiceInterface;
 use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
+use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\Contracts\Services\Geo\ResponseTemplateServiceInterface;
+use App\Contracts\Services\Geo\ReviewServiceInterface;
+use App\Models\Product;
+use App\Models\User;
 use App\Services\BalanceService;
 use App\Services\ChatService;
+use App\Services\Feedback\CachedFeedbackService;
+use App\Services\Feedback\FeedbackableMap;
+use App\Services\Feedback\FeedbackService;
+use App\Services\Geo\CachedReviewService;
 use App\Services\Geo\GeoCollectorService;
 use App\Services\Geo\LocationService;
 use App\Services\Geo\ResponseTemplateService;
+use App\Services\Geo\ReviewService;
 use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
+use App\Services\Product\CachedProductService;
+use App\Services\Product\ProductService;
 use App\Services\RecommendationService;
 use App\Services\SellerService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\ServiceProvider;
@@ -56,6 +69,24 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(TelescopeServiceProvider::class);
         }
 
+        $this->app->bind(function (Application $app): ProductServiceInterface {
+            return new CachedProductService(
+                $app->make(ProductService::class)
+            );
+        });
+
+        $this->app->bind(function (Application $app): FeedbackServiceInterface {
+            return new CachedFeedbackService(
+                $app->make(FeedbackService::class)
+            );
+        });
+
+        $this->app->bind(function (Application $app): ReviewServiceInterface {
+            return new CachedReviewService(
+                $app->make(ReviewService::class)
+            );
+        });
+
         $this->app->bind(function (): RecommendationServiceInterface {
             return new RecommendationService(
                 baseUrl: config('services.recommendation.url'),
@@ -74,6 +105,13 @@ class AppServiceProvider extends ServiceProvider
                 baseUrl: config('services.geo_collector.url'),
                 timeout: config('services.geo_collector.timeout'),
             );
+        });
+
+        $this->app->singleton(function (): FeedbackableMap {
+            return new FeedbackableMap([
+                'product' => Product::class,
+                'seller' => User::class,
+            ]);
         });
     }
 
