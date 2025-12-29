@@ -45,6 +45,7 @@ This is a demo web application for marketplace. The development environment is f
 ## Available Services
 
 - **Application**: [http://localhost:8585](http://localhost:8585)
+- **Geo Dashboard**: [http://localhost:8585/geo/dashboard](http://localhost:8585/geo/dashboard) (for sellers)
 - **Filament Admin Panel**: [http://localhost:8585/admin](http://localhost:8585/admin)
 - **Horizon Dashboard**: [http://localhost:8585/horizon](http://localhost:8585/horizon)
 - **Log Viewer**: [http://localhost:8585/log-viewer](http://localhost:8585/log-viewer)
@@ -56,6 +57,7 @@ This is a demo web application for marketplace. The development environment is f
 - **Recommendation Service (Python/FastAPI)**: [http://localhost:8000](http://localhost:8000)
 - **NLP Search Preprocessing Service (Python/FastAPI)**: [http://localhost:8001](http://localhost:8001)
 - **Image Analysis Service (Python/FastAPI)**: [http://localhost:8002](http://localhost:8002)
+- **Geo Collector Service (Python/FastAPI)**: [http://localhost:8003](http://localhost:8003)
 
 ### Grafana Dashboard Charts
 
@@ -96,6 +98,17 @@ This project has been enhanced with several Python-based microservices. Communic
 - **Usage**:
     - **Laravel**: After a product image is uploaded, Laravel publishes an event to Kafka.
     - **Laravel Consumer**: A dedicated Laravel Kafka consumer (`image_analysis_consumer`) listens to `image_analysis_completed` topic, dispatches a `ProcessImageAnalysisResult` job, which then updates the `Product` model with the analysis data.
+
+### 4. Geo Collector Service (Python/FastAPI)
+
+- **Purpose**: A service designed to collect reviews from various geo-services (like Google, Yelp, etc.).
+- **Technologies**: Python, FastAPI, `confluent-kafka-python`.
+- **How it works**:
+    - **API Endpoint**: Exposes a `POST /collect_reviews` endpoint that accepts review data. In a real-world scenario, this service would contain schedulers to periodically pull data from external APIs.
+    - **Sentiment Analysis**: Performs basic sentiment analysis on the review text.
+    - **Publishing**: Publishes the enriched review data to the `geo_reviews` Kafka topic.
+- **Usage**:
+    - **Laravel Consumer**: A dedicated Laravel Kafka consumer (`geo_reviews_consumer`) listens to the `geo_reviews` topic and dispatches a `ProcessGeoReview` job to store the data in the database.
 
 ## Asynchronous Processing with Octane & Swoole
 
