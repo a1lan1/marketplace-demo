@@ -12,6 +12,9 @@ use App\Exceptions\NotEnoughStockException;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\Purchase\CartCalculator;
+use App\Services\Purchase\InventoryService;
+use App\Services\Purchase\PayoutDistributor;
 use Cknow\Money\Money;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +23,12 @@ use Throwable;
 
 readonly class PurchaseAction
 {
-    public function __construct(private BalanceServiceInterface $balanceService) {}
+    public function __construct(
+        private BalanceServiceInterface $balanceService,
+        private CartCalculator $cartCalculator,
+        private InventoryService $inventoryService,
+        private PayoutDistributor $payoutDistributor
+    ) {}
 
     /**
      * @throws InsufficientFundsException
@@ -29,51 +37,32 @@ readonly class PurchaseAction
      */
     public function execute(PurchaseDTO $purchaseDTO): void
     {
-        $data = $this->prepareAndValidateData($purchaseDTO);
+        // Fetch Products
+        $productIds = $purchaseDTO->cart->toCollection()->pluck('productId')->unique()->all();
+        $products = Product::with('seller')->whereIn('id', $productIds)->get()->keyBy('id');
 
-        $order = DB::transaction(function () use ($purchaseDTO, $data): Order {
-            $order = $this->createOrderAndWithdraw($purchaseDTO->buyer, $data['totalAmount']);
-            $this->processOrderItems($order, $purchaseDTO->cart, $data['products']);
-            $this->distributePayouts($order, $data['sellerPayouts']);
+        // Validate Stock
+        $this->inventoryService->ensureStock($purchaseDTO->cart, $products);
+
+        // Calculate Totals
+        $calculation = $this->cartCalculator->calculate($purchaseDTO->cart, $products);
+
+        $order = DB::transaction(function () use ($purchaseDTO, $calculation, $products): Order {
+            // Create Order & Charge Buyer
+            $order = $this->createOrderAndWithdraw($purchaseDTO->buyer, $calculation->totalAmount);
+
+            // Process Items (Attach & Decrement)
+            $this->processOrderItems($order, $purchaseDTO->cart, $products);
+            $this->inventoryService->decrementStock($purchaseDTO->cart, $products);
+
+            // Distribute Payouts
+            $sellers = $products->pluck('seller')->unique('id')->keyBy('id');
+            $this->payoutDistributor->distribute($order, $calculation->sellerPayouts, $sellers);
 
             return $order;
         });
 
         event(new OrderCreated($order));
-    }
-
-    /**
-     * @throws NotEnoughStockException
-     */
-    private function prepareAndValidateData(PurchaseDTO $purchaseDTO): array
-    {
-        $sellerPayouts = new Collection;
-        $totalAmount = Money::USD(0);
-
-        $productIds = $purchaseDTO->cart->toCollection()->pluck('productId')->unique()->all();
-        $products = Product::with('seller')->whereIn('id', $productIds)->get()->keyBy('id');
-
-        foreach ($purchaseDTO->cart as $item) {
-            /** @var Product $product */
-            $product = $products->get($item->productId);
-
-            if ($product->stock < $item->quantity) {
-                throw new NotEnoughStockException($product, $item->quantity);
-            }
-
-            $itemTotal = $product->price->multiply($item->quantity);
-            $totalAmount = $totalAmount->add($itemTotal);
-
-            $sellerId = $product->seller->id;
-            $currentPayout = $sellerPayouts->get($sellerId, Money::USD(0));
-            $sellerPayouts->put($sellerId, $currentPayout->add($itemTotal));
-        }
-
-        return [
-            'products' => $products,
-            'totalAmount' => $totalAmount,
-            'sellerPayouts' => $sellerPayouts,
-        ];
     }
 
     /**
@@ -104,28 +93,6 @@ readonly class PurchaseAction
                 'quantity' => $item->quantity,
                 'price' => $product->price->getAmount(),
             ]);
-
-            $product->decrement('stock', $item->quantity);
-        }
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function distributePayouts(Order $order, Collection $sellerPayouts): void
-    {
-        $sellerIds = $sellerPayouts->keys()->all();
-        $sellers = User::whereIn('id', $sellerIds)->get()->keyBy('id');
-
-        foreach ($sellerPayouts as $sellerId => $payoutAmount) {
-            /** @var User $seller */
-            $seller = $sellers->get($sellerId);
-
-            $this->balanceService->deposit(
-                user: $seller,
-                amount: $payoutAmount,
-                description: 'Payout for order #'.$order->id
-            );
         }
     }
 }
