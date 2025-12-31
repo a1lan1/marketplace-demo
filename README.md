@@ -58,6 +58,7 @@ This is a demo web application for marketplace. The development environment is f
 - **NLP Search Preprocessing Service (Python/FastAPI)**: [http://localhost:8001](http://localhost:8001)
 - **Image Analysis Service (Python/FastAPI)**: [http://localhost:8002](http://localhost:8002)
 - **Geo Collector Service (Python/FastAPI)**: [http://localhost:8003](http://localhost:8003)
+- **Currency Service (Go/Frankfurter API)**: [http://localhost:8004](http://localhost:8004)
 
 ### Grafana Dashboard Charts
 
@@ -109,6 +110,18 @@ This project has been enhanced with several Python-based microservices. Communic
     - **Publishing**: Publishes the enriched review data to the `geo_reviews` Kafka topic.
 - **Usage**:
     - **Laravel Consumer**: A dedicated Laravel Kafka consumer (`geo_reviews_consumer`) listens to the `geo_reviews` topic and dispatches a `ProcessGeoReview` job to store the data in the database.
+
+### 5. Currency Service (Go)
+
+- **Purpose**: Provides real-time currency exchange rates and conversion with high performance.
+- **Technologies**: Go 1.23, Standard Library (`net/http`, `sync`).
+- **How it works**:
+    - **Data Source**: Fetches rates from the public [Frankfurter API](https://www.frankfurter.app).
+    - **Caching**: Implements an in-memory cache with a 1-hour TTL to minimize external API calls and latency.
+    - **API Endpoints**:
+        - `GET /rates?base=USD`: Returns all exchange rates.
+        - `GET /convert?from=USD&to=EUR&amount=100`: Converts a specific amount.
+- **Usage**: Laravel application calls this service synchronously via HTTP to get current rates for product prices.
 
 ## Asynchronous Processing with Octane & Swoole
 
