@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import AuthButtons from '@/components/AuthButtons.vue'
 import CartWidget from '@/components/cart/CartWidget.vue'
+import UserBalanceChip from '@/components/common/UserBalanceChip.vue'
 import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import type { BreadcrumbItemType } from '@/types'
-import { formatCurrency } from '@/utils/formatters'
 import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
 
 withDefaults(
   defineProps<{
@@ -18,9 +17,6 @@ withDefaults(
 )
 
 const page = usePage()
-const userBalance = computed(() =>
-  formatCurrency(page.props.auth.user?.balance ?? 0)
-)
 </script>
 
 <template>
@@ -37,13 +33,11 @@ const userBalance = computed(() =>
     </div>
 
     <div class="flex items-center gap-4">
-      <v-chip
+      <UserBalanceChip
         v-if="page.props.auth.user"
+        :balance="page.props.auth.user.balance"
         class="mr-2"
-        color="primary"
-      >
-        Balance: {{ userBalance }}
-      </v-chip>
+      />
       <AuthButtons v-else />
       <CartWidget />
     </div>
