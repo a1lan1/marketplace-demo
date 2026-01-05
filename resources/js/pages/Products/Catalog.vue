@@ -5,13 +5,15 @@ import ProductList from '@/components/product/ProductList.vue'
 import RecommendedProducts from '@/components/product/RecommendedProducts.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import type { BreadcrumbItem, Pagination, Product } from '@/types'
-import { Head } from '@inertiajs/vue3'
+import { Head, usePage } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
 defineProps<{
   products: Pagination<Product>;
   recommendations: Product[];
 }>()
+
+const page = usePage()
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -29,12 +31,6 @@ const viewMode = ref<ViewMode>('grid')
   <Head title="Catalog" />
 
   <AppLayout :breadcrumbs>
-    <template #header>
-      <h2 class="text-h5">
-        Catalog
-      </h2>
-    </template>
-
     <v-container>
       <div class="flex gap-2">
         <ProductAutocomplete />
@@ -89,8 +85,9 @@ const viewMode = ref<ViewMode>('grid')
       </v-alert>
 
       <RecommendedProducts
+        v-if="page.props.auth.user"
         :products="recommendations"
-        class="mt-8"
+        class="mt-4"
       />
     </v-container>
   </AppLayout>

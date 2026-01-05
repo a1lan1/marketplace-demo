@@ -51,7 +51,9 @@ defineProps<{
                 <span
                   v-else
                   class="text-h6 font-weight-bold"
-                >{{ feedback.author?.name?.charAt(0).toUpperCase() || 'A' }}</span>
+                >
+                  {{ feedback.author?.name?.charAt(0).toUpperCase() || 'A' }}
+                </span>
               </VAvatar>
 
               <div>

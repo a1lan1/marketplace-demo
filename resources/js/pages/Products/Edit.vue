@@ -28,12 +28,6 @@ const breadcrumbs: BreadcrumbItem[] = [
   <Head title="Edit Product" />
 
   <AppLayout :breadcrumbs>
-    <template #header>
-      <h2 class="text-h5">
-        Edit Product: {{ product.name }}
-      </h2>
-    </template>
-
     <v-container>
       <v-card>
         <v-card-text>

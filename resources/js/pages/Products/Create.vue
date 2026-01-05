@@ -24,12 +24,6 @@ const breadcrumbs: BreadcrumbItem[] = [
   <Head title="Add Product" />
 
   <AppLayout :breadcrumbs>
-    <template #header>
-      <h2 class="text-h5">
-        Add New Product
-      </h2>
-    </template>
-
     <v-container>
       <v-card>
         <v-card-text>

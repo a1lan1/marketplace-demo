@@ -55,12 +55,6 @@ onMounted(() => {
   <Head :title="product.name" />
 
   <AppLayout :breadcrumbs>
-    <template #header>
-      <h2 class="text-h5">
-        {{ product.name }}
-      </h2>
-    </template>
-
     <v-container>
       <ProductAutocomplete />
 

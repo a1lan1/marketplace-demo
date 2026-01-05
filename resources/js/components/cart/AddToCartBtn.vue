@@ -32,7 +32,7 @@ const isAddToCartDisabled = computed(() => {
     variant="flat"
     :block="block"
     :icon="iconOnly"
-    :size="iconOnly ? 'small' : undefined"
+    :size="iconOnly ? 'x-small' : 'small'"
     :class="isAddToCartDisabled ? 'cursor-not-allowed' : 'cursor-pointer'"
     @click.prevent="addToCart(product)"
   >

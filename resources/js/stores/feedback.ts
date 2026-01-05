@@ -1,5 +1,4 @@
-import { PaginationBasic } from '@/types'
-import { Feedback, FeedbackForm } from '@/types'
+import { Feedback, FeedbackForm, PaginationBasic } from '@/types'
 import { defineStore } from 'pinia'
 
 interface State {
@@ -50,7 +49,7 @@ export const useFeedbackStore = defineStore('feedback', {
       }
     },
     addOrUpdateFeedback(feedback: Feedback) {
-      const index = this.feedbacks.findIndex(f => f.id === feedback.id)
+      const index = this.feedbacks.findIndex((f) => f.id === feedback.id)
       if (index !== -1) {
         this.feedbacks[index] = feedback
       } else {

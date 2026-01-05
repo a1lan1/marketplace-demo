@@ -77,7 +77,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                   density="compact"
                   color="warning"
                 />
-                <span class="text-xl font-weight-bold">
+                <span class="font-weight-bold text-xl">
                   {{ seller.average_rating }}
                 </span>
                 <span class="text-gray-500">({{ seller.reviews_count }} reviews)</span>

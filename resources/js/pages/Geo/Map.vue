@@ -2,11 +2,11 @@
 import { useMap } from '@/composables/useMap'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useGeoStore } from '@/stores/geo'
+import type { BreadcrumbItem } from '@/types'
 import type { Coordinates } from '@/types/geo'
 import { LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted } from 'vue'
-import type { BreadcrumbItem } from '@/types'
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Geo', href: '#' },
