@@ -19,11 +19,17 @@ Route::post('user-activities', [UserActivityController::class, 'store'])
 Route::middleware('auth:sanctum')
     ->get('user', fn (Request $request) => $request->user());
 
-Route::get('catalog/search', [ProductController::class, 'autocomplete'])->name('api.catalog.autocomplete');
+Route::get('catalog/search', [ProductController::class, 'autocomplete'])
+    ->middleware('throttle:20,1')
+    ->name('api.catalog.autocomplete');
 
-Route::get('{type}/{id}/feedbacks', [FeedbackController::class, 'index'])->name('api.feedbacks.index');
+Route::get('{type}/{id}/feedbacks', [FeedbackController::class, 'index'])
+    ->middleware('throttle:60,1')
+    ->name('api.feedbacks.index');
 
-Route::get('currency/rates', [CurrencyController::class, 'rates'])->name('currency.rates');
+Route::get('currency/rates', [CurrencyController::class, 'rates'])
+    ->middleware('throttle:60,1')
+    ->name('currency.rates');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('user/orders', [OrderController::class, 'getUserOrders'])->name('api.user.orders.index');
@@ -46,5 +52,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     });
 
     Route::get('feedbacks', [FeedbackController::class, 'list'])->name('api.feedbacks.list');
-    Route::post('feedbacks', [FeedbackController::class, 'store'])->name('api.feedbacks.store');
+    Route::post('feedbacks', [FeedbackController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('api.feedbacks.store');
 });

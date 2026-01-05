@@ -33,7 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::prefix('orders')->group(function (): void {
         Route::get('', [OrderController::class, 'index'])->name('orders.index');
-        Route::post('', [OrderController::class, 'store'])->name('orders.store');
+        Route::post('', [OrderController::class, 'store'])
+            ->middleware('throttle:5,1')
+            ->name('orders.store');
         Route::put('{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status.update');
     });
 
