@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
-import ProductPrice from '@/components/product/ProductPrice.vue'
+import Money from '@/components/common/Money.vue'
 import ProductSeller from '@/components/product/ProductSeller.vue'
 import ProductStockStatus from '@/components/product/ProductStockStatus.vue'
 import { show as showProduct } from '@/routes/products'
@@ -42,8 +42,8 @@ defineProps<{
           >
             {{ product.name }}
           </Link>
-          <ProductPrice
-            :price="product.price"
+          <Money
+            :value="product.price"
             chip
           />
         </div>

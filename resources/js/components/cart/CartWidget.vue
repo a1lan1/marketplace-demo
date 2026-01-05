@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import Money from '@/components/common/Money.vue'
 import { index as checkoutIndex } from '@/routes/checkout'
 import { useCartStore } from '@/stores/cart'
-import type { CartItem } from '@/types'
-import { formatCurrency } from '@/utils/formatters'
 import { router } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
 
@@ -10,12 +9,13 @@ const cartStore = useCartStore()
 const { items, totalItems, totalPrice } = storeToRefs(cartStore)
 const { removeFromCart } = cartStore
 
-const goToCheckout = () => {
-  router.get(checkoutIndex().url)
-}
+const getItemTotal = (item: any) => {
+  const price =
+    typeof item.price === 'object' && 'amount' in item.price
+      ? item.price.amount / 100
+      : Number(item.price)
 
-const getItemTotalPrice = (item: CartItem): string => {
-  return formatCurrency(Number(item.price) * item.quantity)
+  return price * item.quantity
 }
 </script>
 
@@ -42,9 +42,16 @@ const getItemTotalPrice = (item: CartItem): string => {
           v-for="item in items"
           :key="item.product_id"
           :title="item.name"
-          :subtitle="`Quantity: ${item.quantity} - ${getItemTotalPrice(item)}`"
           density="compact"
         >
+          <template #subtitle>
+            Quantity: {{ item.quantity }} -
+            <Money
+              :value="getItemTotal(item)"
+              size="small"
+            />
+          </template>
+
           <template #prepend>
             <v-img
               :src="item.cover_image"
@@ -76,15 +83,19 @@ const getItemTotalPrice = (item: CartItem): string => {
 
       <v-divider v-if="items.length > 0" />
 
-      <v-card-actions v-if="items.length > 0">
-        <div class="font-weight-bold">
-          Total: {{ formatCurrency(totalPrice) }}
+      <v-card-actions
+        v-if="items.length > 0"
+        class="flex justify-between"
+      >
+        <div class="text-xl">
+          Total: <Money :value="totalPrice" />
         </div>
-        <v-spacer />
+
         <v-btn
-          color="primary"
+          color="success"
           variant="tonal"
-          @click="goToCheckout"
+          size="small"
+          @click="router.get(checkoutIndex().url)"
         >
           Checkout
         </v-btn>

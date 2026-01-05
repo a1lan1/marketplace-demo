@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AddToCartBtn from '@/components/cart/AddToCartBtn.vue'
+import Money from '@/components/common/Money.vue'
 import FeedbackForm from '@/components/Feedback/FeedbackForm.vue'
 import FeedbackList from '@/components/Feedback/FeedbackList.vue'
 import ProductAutocomplete from '@/components/product/ProductAutocomplete.vue'
-import ProductPrice from '@/components/product/ProductPrice.vue'
 import ProductSeller from '@/components/product/ProductSeller.vue'
 import ProductStockStatus from '@/components/product/ProductStockStatus.vue'
 import RecommendedProducts from '@/components/product/RecommendedProducts.vue'
@@ -103,8 +103,8 @@ onMounted(() => {
 
               <div class="align-center mb-4 flex justify-between">
                 <div class="d-flex align-center">
-                  <ProductPrice
-                    :price="product.price"
+                  <Money
+                    :value="product.price"
                     size="large"
                     chip
                   />

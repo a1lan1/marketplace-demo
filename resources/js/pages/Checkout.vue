@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import Money from '@/components/common/Money.vue'
 import { trackError } from '@/composables/useActivity'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { index as ordersIndex, store as storeOrder } from '@/routes/orders'
 import { useCartStore } from '@/stores/cart'
 import type { BreadcrumbItem, CartItem, CheckoutForm } from '@/types'
-import { formatCurrency } from '@/utils/formatters'
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
 
@@ -41,8 +41,8 @@ const placeOrder = () => {
   })
 }
 
-const getItemTotalPrice = (item: CartItem): string => {
-  return formatCurrency(Number(item.price) * item.quantity)
+const getItemTotalPrice = (item: CartItem): number => {
+  return Number(item.price) * item.quantity
 }
 
 const cartHeaders = [
@@ -96,7 +96,7 @@ const cartHeaders = [
             </template>
 
             <template #[`item.price`]="{ item }">
-              {{ formatCurrency(Number(item.price)) }}
+              <Money :value="Number(item.price)" />
             </template>
 
             <template #[`item.quantity`]="{ item }">
@@ -112,7 +112,7 @@ const cartHeaders = [
             </template>
 
             <template #[`item.total`]="{ item }">
-              {{ getItemTotalPrice(item) }}
+              <Money :value="getItemTotalPrice(item)" />
             </template>
 
             <template #[`item.actions`]="{ item }">
@@ -134,14 +134,14 @@ const cartHeaders = [
 
           <v-divider
             v-if="items.length > 0"
-            class="my-4"
+            class="my-2"
           />
 
           <div
             v-if="items.length > 0"
-            class="text-h6 text-right"
+            class="text-right text-xl"
           >
-            Total: {{ formatCurrency(totalPrice) }}
+            Total: <Money :value="totalPrice" />
           </div>
         </v-card-text>
 
@@ -149,7 +149,6 @@ const cartHeaders = [
           <v-spacer />
           <v-btn
             color="success"
-            size="large"
             variant="elevated"
             prepend-icon="mdi-currency-usd"
             :loading="form.processing"
