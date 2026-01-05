@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AuthButtons from '@/components/AuthButtons.vue'
 import CartWidget from '@/components/cart/CartWidget.vue'
+import CurrencySwitcher from '@/components/common/CurrencySwitcher.vue'
 import UserBalanceChip from '@/components/common/UserBalanceChip.vue'
 import Breadcrumbs from '@/components/theme/Breadcrumbs.vue'
 import { SidebarTrigger } from '@/components/ui/sidebar'
@@ -33,6 +34,7 @@ const page = usePage()
     </div>
 
     <div class="flex items-center gap-4">
+      <CurrencySwitcher />
       <UserBalanceChip
         v-if="page.props.auth.user"
         :balance="page.props.auth.user.balance"
