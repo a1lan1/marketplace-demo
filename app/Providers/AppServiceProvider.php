@@ -12,6 +12,7 @@ use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
+use App\Contracts\Services\CurrencyServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\Contracts\Services\Geo\ResponseTemplateServiceInterface;
@@ -20,6 +21,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Services\BalanceService;
 use App\Services\ChatService;
+use App\Services\Currency\CurrencyService;
 use App\Services\Feedback\CachedFeedbackService;
 use App\Services\Feedback\FeedbackableMap;
 use App\Services\Feedback\FeedbackService;
@@ -104,6 +106,13 @@ class AppServiceProvider extends ServiceProvider
             return new GeoCollectorService(
                 baseUrl: config('services.geo_collector.url'),
                 timeout: config('services.geo_collector.timeout'),
+            );
+        });
+
+        $this->app->singleton(function (): CurrencyServiceInterface {
+            return new CurrencyService(
+                baseUrl: config('services.currency_rates.url'),
+                timeout: config('services.currency_rates.timeout'),
             );
         });
 

@@ -50,4 +50,9 @@ return [
         'timeout' => env('GEO_COLLECTOR_SERVICE_TIMEOUT', 5),
     ],
 
+    'currency_rates' => [
+        'url' => env('CURRENCY_SERVICE_URL', 'http://currency_service:8004'),
+        'timeout' => env('CURRENCY_SERVICE_TIMEOUT', 5),
+    ],
+
 ];
