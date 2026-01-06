@@ -7,7 +7,9 @@ namespace App\Models;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
+use Database\Factories\OrderProductFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  *
+ * @method static OrderProductFactory factory($count = null, $state = [])
  * @method static Builder<static>|OrderProduct newModelQuery()
  * @method static Builder<static>|OrderProduct newQuery()
  * @method static Builder<static>|OrderProduct query()
@@ -34,6 +37,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class OrderProduct extends Pivot
 {
+    use HasFactory;
+
     protected $table = 'order_product';
 
     protected function casts(): array
