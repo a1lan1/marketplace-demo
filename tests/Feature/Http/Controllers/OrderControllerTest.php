@@ -19,7 +19,6 @@ beforeEach(function (): void {
     $this->admin = User::factory()->withAdminRole()->create();
     $this->buyer = User::factory()->withBuyerRole()->create(['balance' => Money::USD(100000)]);
     $this->userWithoutRole = User::factory()->create();
-
     $this->product = Product::factory()->create(['price' => Money::USD(10000), 'stock' => 10]);
 });
 
