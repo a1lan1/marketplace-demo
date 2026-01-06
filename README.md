@@ -123,6 +123,13 @@ This project has been enhanced with several Python-based microservices. Communic
         - `GET /convert?from=USD&to=EUR&amount=100`: Converts a specific amount.
 - **Usage**: Laravel application calls this service synchronously via HTTP to get current rates for product prices.
 
+### 6. Multi-currency Feature
+
+- **Overview**: Allows users to view prices in their preferred currency.
+- **Architecture**:
+    - **Frontend (Vue)**: `CurrencySwitcher` component in the header updates the Pinia store. Prices are dynamically converted for display.
+    - **Backend Proxy**: Frontend requests go to `GET /currency/rates` (Laravel), which proxies to the **Currency Service** (Go).
+
 ## Asynchronous Processing with Octane & Swoole
 
 This application runs on **Laravel Octane** with **Swoole** server for high-performance asynchronous processing.
