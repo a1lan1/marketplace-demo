@@ -77,8 +77,23 @@ readonly class ProductService implements ProductServiceInterface
         $product->delete();
     }
 
-    public function getRecommendedProducts(int $userId, ?int $excludedProductId = null): Collection
+    public function getRecommendedProducts(int $userId, ?int $excludedProductId = null, ?int $limit = 6): Collection
     {
-        return $this->recommendationService->getRecommendedProducts($userId, $excludedProductId);
+        $recommendedIds = $this->recommendationService->getRecommendations($userId);
+
+        if ($excludedProductId !== null) {
+            $recommendedIds = array_diff($recommendedIds, [$excludedProductId]);
+        }
+
+        if ($recommendedIds === []) {
+            return new Collection;
+        }
+
+        return Product::query()
+            ->whereIn('id', $recommendedIds)
+            ->orderByRaw('array_position(ARRAY['.implode(',', $recommendedIds).']::bigint[], id::bigint)')
+            ->with(['media', 'seller'])
+            ->limit($limit)
+            ->get();
     }
 }
