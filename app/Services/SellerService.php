@@ -17,7 +17,9 @@ class SellerService implements SellerServiceInterface
 
         return Cache::tags(['products', 'sellers'])->remember($key, 3600, function () use ($seller): User {
             return $seller->load(['products' => function (HasMany $query): void {
-                $query->latest()->take(8);
+                $query->select(['id', 'user_id', 'name', 'description', 'price', 'stock', 'created_at', 'updated_at'])
+                    ->latest()
+                    ->take(8);
             }]);
         });
     }

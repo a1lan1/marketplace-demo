@@ -8,6 +8,7 @@ use App\Contracts\OrderServiceInterface;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class OrderService implements OrderServiceInterface
@@ -15,7 +16,15 @@ class OrderService implements OrderServiceInterface
     public function getUserOrders(User $user, int $perPage = 10): LengthAwarePaginator
     {
         return $user->orders()
-            ->with('products', 'buyer')
+            ->select(['id', 'user_id', 'total_amount', 'status', 'created_at'])
+            ->with([
+                'products' => function (Relation $query): void {
+                    $query->select(['products.id', 'products.name', 'products.price']);
+                },
+                'buyer' => function (Relation $query): void {
+                    $query->select('id', 'name')->with('media');
+                },
+            ])
             ->latest()
             ->paginate($perPage);
     }
@@ -28,7 +37,15 @@ class OrderService implements OrderServiceInterface
     {
         return Order::query()
             ->forUser($user)
-            ->with(['buyer', 'products.seller'])
+            ->select(['id', 'user_id', 'total_amount', 'status', 'created_at'])
+            ->with([
+                'buyer' => function (Relation $query): void {
+                    $query->select('id', 'name')->with('media');
+                },
+                'products.seller' => function (Relation $query): void {
+                    $query->select('id', 'name')->with('media');
+                },
+            ])
             ->latest()
             ->get();
     }

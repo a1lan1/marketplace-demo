@@ -16,6 +16,7 @@ class ReviewService implements ReviewServiceInterface
     public function getReviewsForUser(User $user, ReviewFilterData $filters, int $page = 1): LengthAwarePaginator
     {
         return Review::query()
+            ->select(['id', 'location_id', 'source', 'author_name', 'text', 'rating', 'sentiment', 'published_at'])
             ->whereHas('location', function (Builder $q) use ($user): void {
                 $q->where('seller_id', $user->id);
             })

@@ -22,6 +22,7 @@ class LocationService implements LocationServiceInterface
 
         return Cache::tags(['locations'])->remember($key, 3600, function () use ($user): Collection {
             return $user->locations()
+                ->select(['id', 'seller_id', 'name', 'type', 'address', 'latitude', 'longitude', 'external_ids'])
                 ->withCount('reviews')
                 ->withAvg('reviews', 'rating')
                 ->latest()
