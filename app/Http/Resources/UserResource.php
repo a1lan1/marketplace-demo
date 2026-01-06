@@ -23,9 +23,9 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'balance' => $this->balance->getAmount(),
             'avatar' => $this->avatar,
+            'email' => $this->whenHas('email'),
+            'balance' => $this->whenHas('balance', fn () => $this->balance->getAmount()),
         ];
     }
 }
