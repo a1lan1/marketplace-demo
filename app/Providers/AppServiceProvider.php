@@ -13,6 +13,7 @@ use App\Contracts\ProductSearcherInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
+use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
@@ -20,6 +21,7 @@ use App\Contracts\Services\Geo\ResponseTemplateServiceInterface;
 use App\Contracts\Services\Geo\ReviewServiceInterface;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\Analytics\AnalyticsService;
 use App\Services\BalanceService;
 use App\Services\ChatService;
 use App\Services\Currency\CurrencyService;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         SellerServiceInterface::class => SellerService::class,
         ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
         ProductSearcherInterface::class => ScoutProductSearcher::class,
+        AnalyticsServiceInterface::class => AnalyticsService::class,
     ];
 
     /**
