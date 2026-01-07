@@ -4,9 +4,11 @@ import { trackError } from '@/composables/useActivity'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { index as ordersIndex, store as storeOrder } from '@/routes/orders'
 import { useCartStore } from '@/stores/cart'
+import { generateUUID } from '@/utils/uuid'
 import type { BreadcrumbItem, CartItem, CheckoutForm } from '@/types'
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
 
 const cartStore = useCartStore()
 const { items, totalPrice } = storeToRefs(cartStore)
@@ -23,6 +25,8 @@ const form = useForm<CheckoutForm>({
   cart: []
 })
 
+const idempotencyKey = ref(generateUUID())
+
 const placeOrder = () => {
   form.cart = items.value.map((item) => ({
     product_id: item.product_id,
@@ -30,13 +34,18 @@ const placeOrder = () => {
   }))
 
   form.post(storeOrder().url, {
+    headers: {
+      'Idempotency-Key': idempotencyKey.value
+    },
     onSuccess: () => {
       clearCart()
+      idempotencyKey.value = generateUUID()
       router.visit(ordersIndex().url)
     },
     onError: (errors: any) => {
       console.error(errors)
       trackError('Error placing order')
+      idempotencyKey.value = generateUUID()
     }
   })
 }
