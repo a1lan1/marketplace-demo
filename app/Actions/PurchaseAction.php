@@ -39,15 +39,21 @@ readonly class PurchaseAction
     {
         // Fetch Products
         $productIds = $purchaseDTO->cart->toCollection()->pluck('productId')->unique()->all();
-        $products = Product::with('seller')->whereIn('id', $productIds)->get()->keyBy('id');
 
-        // Validate Stock
-        $this->inventoryService->ensureStock($purchaseDTO->cart, $products);
+        $order = DB::transaction(function () use ($purchaseDTO, $productIds): Order {
+            // Lock products for update to prevent concurrent purchases of the same stock
+            $products = Product::with('seller')
+                ->whereIn('id', $productIds)
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
 
-        // Calculate Totals
-        $calculation = $this->cartCalculator->calculate($purchaseDTO->cart, $products);
+            // Validate Stock
+            $this->inventoryService->ensureStock($purchaseDTO->cart, $products);
 
-        $order = DB::transaction(function () use ($purchaseDTO, $calculation, $products): Order {
+            // Calculate Totals
+            $calculation = $this->cartCalculator->calculate($purchaseDTO->cart, $products);
+
             // Create Order & Charge Buyer
             $order = $this->createOrderAndWithdraw($purchaseDTO->buyer, $calculation->totalAmount);
 
@@ -85,14 +91,15 @@ readonly class PurchaseAction
 
     private function processOrderItems(Order $order, DataCollection $cart, Collection $products): void
     {
-        foreach ($cart as $item) {
-            /** @var Product $product */
-            $product = $products->get($item->productId);
+        $cartItems = $cart->toCollection()->keyBy('productId');
 
-            $order->products()->attach($product->id, [
-                'quantity' => $item->quantity,
+        $attachments = $products->mapWithKeys(fn (Product $product): array => [
+            $product->id => [
+                'quantity' => $cartItems->get($product->id)->quantity,
                 'price' => $product->price->getAmount(),
-            ]);
-        }
+            ],
+        ])->all();
+
+        $order->products()->attach($attachments);
     }
 }
