@@ -22,6 +22,12 @@ class IdempotencyMiddleware
             return $next($request);
         }
 
+        $key = $request->header('Idempotency-Key');
+
+        if (!$key) {
+            return response()->json(['error' => 'Idempotency-Key header is required'], 400);
+        }
+
         $cacheKey = $this->getCacheKey($request);
 
         if ($cached = Cache::get($cacheKey)) {
@@ -47,8 +53,7 @@ class IdempotencyMiddleware
 
     private function shouldSkip(Request $request): bool
     {
-        return ! in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'])
-            || ! $request->header('Idempotency-Key');
+        return in_array($request->method(), ['GET', 'HEAD', 'OPTIONS']);
     }
 
     private function getCacheKey(Request $request): string
