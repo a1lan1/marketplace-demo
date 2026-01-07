@@ -43,7 +43,7 @@ test('a guest cannot view orders', function (): void {
 test('a buyer can place an order', function (): void {
     actingAs($this->buyer)->post(route('orders.store'), [
         'cart' => [['product_id' => $this->product->id, 'quantity' => 2]],
-    ])->assertRedirect(route('orders.index'))->assertSessionHas('success');
+    ], ['Idempotency-Key' => 'test-key'])->assertRedirect(route('orders.index'))->assertSessionHas('success');
 
     assertDatabaseHas('orders', [
         'user_id' => $this->buyer->id,
@@ -62,7 +62,7 @@ test('a buyer can place an order', function (): void {
 test('an order fails if stock is insufficient', function (): void {
     actingAs($this->buyer)->post(route('orders.store'), [
         'cart' => [['product_id' => $this->product->id, 'quantity' => 11]],
-    ])->assertRedirect()->assertSessionHasErrors('purchase');
+    ], ['Idempotency-Key' => 'test-key'])->assertRedirect()->assertSessionHasErrors('purchase');
 
     expect($this->product->stock)->toBe(10);
 });
@@ -72,7 +72,7 @@ test('an order fails if balance is insufficient', function (): void {
 
     actingAs($buyerWithLowBalance)->post(route('orders.store'), [
         'cart' => [['product_id' => $this->product->id, 'quantity' => 1]],
-    ])->assertRedirect()->assertSessionHasErrors('purchase');
+    ], ['Idempotency-Key' => 'test-key'])->assertRedirect()->assertSessionHasErrors('purchase');
 });
 
 // Update Status

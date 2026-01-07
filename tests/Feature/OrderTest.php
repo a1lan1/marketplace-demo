@@ -27,7 +27,7 @@ test('user can place order', function (): void {
         'cart' => [
             ['product_id' => $product->id, 'quantity' => 2],
         ],
-    ]);
+    ], ['Idempotency-Key' => 'test-key']);
 
     // Assert
     $response->assertRedirect(route('orders.index'))
@@ -46,7 +46,7 @@ test('user cannot order non-existent product', function (): void {
         'cart' => [
             ['product_id' => 99999, 'quantity' => 1],
         ],
-    ]);
+    ], ['Idempotency-Key' => 'test-key']);
 
     // Assert
     $response->assertSessionHasErrors('cart.0.product_id');
