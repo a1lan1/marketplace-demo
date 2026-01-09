@@ -1,22 +1,29 @@
 <?php
 
-use App\Models\Product;
+use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use App\Services\SellerService;
 use Illuminate\Support\Facades\Cache;
 
-it('returns seller with products and caches result', function (): void {
-    $seller = User::factory()->create();
-    Product::factory()->count(10)->create(['user_id' => $seller->id]);
+beforeEach(function (): void {
+    $this->userRepository = Mockery::mock(UserRepositoryInterface::class);
+    $this->service = new SellerService($this->userRepository);
+});
 
-    $service = new SellerService;
+it('returns seller with products and caches result', function (): void {
+    $seller = User::factory()->make(['id' => 1]);
+    $sellerWithProducts = User::factory()->make(['id' => 1]);
+
+    $this->userRepository->shouldReceive('getSellerWithProducts')
+        ->once()
+        ->with($seller)
+        ->andReturn($sellerWithProducts);
 
     $cacheSpy = Cache::spy();
 
-    $result = $service->getSellerWithProducts($seller);
+    $result = $this->service->getSellerWithProducts($seller);
 
-    expect($result->relationLoaded('products'))->toBeTrue()
-        ->and($result->products)->toHaveCount(8);
+    expect($result)->toBe($sellerWithProducts);
 
     $cacheSpy->shouldHaveReceived('tags')->with(['products', 'sellers'])->once();
 });

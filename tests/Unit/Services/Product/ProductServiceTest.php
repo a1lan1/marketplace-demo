@@ -2,65 +2,58 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit\Services\Product;
 
 use App\Contracts\NlpSearchPreprocessingServiceInterface;
-use App\Contracts\ProductSearcherInterface;
 use App\Contracts\RecommendationServiceInterface;
+use App\Contracts\Repositories\ProductRepositoryInterface;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\Product\ProductService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Laravel\Scout\Builder as ScoutBuilder;
 use Mockery;
-use Mockery\MockInterface;
 
 beforeEach(function (): void {
-    $this->productSearcherMock = $this->mock(ProductSearcherInterface::class);
     $this->recommendationServiceMock = $this->mock(RecommendationServiceInterface::class);
     $this->nlpSearchPreprocessingServiceMock = $this->mock(NlpSearchPreprocessingServiceInterface::class);
+    $this->productRepositoryMock = $this->mock(ProductRepositoryInterface::class);
 
     $this->productService = new ProductService(
         $this->recommendationServiceMock,
         $this->nlpSearchPreprocessingServiceMock,
-        $this->productSearcherMock
+        $this->productRepositoryMock
     );
 });
 
 test('get paginated products', function (): void {
     // Arrange
-    Product::factory()->count(15)->create();
+    $paginatorMock = $this->mock(LengthAwarePaginator::class);
+    $this->productRepositoryMock
+        ->shouldReceive('getPaginated')
+        ->once()
+        ->with(12, 1)
+        ->andReturn($paginatorMock);
 
     // Act
     $result = $this->productService->getPaginatedProducts();
 
     // Assert
-    expect($result)->toBeInstanceOf(LengthAwarePaginator::class)
-        ->and($result->total())->toBe(15)
-        ->and($result->perPage())->toBe(12);
+    expect($result)->toBeInstanceOf(LengthAwarePaginator::class);
 });
 
 test('get user products returns paginated list', function (): void {
     // Arrange
     $userMock = $this->mock(User::class);
-    // Mock the id attribute access
-    $userMock->shouldReceive('getAttribute')->with('id')->andReturn(1);
-
     $paginatorMock = $this->mock(LengthAwarePaginator::class);
-    $relationMock = $this->mock(HasMany::class, function (MockInterface $mock) use ($paginatorMock): void {
-        $mock->shouldReceive('select')->once()->with(Mockery::type('array'))->andReturnSelf();
-        $mock->shouldReceive('latest')->once()->andReturnSelf();
-        $mock->shouldReceive('paginate')
-            ->with(10, ['*'], 'page', 1)
-            ->once()
-            ->andReturn($paginatorMock);
-    });
 
-    $userMock->shouldReceive('products')->once()->andReturn($relationMock);
+    $this->productRepositoryMock
+        ->shouldReceive('getForUser')
+        ->once()
+        ->with($userMock, 10, 1)
+        ->andReturn($paginatorMock);
 
     // Act
     $result = $this->productService->getUserProducts($userMock);
@@ -69,7 +62,7 @@ test('get user products returns paginated list', function (): void {
     expect($result)->toBeInstanceOf(LengthAwarePaginator::class);
 });
 
-test('store product creates or updates product and uploads image', function (): void {
+test('store product creates or updates product', function (): void {
     // Arrange
     $userMock = $this->mock(User::class);
     $productDTO = new ProductDTO(
@@ -82,15 +75,12 @@ test('store product creates or updates product and uploads image', function (): 
     );
 
     $productMock = $this->mock(Product::class);
-    $relationMock = $this->mock(HasMany::class);
 
-    $userMock->shouldReceive('products')->once()->andReturn($relationMock);
-    $relationMock->shouldReceive('updateOrCreate')
-        ->with(['id' => null], $productDTO->toArray())
+    $this->productRepositoryMock
+        ->shouldReceive('store')
         ->once()
+        ->with($productDTO)
         ->andReturn($productMock);
-
-    $productMock->shouldReceive('uploadCoverImage')->with($productDTO->coverImage)->once();
 
     // Act
     $result = $this->productService->storeProduct($productDTO);
@@ -99,10 +89,13 @@ test('store product creates or updates product and uploads image', function (): 
     expect($result)->toBe($productMock);
 });
 
-test('delete product calls delete on the model', function (): void {
+test('delete product calls delete on the repository', function (): void {
     // Arrange
     $productMock = $this->mock(Product::class);
-    $productMock->shouldReceive('delete')->once();
+    $this->productRepositoryMock
+        ->shouldReceive('delete')
+        ->once()
+        ->with($productMock);
 
     // Act
     $this->productService->deleteProduct($productMock);
@@ -111,7 +104,7 @@ test('delete product calls delete on the model', function (): void {
     $this->assertTrue(true); // Placeholder assertion
 });
 
-test('get autocomplete suggestions preprocesses query and returns products', function (): void {
+test('get autocomplete suggestions preprocesses query and returns mapped products', function (): void {
     // Arrange
     $searchQuery = '  Test Query  ';
     $processedQuery = 'test query';
@@ -129,17 +122,13 @@ test('get autocomplete suggestions preprocesses query and returns products', fun
     $product2 = Mockery::mock(Product::class);
     $product2->shouldReceive('only')->with('id', 'name')->andReturn(['id' => 2, 'name' => 'Test Product 2']);
 
-    $expectedProducts = collect([$product1, $product2]);
+    $rawProductsFromRepo = collect([$product1, $product2]);
 
-    $scoutBuilderMock = Mockery::mock(ScoutBuilder::class);
-    $scoutBuilderMock->shouldReceive('take')->with($limit)->andReturnSelf();
-    $scoutBuilderMock->shouldReceive('get')->andReturn($expectedProducts);
-
-    $this->productSearcherMock
-        ->shouldReceive('search')
+    $this->productRepositoryMock
+        ->shouldReceive('searchSuggestions')
         ->once()
-        ->with($processedQuery)
-        ->andReturn($scoutBuilderMock);
+        ->with($processedQuery, $limit)
+        ->andReturn($rawProductsFromRepo);
 
     // Act
     $result = $this->productService->getAutocompleteSuggestions($searchQuery, $limit);

@@ -13,6 +13,9 @@ use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\NotEnoughStockException;
 use App\Models\Product;
 use App\Models\User;
+use App\Repositories\OrderRepository;
+use App\Repositories\ProductRepository;
+use App\Repositories\TransactionRepository;
 use App\Services\BalanceService;
 use App\Services\Purchase\CartCalculator;
 use App\Services\Purchase\InventoryService;
@@ -24,13 +27,19 @@ use function Pest\Laravel\assertDatabaseHas;
 beforeEach(function (): void {
     $this->cartCalculator = new CartCalculator;
     $this->inventoryService = new InventoryService;
-    $this->payoutDistributor = new PayoutDistributor(new BalanceService(new CreateTransactionAction));
+    $this->transactionRepository = new TransactionRepository;
+    $this->orderRepository = new OrderRepository;
+    $this->productRepository = new ProductRepository;
+
+    $this->payoutDistributor = new PayoutDistributor(new BalanceService(new CreateTransactionAction($this->transactionRepository)));
 
     $this->purchaseAction = new PurchaseAction(
-        new BalanceService(new CreateTransactionAction),
+        new BalanceService(new CreateTransactionAction($this->transactionRepository)),
         $this->cartCalculator,
         $this->inventoryService,
-        $this->payoutDistributor
+        $this->payoutDistributor,
+        $this->orderRepository,
+        $this->productRepository
     );
 });
 

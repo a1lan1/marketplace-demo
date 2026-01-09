@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Unit\Services;
 
 use App\Actions\Transactions\CreateTransactionAction;
+use App\Contracts\Repositories\TransactionRepositoryInterface;
 use App\Enums\TransactionType;
 use App\Exceptions\InsufficientFundsException;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Services\BalanceService;
 use Cknow\Money\Money;
@@ -14,13 +16,26 @@ use Cknow\Money\Money;
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function (): void {
-    $this->balanceService = new BalanceService(new CreateTransactionAction);
+    $this->transactionRepositoryMock = $this->mock(TransactionRepositoryInterface::class);
+    $this->balanceService = new BalanceService(new CreateTransactionAction($this->transactionRepositoryMock));
 });
 
 it('can deposit money', function (): void {
     // Arrange
     $user = User::factory()->create(['balance' => 10000]); // $100.00
     $amount = Money::USD(5000); // $50.00
+
+    $this->transactionRepositoryMock
+        ->shouldReceive('create')
+        ->once()
+        ->andReturnUsing(function (User $u, Money $a, TransactionType $t, ?string $d) {
+            return Transaction::factory()->create([
+                'user_id' => $u->id,
+                'amount' => $a,
+                'type' => $t,
+                'description' => $d,
+            ]);
+        });
 
     // Act
     $transaction = $this->balanceService->deposit($user, $amount, 'Test Deposit');
@@ -40,6 +55,18 @@ it('can withdraw money', function (): void {
     // Arrange
     $user = User::factory()->create(['balance' => 10000]); // $100.00
     $amount = Money::USD(5000); // $50.00
+
+    $this->transactionRepositoryMock
+        ->shouldReceive('create')
+        ->once()
+        ->andReturnUsing(function (User $u, Money $a, TransactionType $t, ?string $d) {
+            return Transaction::factory()->create([
+                'user_id' => $u->id,
+                'amount' => $a,
+                'type' => $t,
+                'description' => $d,
+            ]);
+        });
 
     // Act
     $transaction = $this->balanceService->withdraw($user, $amount, 'Test Withdrawal');

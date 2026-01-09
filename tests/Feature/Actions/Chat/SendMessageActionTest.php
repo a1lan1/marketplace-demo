@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Feature\Actions\Chat;
 
 use App\Actions\Chat\SendMessageAction;
+use App\Contracts\Repositories\MessageRepositoryInterface;
 use App\Events\MessageSent;
+use App\Models\Message;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
@@ -17,7 +19,19 @@ it('creates a message and dispatches an event', function (): void {
     $order = Order::factory()->create();
     $sender = User::factory()->create();
     $messageContent = 'Hello, this is a test message.';
-    $action = new SendMessageAction;
+
+    $messageRepositoryMock = $this->mock(MessageRepositoryInterface::class);
+    $messageRepositoryMock->shouldReceive('createForOrder')
+        ->once()
+        ->andReturnUsing(function (Order $o, User $s, string $c) {
+            return Message::factory()->create([
+                'order_id' => $o->id,
+                'user_id' => $s->id,
+                'message' => $c,
+            ]);
+        });
+
+    $action = new SendMessageAction($messageRepositoryMock);
 
     // 2. Act
     $message = $action->execute($order, $sender, $messageContent);

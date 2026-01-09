@@ -1,71 +1,60 @@
 <?php
 
+use App\Contracts\Repositories\ResponseTemplateRepositoryInterface;
 use App\DTO\Geo\ResponseTemplateData;
 use App\Models\ResponseTemplate;
 use App\Models\User;
 use App\Services\Geo\ResponseTemplateService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseMissing;
+beforeEach(function (): void {
+    $this->repository = Mockery::mock(ResponseTemplateRepositoryInterface::class);
+    $this->service = new ResponseTemplateService($this->repository);
+});
 
 it('returns templates for user and caches result', function (): void {
-    $user = User::factory()->create();
-    ResponseTemplate::factory()->count(5)->create(['seller_id' => $user->id]);
+    $user = User::factory()->make(['id' => 1]);
+    $templates = new Collection([new ResponseTemplate]);
 
-    $service = new ResponseTemplateService;
+    $this->repository->shouldReceive('getForUser')
+        ->once()
+        ->with($user)
+        ->andReturn($templates);
 
     $cacheSpy = Cache::spy();
 
-    $result = $service->getTemplatesForUser($user);
+    $result = $this->service->getTemplatesForUser($user);
 
-    expect($result)->toHaveCount(5);
+    expect($result)->toHaveCount(1);
     $cacheSpy->shouldHaveReceived('tags')->with(['response_templates'])->once();
 });
 
 it('creates a new template', function (): void {
-    $user = User::factory()->create();
     $data = new ResponseTemplateData(
         id: null,
-        sellerId: $user->id,
+        sellerId: 1,
         title: 'Test Title',
         body: 'Test Body'
     );
+    $template = new ResponseTemplate;
 
-    $service = new ResponseTemplateService;
-    $service->storeTemplate($data);
+    $this->repository->shouldReceive('store')
+        ->once()
+        ->with($data)
+        ->andReturn($template);
 
-    assertDatabaseHas('response_templates', [
-        'seller_id' => $user->id,
-        'title' => 'Test Title',
-        'body' => 'Test Body',
-    ]);
-});
+    $result = $this->service->storeTemplate($data);
 
-it('updates an existing template', function (): void {
-    $template = ResponseTemplate::factory()->create();
-    $data = new ResponseTemplateData(
-        id: $template->id,
-        sellerId: $template->seller_id,
-        title: 'Updated Title',
-        body: 'Updated Body'
-    );
-
-    $service = new ResponseTemplateService;
-    $service->storeTemplate($data);
-
-    assertDatabaseHas('response_templates', [
-        'id' => $template->id,
-        'title' => 'Updated Title',
-        'body' => 'Updated Body',
-    ]);
+    expect($result)->toBe($template);
 });
 
 it('deletes a template', function (): void {
-    $template = ResponseTemplate::factory()->create();
-    $service = new ResponseTemplateService;
+    $template = new ResponseTemplate;
 
-    $service->deleteTemplate($template);
+    $this->repository->shouldReceive('delete')
+        ->once()
+        ->with($template);
 
-    assertDatabaseMissing('response_templates', ['id' => $template->id]);
+    $this->service->deleteTemplate($template);
 });
