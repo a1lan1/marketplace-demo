@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Geo;
 
+use App\Contracts\Repositories\ReviewRepositoryInterface;
 use App\DTO\Geo\ReviewData;
 use App\Enums\SentimentEnum;
 use App\Events\NegativeSentimentDetected;
@@ -13,6 +14,8 @@ use Throwable;
 
 class StoreReviewAction
 {
+    public function __construct(protected ReviewRepositoryInterface $reviewRepository) {}
+
     /**
      * Store or update a review from external source.
      *
@@ -20,14 +23,8 @@ class StoreReviewAction
      */
     public function execute(ReviewData $data): Review
     {
-        $review = DB::transaction(function () use ($data) {
-            return Review::updateOrCreate(
-                [
-                    'external_id' => $data->externalId,
-                    'source' => $data->source,
-                ],
-                $data->toArray()
-            );
+        $review = DB::transaction(function () use ($data): Review {
+            return $this->reviewRepository->updateOrCreate($data);
         });
 
         if ($review->sentiment === SentimentEnum::NEGATIVE) {

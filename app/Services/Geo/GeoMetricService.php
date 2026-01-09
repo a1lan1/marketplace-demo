@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Geo;
 
+use App\Contracts\Repositories\ReviewRepositoryInterface;
 use App\Models\Review;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class GeoMetricService
 {
+    public function __construct(protected ReviewRepositoryInterface $reviewRepository) {}
+
     /**
      * @return array<string, mixed>
      */
@@ -20,30 +22,34 @@ class GeoMetricService
         $key = sprintf('geo_metrics_user_%d_loc_', $user->id).($locationId ?? 'all');
 
         return Cache::tags(['reviews', 'locations'])->remember($key, 3600, function () use ($user, $locationId): array {
-            $baseQuery = Review::query()
-                ->whereHas('location', function (Builder $q) use ($user): void {
-                    $q->where('seller_id', $user->id);
-                })
-                ->when($locationId, fn (Builder $q) => $q->where('location_id', $locationId));
+            $reviews = $this->reviewRepository->getForUserAndLocation($user, $locationId);
 
-            $averageRating = (float) $baseQuery->clone()->avg('rating');
-            $totalReviews = $baseQuery->clone()->count();
+            $averageRating = (float) $reviews->avg('rating');
+            $totalReviews = $reviews->count();
 
-            $sentimentCounts = $baseQuery->clone()
-                ->select('sentiment', DB::raw('count(*) as count'))
+            $sentimentCounts = $reviews
                 ->groupBy('sentiment')
-                ->pluck('count', 'sentiment');
+                ->map->count();
 
-            $sourceCounts = $baseQuery->clone()
-                ->select('source', DB::raw('count(*) as count'))
+            $sourceCounts = $reviews
                 ->groupBy('source')
-                ->pluck('count', 'source');
+                ->map->count();
 
-            $ratingDynamics = $baseQuery->clone()
-                ->select(DB::raw('DATE(published_at) as date'), DB::raw('AVG(rating) as average_rating'))
-                ->groupBy('date')
-                ->orderBy('date', 'asc')
-                ->get();
+            $ratingDynamics = $reviews
+                ->sortBy('published_at')
+                ->groupBy(fn (Review $review) => $review->published_at->format('Y-m-d'))
+                ->map(function (Collection $group): array {
+                    /** @var Review $firstReview */
+                    $firstReview = $group->first();
+                    /** @var float $avgRating */
+                    $avgRating = $group->avg('rating');
+
+                    return [
+                        'date' => $firstReview->published_at->format('Y-m-d'),
+                        'average_rating' => $avgRating,
+                    ];
+                })
+                ->values();
 
             return [
                 'average_rating' => $averageRating,
