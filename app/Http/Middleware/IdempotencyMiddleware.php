@@ -24,7 +24,11 @@ class IdempotencyMiddleware
 
         $key = $request->header('Idempotency-Key');
 
-        if (!$key) {
+        if (! $key) {
+            if ($request->header('X-Inertia')) {
+                return back()->withErrors(['purchase' => 'Idempotency-Key header is required. Please refresh the page.']);
+            }
+
             return response()->json(['error' => 'Idempotency-Key header is required'], 400);
         }
 
@@ -37,6 +41,10 @@ class IdempotencyMiddleware
         $lock = Cache::lock($cacheKey.':lock', 10);
 
         if (! $lock->get()) {
+            if ($request->header('X-Inertia')) {
+                return back()->withErrors(['purchase' => 'Request is being processed. Please wait.']);
+            }
+
             return response()->json(['error' => 'Request is being processed'], 409);
         }
 
