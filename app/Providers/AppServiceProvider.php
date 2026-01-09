@@ -12,6 +12,7 @@ use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\Repositories\FeedbackRepositoryInterface;
+use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
@@ -23,6 +24,7 @@ use App\Contracts\Services\Geo\ReviewServiceInterface;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\FeedbackRepository;
+use App\Repositories\OrderRepository;
 use App\Services\Analytics\AnalyticsService;
 use App\Services\BalanceService;
 use App\Services\ChatService;
@@ -64,6 +66,7 @@ class AppServiceProvider extends ServiceProvider
         SellerServiceInterface::class => SellerService::class,
         ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
         AnalyticsServiceInterface::class => AnalyticsService::class,
+        OrderRepositoryInterface::class => OrderRepository::class,
         FeedbackRepositoryInterface::class => FeedbackRepository::class,
     ];
 

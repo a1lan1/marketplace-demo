@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Feedback;
 
 use App\Contracts\Repositories\FeedbackRepositoryInterface;
+use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\DTO\FeedbackData;
 use App\Events\FeedbackSaved;
 use App\Models\Feedback;
@@ -16,7 +17,10 @@ use Throwable;
 
 class CreateFeedbackAction
 {
-    public function __construct(protected FeedbackRepositoryInterface $feedbackRepository) {}
+    public function __construct(
+        protected FeedbackRepositoryInterface $feedbackRepository,
+        protected OrderRepositoryInterface $orderRepository
+    ) {}
 
     /**
      * @throws Throwable
@@ -66,12 +70,6 @@ class CreateFeedbackAction
             return false;
         }
 
-        return Order::query()
-            ->where('user_id', $author->id)
-            ->where('status', OrderStatusEnum::COMPLETED)
-            ->whereHas('products', function (Builder $query) use ($feedbackableId): void {
-                $query->where('products.id', $feedbackableId);
-            })
-            ->exists();
+        return $this->orderRepository->hasPurchasedProduct($author->id, $feedbackableId);
     }
 }

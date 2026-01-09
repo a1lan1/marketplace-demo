@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Contracts\BalanceServiceInterface;
+use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\DTO\PurchaseDTO;
 use App\Events\OrderCreated;
 use App\Exceptions\InsufficientFundsException;
@@ -27,7 +28,8 @@ readonly class PurchaseAction
         private BalanceServiceInterface $balanceService,
         private CartCalculator $cartCalculator,
         private InventoryService $inventoryService,
-        private PayoutDistributor $payoutDistributor
+        private PayoutDistributor $payoutDistributor,
+        private OrderRepositoryInterface $orderRepository
     ) {}
 
     /**
@@ -77,8 +79,7 @@ readonly class PurchaseAction
      */
     private function createOrderAndWithdraw(User $buyer, Money $totalAmount): Order
     {
-        /** @var Order $order */
-        $order = $buyer->orders()->create(['total_amount' => $totalAmount]);
+        $order = $this->orderRepository->create($buyer, $totalAmount);
 
         $this->balanceService->withdraw(
             user: $buyer,
@@ -100,6 +101,6 @@ readonly class PurchaseAction
             ],
         ])->all();
 
-        $order->products()->attach($attachments);
+        $this->orderRepository->attachProducts($order, $attachments);
     }
 }
