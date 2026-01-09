@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Feedback;
 
+use App\Contracts\Services\Feedback\FeedbackableMapInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-readonly class FeedbackableMap
+readonly class FeedbackableMap implements FeedbackableMapInterface
 {
     public function __construct(private array $map = []) {}
 

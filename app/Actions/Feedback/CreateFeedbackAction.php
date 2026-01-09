@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Actions\Feedback;
 
+use App\Contracts\Repositories\FeedbackRepositoryInterface;
 use App\DTO\FeedbackData;
-use App\Enums\OrderStatusEnum;
 use App\Events\FeedbackSaved;
 use App\Models\Feedback;
-use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Throwable;
 
 class CreateFeedbackAction
 {
+    public function __construct(protected FeedbackRepositoryInterface $feedbackRepository) {}
+
     /**
      * @throws Throwable
      * @throws ValidationException
@@ -30,14 +30,7 @@ class CreateFeedbackAction
 
         $isVerified = $this->checkIfVerifiedPurchase($author, $feedbackableClass, $data->feedbackableId);
 
-        $feedback = Feedback::create([
-            'user_id' => $author->id,
-            'feedbackable_type' => $feedbackableClass,
-            'feedbackable_id' => $data->feedbackableId,
-            'rating' => $data->rating,
-            'comment' => $data->comment,
-            'is_verified_purchase' => $isVerified,
-        ]);
+        $feedback = $this->feedbackRepository->store($author, $feedbackableClass, $data, $isVerified);
 
         event(new FeedbackSaved($feedback));
 
@@ -58,11 +51,7 @@ class CreateFeedbackAction
      */
     private function ensureFeedbackDoesNotExist(User $author, string $feedbackableClass, int $feedbackableId): void
     {
-        $exists = Feedback::query()
-            ->where('user_id', $author->id)
-            ->where('feedbackable_type', $feedbackableClass)
-            ->where('feedbackable_id', $feedbackableId)
-            ->exists();
+        $exists = $this->feedbackRepository->existsForUserAndEntity($author->id, $feedbackableClass, $feedbackableId);
 
         if ($exists) {
             throw ValidationException::withMessages([

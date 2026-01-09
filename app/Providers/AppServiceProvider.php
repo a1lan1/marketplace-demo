@@ -11,15 +11,18 @@ use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
+use App\Contracts\Repositories\FeedbackRepositoryInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
+use App\Contracts\Services\Feedback\FeedbackableMapInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\Contracts\Services\Geo\ResponseTemplateServiceInterface;
 use App\Contracts\Services\Geo\ReviewServiceInterface;
 use App\Models\Product;
 use App\Models\User;
+use App\Repositories\FeedbackRepository;
 use App\Services\Analytics\AnalyticsService;
 use App\Services\BalanceService;
 use App\Services\ChatService;
@@ -61,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
         SellerServiceInterface::class => SellerService::class,
         ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
         AnalyticsServiceInterface::class => AnalyticsService::class,
+        FeedbackRepositoryInterface::class => FeedbackRepository::class,
     ];
 
     /**
@@ -119,7 +123,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(function (): FeedbackableMap {
+        $this->app->singleton(FeedbackableMapInterface::class, function () {
             return new FeedbackableMap([
                 'product' => Product::class,
                 'seller' => User::class,
