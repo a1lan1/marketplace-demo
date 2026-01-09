@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Geo;
 
+use App\Contracts\Repositories\LocationRepositoryInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\DTO\Geo\LocationData;
 use App\Models\Location;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Cache;
 
 class LocationService implements LocationServiceInterface
 {
+    public function __construct(protected LocationRepositoryInterface $locationRepository) {}
+
     /**
      * @return Collection<int, Location>
      */
@@ -21,21 +24,13 @@ class LocationService implements LocationServiceInterface
         $key = sprintf('locations_user_%d_list', $user->id);
 
         return Cache::tags(['locations'])->remember($key, 3600, function () use ($user): Collection {
-            return $user->locations()
-                ->select(['id', 'seller_id', 'name', 'type', 'address', 'latitude', 'longitude', 'external_ids'])
-                ->withCount('reviews')
-                ->withAvg('reviews', 'rating')
-                ->latest()
-                ->get();
+            return $this->locationRepository->getForUser($user);
         });
     }
 
     public function storeLocation(LocationData $data): Location
     {
-        return Location::updateOrCreate(
-            ['id' => $data->id],
-            $data->toArray()
-        );
+        return $this->locationRepository->store($data);
     }
 
     public function getLocationWithStats(Location $location): Location
@@ -43,12 +38,12 @@ class LocationService implements LocationServiceInterface
         $key = sprintf('location_%d_stats', $location->id);
 
         return Cache::tags(['locations'])->remember($key, 3600, function () use ($location): Location {
-            return $location->loadCount('reviews')->loadAvg('reviews', 'rating');
+            return $this->locationRepository->getWithStats($location);
         });
     }
 
     public function deleteLocation(Location $location): void
     {
-        $location->delete();
+        $this->locationRepository->delete($location);
     }
 }
