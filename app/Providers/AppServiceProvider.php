@@ -9,7 +9,6 @@ use App\Contracts\ChatServiceInterface;
 use App\Contracts\FeedbackServiceInterface;
 use App\Contracts\NlpSearchPreprocessingServiceInterface;
 use App\Contracts\OrderServiceInterface;
-use App\Contracts\ProductSearcherInterface;
 use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\SellerServiceInterface;
@@ -37,7 +36,6 @@ use App\Services\NlpSearchPreprocessingService;
 use App\Services\OrderService;
 use App\Services\Product\CachedProductService;
 use App\Services\Product\ProductService;
-use App\Services\Product\ScoutProductSearcher;
 use App\Services\RecommendationService;
 use App\Services\SellerService;
 use Carbon\CarbonImmutable;
@@ -62,7 +60,6 @@ class AppServiceProvider extends ServiceProvider
         LocationServiceInterface::class => LocationService::class,
         SellerServiceInterface::class => SellerService::class,
         ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
-        ProductSearcherInterface::class => ScoutProductSearcher::class,
         AnalyticsServiceInterface::class => AnalyticsService::class,
     ];
 
