@@ -29,6 +29,10 @@ class AnalyticsService implements AnalyticsServiceInterface
     {
         $stats = $this->orderRepository->getSalesStatsByCurrency();
 
+        if (! $stats) {
+            return collect();
+        }
+
         return collect([
             [
                 'currency' => $stats->currency,

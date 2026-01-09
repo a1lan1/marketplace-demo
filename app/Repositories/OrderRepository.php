@@ -51,10 +51,10 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function create(User $buyer, Money $totalAmount): Order
     {
-        /** @var Order $order */
-        $order = $buyer->orders()->create(['total_amount' => $totalAmount]);
-
-        return $order;
+        return Order::create([
+            'user_id' => $buyer->id,
+            'total_amount' => $totalAmount,
+        ]);
     }
 
     public function attachProducts(Order $order, array $attachments): void

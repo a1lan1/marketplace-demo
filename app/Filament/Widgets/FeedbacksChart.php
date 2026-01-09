@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Models\Feedback;
+use App\Contracts\Repositories\FeedbackRepositoryInterface;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Auth;
 use Override;
 
-class ReviewsChart extends ChartWidget
+class FeedbacksChart extends ChartWidget
 {
     protected ?string $heading = 'Review Sentiments (Geo Collector)';
 
     #[Override]
     protected function getData(): array
     {
-        $data = Feedback::query()
-            ->selectRaw('count(*) as total, sentiment')
-            ->groupBy('sentiment')
-            ->pluck('total', 'sentiment')
-            ->toArray();
+        /** @var FeedbackRepositoryInterface $feedbackRepository */
+        $feedbackRepository = resolve(FeedbackRepositoryInterface::class);
+        $data = $feedbackRepository->getSentimentCountsForUser(Auth::id());
 
         $positive = $data['positive'] ?? 0;
         $neutral = $data['neutral'] ?? 0;

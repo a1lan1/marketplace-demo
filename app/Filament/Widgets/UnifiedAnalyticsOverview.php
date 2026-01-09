@@ -16,7 +16,7 @@ class UnifiedAnalyticsOverview extends BaseWidget
     #[Override]
     protected function getStats(): array
     {
-        $analyticsService = app(AnalyticsServiceInterface::class);
+        $analyticsService = resolve(AnalyticsServiceInterface::class);
         $revenue = $analyticsService->getTotalRevenueInUsd();
         $salesByCurrency = $analyticsService->getSalesByCurrency();
 

@@ -44,9 +44,11 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function store(ProductDTO $productDTO): Product
     {
-        /** @var Product $product */
-        $product = $productDTO->user->products()->updateOrCreate(
-            ['id' => $productDTO->productId],
+        $product = Product::updateOrCreate(
+            [
+                'id' => $productDTO->productId,
+                'user_id' => $productDTO->user->id,
+            ],
             $productDTO->toArray()
         );
 
