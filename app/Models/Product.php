@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\MediaCollection;
+use App\Models\Builders\ProductBuilder;
 use App\Observers\ProductObserver;
 use App\Traits\HasFeedback;
 use Carbon\CarbonImmutable;
@@ -12,9 +13,9 @@ use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,30 +41,32 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read string $cover_image
- * @property-read Collection<int, Feedback> $feedbacks
+ * @property-read EloquentCollection<int, Feedback> $feedbacks
  * @property-read int|null $feedbacks_count
  * @property-read SpatieMediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read User $seller
  *
  * @method static ProductFactory factory($count = null, $state = [])
- * @method static Builder<static>|Product newModelQuery()
- * @method static Builder<static>|Product newQuery()
- * @method static Builder<static>|Product query()
- * @method static Builder<static>|Product whereCreatedAt($value)
- * @method static Builder<static>|Product whereDescription($value)
- * @method static Builder<static>|Product whereId($value)
- * @method static Builder<static>|Product whereImageModerationStatus($value)
- * @method static Builder<static>|Product whereImageTags($value)
- * @method static Builder<static>|Product whereName($value)
- * @method static Builder<static>|Product wherePrice($value)
- * @method static Builder<static>|Product whereStock($value)
- * @method static Builder<static>|Product whereUpdatedAt($value)
- * @method static Builder<static>|Product whereUserId($value)
+ * @method static ProductBuilder<static>|Product newModelQuery()
+ * @method static ProductBuilder<static>|Product newQuery()
+ * @method static ProductBuilder<static>|Product query()
+ * @method static ProductBuilder<static>|Product recommended(array $productIds)
+ * @method static ProductBuilder<static>|Product whereCreatedAt($value)
+ * @method static ProductBuilder<static>|Product whereDescription($value)
+ * @method static ProductBuilder<static>|Product whereId($value)
+ * @method static ProductBuilder<static>|Product whereImageModerationStatus($value)
+ * @method static ProductBuilder<static>|Product whereImageTags($value)
+ * @method static ProductBuilder<static>|Product whereName($value)
+ * @method static ProductBuilder<static>|Product wherePrice($value)
+ * @method static ProductBuilder<static>|Product whereStock($value)
+ * @method static ProductBuilder<static>|Product whereUpdatedAt($value)
+ * @method static ProductBuilder<static>|Product whereUserId($value)
  *
  * @mixin \Eloquent
  */
 #[ObservedBy([ProductObserver::class])]
+#[UseEloquentBuilder(ProductBuilder::class)]
 class Product extends Model implements HasMedia
 {
     use HasFactory;

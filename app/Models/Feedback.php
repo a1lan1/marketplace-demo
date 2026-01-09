@@ -6,11 +6,12 @@ namespace App\Models;
 
 use App\Contracts\Sentimentable;
 use App\Enums\SentimentEnum;
+use App\Models\Builders\FeedbackBuilder;
 use App\Observers\FeedbackObserver;
 use Carbon\CarbonImmutable;
 use Database\Factories\FeedbackFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,25 +32,26 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property-read Model|\Eloquent $feedbackable
  *
  * @method static FeedbackFactory factory($count = null, $state = [])
- * @method static Builder<static>|Feedback forEntity(string $type, int $id)
- * @method static Builder<static>|Feedback forUser(int $userId)
- * @method static Builder<static>|Feedback newModelQuery()
- * @method static Builder<static>|Feedback newQuery()
- * @method static Builder<static>|Feedback query()
- * @method static Builder<static>|Feedback whereComment($value)
- * @method static Builder<static>|Feedback whereCreatedAt($value)
- * @method static Builder<static>|Feedback whereFeedbackableId($value)
- * @method static Builder<static>|Feedback whereFeedbackableType($value)
- * @method static Builder<static>|Feedback whereId($value)
- * @method static Builder<static>|Feedback whereIsVerifiedPurchase($value)
- * @method static Builder<static>|Feedback whereRating($value)
- * @method static Builder<static>|Feedback whereSentiment($value)
- * @method static Builder<static>|Feedback whereUpdatedAt($value)
- * @method static Builder<static>|Feedback whereUserId($value)
+ * @method static FeedbackBuilder<static>|Feedback forEntity(string $type, int $id)
+ * @method static FeedbackBuilder<static>|Feedback forUser(int $userId)
+ * @method static FeedbackBuilder<static>|Feedback newModelQuery()
+ * @method static FeedbackBuilder<static>|Feedback newQuery()
+ * @method static FeedbackBuilder<static>|Feedback query()
+ * @method static FeedbackBuilder<static>|Feedback whereComment($value)
+ * @method static FeedbackBuilder<static>|Feedback whereCreatedAt($value)
+ * @method static FeedbackBuilder<static>|Feedback whereFeedbackableId($value)
+ * @method static FeedbackBuilder<static>|Feedback whereFeedbackableType($value)
+ * @method static FeedbackBuilder<static>|Feedback whereId($value)
+ * @method static FeedbackBuilder<static>|Feedback whereIsVerifiedPurchase($value)
+ * @method static FeedbackBuilder<static>|Feedback whereRating($value)
+ * @method static FeedbackBuilder<static>|Feedback whereSentiment($value)
+ * @method static FeedbackBuilder<static>|Feedback whereUpdatedAt($value)
+ * @method static FeedbackBuilder<static>|Feedback whereUserId($value)
  *
  * @mixin \Eloquent
  */
 #[ObservedBy([FeedbackObserver::class])]
+#[UseEloquentBuilder(FeedbackBuilder::class)]
 class Feedback extends Model implements Sentimentable
 {
     use HasFactory;
@@ -83,26 +85,6 @@ class Feedback extends Model implements Sentimentable
             'is_verified_purchase' => 'boolean',
             'sentiment' => SentimentEnum::class,
         ];
-    }
-
-    protected function scopeForEntity(Builder $query, string $type, int $id): void
-    {
-        $query->where('feedbackable_type', $type)
-            ->where('feedbackable_id', $id);
-    }
-
-    protected function scopeForUser(Builder $query, int $userId): void
-    {
-        $query->where(function (Builder $query) use ($userId): void {
-            /** @var Builder|Feedback $query */
-            $query->forEntity(User::class, $userId);
-
-            $query->orWhereHasMorph(
-                'feedbackable',
-                [Product::class],
-                fn (Builder $productQuery) => $productQuery->where('user_id', $userId)
-            );
-        });
     }
 
     public function getFeedbackableSlug(): ?string

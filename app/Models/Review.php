@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\Sentimentable;
+use App\DTO\Geo\ReviewFilterData;
 use App\Enums\Geo\ReviewSourceEnum;
 use App\Enums\SentimentEnum;
+use App\Models\Builders\ReviewBuilder;
 use App\Observers\ReviewObserver;
 use Carbon\CarbonImmutable;
 use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,25 +32,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property CarbonImmutable|null $updated_at
  * @property-read Location $location
  *
+ * @method static ReviewBuilder<static>|Review applyFilters(ReviewFilterData $filters)
  * @method static ReviewFactory factory($count = null, $state = [])
- * @method static Builder<static>|Review newModelQuery()
- * @method static Builder<static>|Review newQuery()
- * @method static Builder<static>|Review query()
- * @method static Builder<static>|Review whereAuthorName($value)
- * @method static Builder<static>|Review whereCreatedAt($value)
- * @method static Builder<static>|Review whereExternalId($value)
- * @method static Builder<static>|Review whereId($value)
- * @method static Builder<static>|Review whereLocationId($value)
- * @method static Builder<static>|Review wherePublishedAt($value)
- * @method static Builder<static>|Review whereRating($value)
- * @method static Builder<static>|Review whereSentiment($value)
- * @method static Builder<static>|Review whereSource($value)
- * @method static Builder<static>|Review whereText($value)
- * @method static Builder<static>|Review whereUpdatedAt($value)
+ * @method static ReviewBuilder<static>|Review forLocation(?int $locationId)
+ * @method static ReviewBuilder<static>|Review forUser(User $user)
+ * @method static ReviewBuilder<static>|Review newModelQuery()
+ * @method static ReviewBuilder<static>|Review newQuery()
+ * @method static ReviewBuilder<static>|Review query()
+ * @method static ReviewBuilder<static>|Review whereAuthorName($value)
+ * @method static ReviewBuilder<static>|Review whereCreatedAt($value)
+ * @method static ReviewBuilder<static>|Review whereExternalId($value)
+ * @method static ReviewBuilder<static>|Review whereId($value)
+ * @method static ReviewBuilder<static>|Review whereLocationId($value)
+ * @method static ReviewBuilder<static>|Review wherePublishedAt($value)
+ * @method static ReviewBuilder<static>|Review whereRating($value)
+ * @method static ReviewBuilder<static>|Review whereSentiment($value)
+ * @method static ReviewBuilder<static>|Review whereSource($value)
+ * @method static ReviewBuilder<static>|Review whereText($value)
+ * @method static ReviewBuilder<static>|Review whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
 #[ObservedBy([ReviewObserver::class])]
+#[UseEloquentBuilder(ReviewBuilder::class)]
 class Review extends Model implements Sentimentable
 {
     use HasFactory;
