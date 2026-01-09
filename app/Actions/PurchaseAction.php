@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\Contracts\BalanceServiceInterface;
 use App\Contracts\Repositories\OrderRepositoryInterface;
+use App\Contracts\Repositories\ProductRepositoryInterface;
 use App\DTO\PurchaseDTO;
 use App\Events\OrderCreated;
 use App\Exceptions\InsufficientFundsException;
@@ -29,7 +30,8 @@ readonly class PurchaseAction
         private CartCalculator $cartCalculator,
         private InventoryService $inventoryService,
         private PayoutDistributor $payoutDistributor,
-        private OrderRepositoryInterface $orderRepository
+        private OrderRepositoryInterface $orderRepository,
+        private ProductRepositoryInterface $productRepository
     ) {}
 
     /**
@@ -44,11 +46,7 @@ readonly class PurchaseAction
 
         $order = DB::transaction(function () use ($purchaseDTO, $productIds): Order {
             // Lock products for update to prevent concurrent purchases of the same stock
-            $products = Product::with('seller')
-                ->whereIn('id', $productIds)
-                ->lockForUpdate()
-                ->get()
-                ->keyBy('id');
+            $products = $this->productRepository->getByIdsLocked($productIds);
 
             // Validate Stock
             $this->inventoryService->ensureStock($purchaseDTO->cart, $products);
