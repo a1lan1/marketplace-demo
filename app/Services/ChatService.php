@@ -5,35 +5,22 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\ChatServiceInterface;
+use App\Contracts\Repositories\MessageRepositoryInterface;
 use App\Models\Order;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class ChatService implements ChatServiceInterface
 {
+    public function __construct(protected MessageRepositoryInterface $messageRepository) {}
+
     public function getOrderMessages(Order $order): Collection
     {
-        return $order->messages()
-            ->select(['id', 'order_id', 'user_id', 'message', 'created_at'])
-            ->with([
-                'user' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-            ])
-            ->get();
+        return $this->messageRepository->getForOrder($order);
     }
 
     public function getPaginatedMessages(Order $order, int $perPage = 50): LengthAwarePaginator
     {
-        return $order->messages()
-            ->select(['id', 'order_id', 'user_id', 'message', 'created_at'])
-            ->with([
-                'user' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-            ])
-            ->latest()
-            ->paginate($perPage);
+        return $this->messageRepository->getPaginatedForOrder($order, $perPage);
     }
 }

@@ -13,6 +13,7 @@ use App\Contracts\ProductServiceInterface;
 use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\Repositories\FeedbackRepositoryInterface;
 use App\Contracts\Repositories\LocationRepositoryInterface;
+use App\Contracts\Repositories\MessageRepositoryInterface;
 use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\Contracts\Repositories\ProductRepositoryInterface;
 use App\Contracts\SellerServiceInterface;
@@ -27,6 +28,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Repositories\FeedbackRepository;
 use App\Repositories\LocationRepository;
+use App\Repositories\MessageRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Analytics\AnalyticsService;
@@ -74,6 +76,7 @@ class AppServiceProvider extends ServiceProvider
         FeedbackRepositoryInterface::class => FeedbackRepository::class,
         LocationRepositoryInterface::class => LocationRepository::class,
         ProductRepositoryInterface::class => ProductRepository::class,
+        MessageRepositoryInterface::class => MessageRepository::class,
     ];
 
     /**
