@@ -13,22 +13,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-activities', [UserActivityController::class, 'store'])
-    ->middleware('throttle:120,1')
+    ->middleware('throttle:activities')
     ->name('api.user-activities.store');
 
 Route::middleware('auth:sanctum')
     ->get('user', fn (Request $request) => $request->user());
 
 Route::get('catalog/search', [ProductController::class, 'autocomplete'])
-    ->middleware('throttle:20,1')
+    ->middleware('throttle:catalog')
     ->name('api.catalog.autocomplete');
 
 Route::get('{type}/{id}/feedbacks', [FeedbackController::class, 'index'])
-    ->middleware('throttle:60,1')
+    ->middleware('throttle:feedbacks')
     ->name('api.feedbacks.index');
 
 Route::get('currency/rates', [CurrencyController::class, 'rates'])
-    ->middleware('throttle:60,1')
+    ->middleware('throttle:currency')
     ->name('currency.rates');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::prefix('chat')->group(function (): void {
         Route::get('{order}/messages', [ChatController::class, 'getMessages'])->name('api.orders.messages.index');
         Route::post('{order}', [ChatController::class, 'store'])
-            ->middleware('throttle:60,1')
+            ->middleware('throttle:chat')
             ->name('api.chat.store');
     });
 
@@ -53,6 +53,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
 
     Route::get('feedbacks', [FeedbackController::class, 'list'])->name('api.feedbacks.list');
     Route::post('feedbacks', [FeedbackController::class, 'store'])
-        ->middleware('throttle:5,1')
+        ->middleware('throttle:feedbacks')
         ->name('api.feedbacks.store');
 });

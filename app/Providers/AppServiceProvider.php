@@ -58,10 +58,13 @@ use App\Services\Product\ProductService;
 use App\Services\RecommendationService;
 use App\Services\SellerService;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -147,7 +150,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(FeedbackableMapInterface::class, function () {
+        $this->app->singleton(function (): FeedbackableMapInterface {
             return new FeedbackableMap([
                 'product' => Product::class,
                 'seller' => User::class,
@@ -164,5 +167,34 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventAccessingMissingAttributes(! $this->app->isProduction());
+
+        $this->configureRateLimiting();
+    }
+
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('orders', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('feedbacks', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('chat', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('catalog', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('currency', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('activities', function (Request $request) {
+            return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
+        });
     }
 }
