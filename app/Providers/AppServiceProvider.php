@@ -19,6 +19,7 @@ use App\Contracts\Repositories\ProductRepositoryInterface;
 use App\Contracts\Repositories\ResponseTemplateRepositoryInterface;
 use App\Contracts\Repositories\ReviewRepositoryInterface;
 use App\Contracts\Repositories\TransactionRepositoryInterface;
+use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
@@ -37,6 +38,7 @@ use App\Repositories\ProductRepository;
 use App\Repositories\ResponseTemplateRepository;
 use App\Repositories\ReviewRepository;
 use App\Repositories\TransactionRepository;
+use App\Repositories\UserRepository;
 use App\Services\Analytics\AnalyticsService;
 use App\Services\BalanceService;
 use App\Services\ChatService;
@@ -85,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
         LocationRepositoryInterface::class => LocationRepository::class,
         ProductRepositoryInterface::class => ProductRepository::class,
         MessageRepositoryInterface::class => MessageRepository::class,
+        UserRepositoryInterface::class => UserRepository::class,
         TransactionRepositoryInterface::class => TransactionRepository::class,
     ];
 
