@@ -40,4 +40,26 @@ class PurchaseRequest extends FormRequest
             'cart.*.quantity.min' => 'The quantity for each product must be at least 1.',
         ];
     }
+
+    /**
+     * Get the body parameters for the request.
+     *
+     * @return array<string, array{description: string, example?: mixed}>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'cart' => [
+                'description' => 'List of items to purchase',
+            ],
+            'cart.*.product_id' => [
+                'description' => 'The ID of the product to purchase',
+                'example' => 123,
+            ],
+            'cart.*.quantity' => [
+                'description' => 'The quantity of the product',
+                'example' => 2,
+            ],
+        ];
+    }
 }
