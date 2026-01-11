@@ -19,11 +19,7 @@ class FeedbackResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'author' => [
-                'id' => $this->author->id,
-                'name' => $this->author->name,
-                'avatar' => $this->author->avatar,
-            ],
+            'author' => UserResource::make($this->whenLoaded('author')),
             'rating' => $this->rating,
             'comment' => $this->comment,
             'sentiment' => $this->sentiment,
