@@ -64,6 +64,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -167,6 +168,17 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventAccessingMissingAttributes(! $this->app->isProduction());
+
+        Gate::define('viewApiDocs', function (?User $user) {
+            if (! $this->app->isProduction()) {
+                return true;
+            }
+
+            return $user && in_array($user->email, [
+                'test@example.com',
+                'demo@example.com',
+            ]);
+        });
 
         $this->configureRateLimiting();
     }
