@@ -7,6 +7,7 @@ namespace App\Services\Analytics;
 use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
+use App\DTO\SalesStatsDTO;
 use App\Enums\OrderStatusEnum;
 use Cknow\Money\Money;
 use Illuminate\Support\Collection;
@@ -29,7 +30,7 @@ class AnalyticsService implements AnalyticsServiceInterface
     {
         $stats = $this->orderRepository->getSalesStatsByCurrency();
 
-        if (! $stats) {
+        if (! $stats instanceof SalesStatsDTO) {
             return collect();
         }
 

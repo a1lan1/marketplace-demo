@@ -169,12 +169,12 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventAccessingMissingAttributes(! $this->app->isProduction());
 
-        Gate::define('viewApiDocs', function (?User $user) {
+        Gate::define('viewApiDocs', function (?User $user): bool {
             if (! $this->app->isProduction()) {
                 return true;
             }
 
-            return $user && in_array($user->email, [
+            return $user instanceof User && in_array($user->email, [
                 'test@example.com',
                 'demo@example.com',
             ]);
