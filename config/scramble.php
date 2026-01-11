@@ -1,8 +1,5 @@
 <?php
 
-use Dedoc\Scramble\Support\Generator\OpenApi;
-use Dedoc\Scramble\Support\Generator\SecurityScheme;
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -17,6 +14,8 @@ return [
         'title' => 'Marketplace API',
         'path' => 'docs/api',
         'api_path' => 'api',
+        'theme' => 'dark',
+        'custom_css' => public_path('css/scramble-dark.css'),
     ],
 
     'servers' => [

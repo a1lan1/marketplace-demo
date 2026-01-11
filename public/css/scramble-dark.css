@@ -1,0 +1,17 @@
+:root {
+    --sl-theme-base-color: #1f2937;
+    --sl-theme-surface-color: #111827;
+    --sl-theme-text-color: #f9fafb;
+    --sl-theme-interactive-color: #3b82f6;
+}
+
+.stoplight-elements {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+}
+
+.stoplight-rendered-markdown,
+.api-docs {
+    background: #111827 !important;
+    color: #f9fafb !important;
+}
