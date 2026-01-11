@@ -45,6 +45,7 @@ export interface User {
   balance: MoneyData;
   created_at: string;
   updated_at: string;
+  seller?: User;
 }
 
 export interface Seller extends User {
@@ -106,31 +107,28 @@ export interface PaginationLink {
   active: boolean;
 }
 
-export interface Pagination<T> {
-  current_page: number;
-  data: T[];
-  first_page_url: string;
-  from: number;
-  last_page: number;
-  last_page_url: string;
-  links: PaginationLink[];
-  next_page_url: string | null;
-  path: string;
-  per_page: number;
-  prev_page_url: string | null;
-  to: number;
-  total: number;
-}
-
-export interface PaginationBasic<T> {
-  data: T[];
-  meta: PaginationMeta;
-}
-
 export interface PaginationMeta {
   current_page: number;
   last_page: number;
   total: number;
+  links: PaginationLink[];
+  per_page: number;
+  path: string;
+  from: number | null;
+  to: number | null;
+}
+
+export interface PaginationLinks {
+  first: string | null;
+  last: string | null;
+  prev: string | null;
+  next: string | null;
+}
+
+export interface Pagination<T> {
+  data: T[];
+  meta: PaginationMeta;
+  links: PaginationLinks;
 }
 
 export interface FlashMessage {

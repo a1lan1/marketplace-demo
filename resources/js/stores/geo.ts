@@ -1,4 +1,4 @@
-import { Feedback, PaginationBasic, PaginationMeta } from '@/types'
+import { Feedback, Pagination } from '@/types'
 import type {
   Location,
   LocationForm,
@@ -36,7 +36,7 @@ interface State {
   reviewsLoading: boolean;
   feedbacksLoading: boolean;
   templatesLoading: boolean;
-  pagination: PaginationMeta;
+  pagination: Pagination<Review>['meta'] | null;
 }
 
 export const useGeoStore = defineStore('geo', {
@@ -52,11 +52,7 @@ export const useGeoStore = defineStore('geo', {
     reviewsLoading: false,
     feedbacksLoading: false,
     templatesLoading: false,
-    pagination: {
-      current_page: 1,
-      last_page: 1,
-      total: 0
-    }
+    pagination: null
   }),
 
   actions: {
@@ -128,15 +124,11 @@ export const useGeoStore = defineStore('geo', {
     async fetchReviews(filters: ReviewFilters = {}) {
       this.reviewsLoading = true
       try {
-        const { data } = await this.$axios.get<PaginationBasic<Review>>('/geo/reviews', {
+        const { data } = await this.$axios.get<Pagination<Review>>('/geo/reviews', {
           params: filters
         })
         this.reviews = data.data
-        this.pagination = {
-          current_page: data.meta.current_page,
-          last_page: data.meta.last_page,
-          total: data.meta.total
-        }
+        this.pagination = data.meta
       } catch (e: any) {
         this.$snackbar.error({
           text: e.response?.data?.message || 'Failed to fetch reviews'
@@ -148,7 +140,7 @@ export const useGeoStore = defineStore('geo', {
     async fetchFeedbacks(filters: any = {}) {
       this.feedbacksLoading = true
       try {
-        const { data } = await this.$axios.get<PaginationBasic<Feedback>>('/feedbacks', {
+        const { data } = await this.$axios.get<Pagination<Feedback>>('/feedbacks', {
           params: filters
         })
         this.feedbacks = data.data
