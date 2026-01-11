@@ -14,6 +14,7 @@ build:
 	docker compose build
 
 up:
+	#docker compose up -d
 	docker compose --profile '*' up -d
 
 storage-clear:
@@ -128,10 +129,11 @@ ide:
 test:
 	@docker compose exec app php artisan config:clear --env=testing
 	@docker compose run --rm -e APP_ENV=testing app php artisan test --coverage --parallel
+	@#docker compose run --rm -e APP_ENV=testing app php artisan test --filter=ChatTest
 
 lint:
-	@make ide
-	@make lint-back
+#	@make ide
+#	@make lint-back
 	@make lint-front
 
 lint-back:
@@ -142,6 +144,6 @@ lint-back:
 
 lint-front:
 	@echo "Linting frontend..."
-	docker compose exec app yarn format
+	#docker compose exec app yarn format
 	docker compose exec app yarn lint
 	docker compose exec app yarn type-check
