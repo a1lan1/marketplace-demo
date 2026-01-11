@@ -1,8 +1,8 @@
 <?php
 
 use App\Contracts\OrderServiceInterface;
+use App\Models\Order;
 use App\Models\User;
-use Illuminate\Support\Collection;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
@@ -12,7 +12,7 @@ it('returns user orders', function (): void {
     $user = User::factory()->create();
     actingAs($user, 'sanctum');
 
-    $orders = new Collection(['order1', 'order2']);
+    $orders = Order::factory()->count(2)->make();
 
     mock(OrderServiceInterface::class, function ($mock) use ($orders): void {
         $mock->shouldReceive('getOrdersForUser')->once()->andReturn($orders);
@@ -20,5 +20,5 @@ it('returns user orders', function (): void {
 
     getJson(route('api.user.orders.index'))
         ->assertOk()
-        ->assertJson($orders->all());
+        ->assertJson($orders->map(fn ($order): array => ['id' => $order->id])->all());
 });
