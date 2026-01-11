@@ -33,7 +33,11 @@ test('authorized users can get chat messages', function (string $role): void {
     actingAs($user, 'sanctum')
         ->getJson(route('api.orders.messages.index', $this->order))
         ->assertOk()
-        ->assertJsonStructure(['data', 'total', 'per_page', 'current_page'])
+        ->assertJsonStructure([
+            'data',
+            'meta' => ['total', 'per_page', 'current_page'],
+            'links',
+        ])
         ->assertJsonCount(5, 'data');
 })->with(['admin', 'buyer', 'seller']);
 

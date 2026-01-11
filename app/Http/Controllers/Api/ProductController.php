@@ -7,26 +7,26 @@ namespace App\Http\Controllers\Api;
 use App\Contracts\ProductServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductController extends Controller
 {
     public function __construct(protected ProductServiceInterface $productService) {}
 
-    public function autocomplete(Request $request): JsonResponse
+    public function autocomplete(Request $request): AnonymousResourceCollection
     {
         $searchQuery = $request->input('query');
 
         $products = $this->productService->getAutocompleteSuggestions($searchQuery);
 
-        return response()->json($products);
+        return ProductResource::collection($products);
     }
 
-    public function getRecommendedProducts(Request $request): JsonResponse
+    public function getRecommendedProducts(Request $request): AnonymousResourceCollection
     {
         $recommendations = $this->productService->getRecommendedProducts($request->user()->id);
 
-        return ProductResource::collection($recommendations)->response();
+        return ProductResource::collection($recommendations);
     }
 }

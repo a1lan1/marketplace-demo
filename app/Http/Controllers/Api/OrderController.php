@@ -6,8 +6,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Contracts\OrderServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -18,10 +19,10 @@ class OrderController extends Controller
         private readonly OrderServiceInterface $orderService,
     ) {}
 
-    public function getUserOrders(): JsonResponse
+    public function getUserOrders(): AnonymousResourceCollection
     {
         $orders = $this->orderService->getOrdersForUser(Auth::user());
 
-        return response()->json($orders);
+        return OrderResource::collection($orders);
     }
 }

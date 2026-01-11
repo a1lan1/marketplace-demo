@@ -16,6 +16,8 @@ class CurrencyService implements CurrencyServiceInterface
     /**
      * Get exchange rates for a given base currency.
      *
+     * @return array{amount: float, base: string, date: string, rates: array<string, float>}
+     *
      * @throws Exception
      */
     public function getRates(string $base = 'USD'): array

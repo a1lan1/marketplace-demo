@@ -8,10 +8,12 @@ use App\Actions\Chat\SendMessageAction;
 use App\Contracts\ChatServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SendMessageRequest;
+use App\Http\Resources\MessageResource;
 use App\Models\Order;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ChatController extends Controller
 {
@@ -25,13 +27,13 @@ class ChatController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function getMessages(Order $order): JsonResponse
+    public function getMessages(Order $order): AnonymousResourceCollection
     {
         $this->authorize('viewChat', $order);
 
         $messages = $this->chatService->getPaginatedMessages($order);
 
-        return response()->json($messages);
+        return MessageResource::collection($messages);
     }
 
     /**
