@@ -92,3 +92,40 @@ jobs:
 
       - name: Run tests
         run: make test
+
+  docs:
+    name: 📚 API Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Setup .env file
+        run: cp .env.example .env
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for app container
+        run: make wait-for-app
+
+      - name: Install Composer dependencies
+        run: docker compose exec -T app composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Generate API Docs
+        run: docker compose exec -T app php artisan scramble:export > openapi.json
+
+      - name: Upload API Docs Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec
+          path: openapi.json
+          retention-days: 7
