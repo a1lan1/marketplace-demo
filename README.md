@@ -45,6 +45,7 @@ This is a demo web application for marketplace. The development environment is f
 ## Available Services
 
 - **Application**: [http://localhost:8585](http://localhost:8585)
+- **API Documentation**: [http://localhost:8585/docs/api](http://localhost:8585/docs/api)
 - **Geo Dashboard**: [http://localhost:8585/geo/dashboard](http://localhost:8585/geo/dashboard) (for sellers)
 - **Filament Admin Panel**: [http://localhost:8585/admin](http://localhost:8585/admin)
 - **Horizon Dashboard**: [http://localhost:8585/horizon](http://localhost:8585/horizon)
@@ -59,6 +60,20 @@ This is a demo web application for marketplace. The development environment is f
 - **Image Analysis Service (Python/FastAPI)**: [http://localhost:8002](http://localhost:8002)
 - **Geo Collector Service (Python/FastAPI)**: [http://localhost:8003](http://localhost:8003)
 - **Currency Service (Go/Frankfurter API)**: [http://localhost:8004](http://localhost:8004)
+
+### API Documentation
+
+The project uses **Scramble** for automatic API documentation generation.
+
+- **Local Development**: Access the interactive docs at `/docs/api`.
+- **Production**: Access is restricted to administrators via `Gate::define('viewApiDocs')`.
+- **CI/CD**: The documentation is automatically validated and exported to `openapi.json` on every push.
+
+To manually export the OpenAPI specification:
+
+```bash
+docker compose exec app php artisan scramble:export > openapi.json
+```
 
 ### Grafana Dashboard Charts
 
