@@ -24,6 +24,7 @@ import {
   index as productsIndex
 } from '@/routes/products'
 import { defaultMethod as prometheus } from '@/routes/prometheus'
+import scramble from '@/routes/scramble'
 import type { NavItem } from '@/types'
 import { Link } from '@inertiajs/vue3'
 import {
@@ -124,6 +125,11 @@ const devNavItems: NavItem[] = [
   {
     title: 'Prometheus Metrics',
     href: prometheus(),
+    icon: LayoutGrid
+  },
+  {
+    title: 'Scramble Docs',
+    href: scramble.docs.ui(),
     icon: LayoutGrid
   }
 ]
