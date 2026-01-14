@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CurrencyController;
+use App\Http\Controllers\Api\CurrentUserController;
 use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\Api\Geo\LocationController;
 use App\Http\Controllers\Api\Geo\ResponseTemplateController;
@@ -9,15 +10,11 @@ use App\Http\Controllers\Api\Geo\ReviewController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserActivityController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user-activities', [UserActivityController::class, 'store'])
     ->middleware('throttle:activities')
     ->name('api.user-activities.store');
-
-Route::middleware('auth:sanctum')
-    ->get('user', fn (Request $request) => $request->user());
 
 Route::get('catalog/search', [ProductController::class, 'autocomplete'])
     ->middleware('throttle:catalog')
@@ -32,6 +29,7 @@ Route::get('currency/rates', [CurrencyController::class, 'rates'])
     ->name('currency.rates');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
+    Route::get('user', CurrentUserController::class);
     Route::get('user/orders', [OrderController::class, 'getUserOrders'])->name('api.user.orders.index');
 
     Route::prefix('chat')->group(function (): void {
