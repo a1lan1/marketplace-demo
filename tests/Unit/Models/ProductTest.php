@@ -70,3 +70,19 @@ it('returns a gravatar if no cover image is present', function (): void {
     expect($coverImageUrl)->toContain('gravatar.com');
     expect($coverImageUrl)->toContain(md5(strtolower(trim($product->name))));
 });
+
+it('can filter and order by recommended product IDs', function (): void {
+    $products = Product::factory(3)->create();
+    $ids = $products->pluck('id')->toArray();
+
+    // Shuffle the IDs to test ordering
+    $recommendedIds = collect($ids)->shuffle()->toArray();
+
+    $result = Product::recommended($recommendedIds)->get();
+
+    // Assert that all recommended products are returned
+    $this->assertCount(3, $result);
+
+    // Assert that the products are in the specified order
+    expect($result->pluck('id')->toArray())->toBe($recommendedIds);
+});
