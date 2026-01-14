@@ -38,7 +38,6 @@ class FeedbackRepository implements FeedbackRepositoryInterface
                 'author' => function (Relation $query): void {
                     $query->select('id', 'name')->with('media');
                 },
-                'feedbackable',
             ])
             ->latest()
             ->paginate($perPage, ['*'], 'page', $page);

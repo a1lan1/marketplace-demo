@@ -14,7 +14,10 @@ class ResponseTemplateRepository implements ResponseTemplateRepositoryInterface
 {
     public function getForUser(User $user): Collection
     {
-        return $user->responseTemplates()->latest()->get();
+        return $user->responseTemplates()
+            ->select(['id', 'seller_id', 'title', 'body', 'created_at'])
+            ->latest()
+            ->get();
     }
 
     public function store(ResponseTemplateData $data): ResponseTemplate

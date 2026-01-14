@@ -81,7 +81,9 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getByIdsLocked(array $ids): Collection
     {
-        return Product::with('seller')
+        return Product::with(['seller' => function (Relation $query): void {
+            $query->select('id', 'name')->with('media');
+        }])
             ->whereIn('id', $ids)
             ->lockForUpdate()
             ->get()

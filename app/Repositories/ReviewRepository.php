@@ -30,6 +30,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getForUserAndLocation(User $user, ?int $locationId = null): Collection
     {
         return Review::query()
+            ->select(['id', 'location_id', 'source', 'author_name', 'text', 'rating', 'sentiment', 'published_at', 'created_at'])
             ->forUser($user)
             ->forLocation($locationId)
             ->get();
