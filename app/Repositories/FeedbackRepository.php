@@ -10,7 +10,6 @@ use App\Enums\SentimentEnum;
 use App\Models\Feedback;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class FeedbackRepository implements FeedbackRepositoryInterface
@@ -18,13 +17,9 @@ class FeedbackRepository implements FeedbackRepositoryInterface
     public function getForEntity(string $modelClass, int $entityId, int $perPage = 15, int $page = 1): LengthAwarePaginator
     {
         return Feedback::query()
-            ->forEntity($modelClass, $entityId)
             ->select(['id', 'user_id', 'feedbackable_type', 'feedbackable_id', 'rating', 'comment', 'sentiment', 'is_verified_purchase', 'created_at'])
-            ->with([
-                'author' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-            ])
+            ->forEntity($modelClass, $entityId)
+            ->withAuthorDetails()
             ->latest()
             ->paginate($perPage, ['*'], 'page', $page);
     }
@@ -32,13 +27,9 @@ class FeedbackRepository implements FeedbackRepositoryInterface
     public function getForUser(int $userId, int $perPage = 15, int $page = 1): LengthAwarePaginator
     {
         return Feedback::query()
-            ->forUser($userId)
             ->select(['id', 'user_id', 'feedbackable_type', 'feedbackable_id', 'rating', 'comment', 'sentiment', 'is_verified_purchase', 'created_at'])
-            ->with([
-                'author' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-            ])
+            ->forUser($userId)
+            ->withAuthorDetails()
             ->latest()
             ->paginate($perPage, ['*'], 'page', $page);
     }

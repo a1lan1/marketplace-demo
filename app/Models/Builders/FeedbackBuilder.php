@@ -8,6 +8,7 @@ use App\Models\Feedback;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @template TModelClass of Feedback
@@ -33,5 +34,12 @@ class FeedbackBuilder extends Builder
                 fn (Builder $productQuery) => $productQuery->where('user_id', $userId)
             );
         });
+    }
+
+    public function withAuthorDetails(): self
+    {
+        return $this->with(['author' => function (Relation $query): void {
+            $query->select('id', 'name')->with('media');
+        }]);
     }
 }

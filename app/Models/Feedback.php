@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * @method static FeedbackFactory factory($count = null, $state = [])
  * @method static FeedbackBuilder<static>|Feedback forEntity(string $type, int $id)
  * @method static FeedbackBuilder<static>|Feedback forUser(int $userId)
+ * @method static FeedbackBuilder<static>|Feedback withAuthorDetails()
  * @method static FeedbackBuilder<static>|Feedback newModelQuery()
  * @method static FeedbackBuilder<static>|Feedback newQuery()
  * @method static FeedbackBuilder<static>|Feedback query()
