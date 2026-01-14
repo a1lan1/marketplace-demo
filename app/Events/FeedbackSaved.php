@@ -31,6 +31,8 @@ class FeedbackSaved implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
+        $this->feedback->loadAuthorDetails();
+
         return [
             'feedback' => new FeedbackResource($this->feedback),
         ];

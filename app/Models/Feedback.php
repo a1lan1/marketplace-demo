@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @property int $id
@@ -76,6 +77,13 @@ class Feedback extends Model implements Sentimentable
     public function feedbackable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function loadAuthorDetails(): self
+    {
+        return $this->loadMissing(['author' => function (Relation $query): void {
+            $query->select('id', 'name')->with('media');
+        }]);
     }
 
     protected function casts(): array

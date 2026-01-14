@@ -51,6 +51,8 @@ class FeedbackController extends Controller
 
         $feedback = $createFeedbackAction->execute($request->user(), $request->toDto());
 
-        return new FeedbackResource($feedback->load('author'));
+        return new FeedbackResource(
+            $feedback->loadAuthorDetails()
+        );
     }
 }
