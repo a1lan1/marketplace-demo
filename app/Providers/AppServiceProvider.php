@@ -41,8 +41,11 @@ use App\Repositories\ReviewRepository;
 use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
 use App\Services\Analytics\AnalyticsService;
+use App\Services\Analytics\CachedAnalyticsService;
 use App\Services\BalanceService;
+use App\Services\CachedRecommendationService;
 use App\Services\ChatService;
+use App\Services\Currency\CachedCurrencyService;
 use App\Services\Currency\CurrencyService;
 use App\Services\Feedback\CachedFeedbackService;
 use App\Services\Feedback\FeedbackableMap;
@@ -86,7 +89,6 @@ class AppServiceProvider extends ServiceProvider
         LocationServiceInterface::class => LocationService::class,
         SellerServiceInterface::class => SellerService::class,
         ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
-        AnalyticsServiceInterface::class => AnalyticsService::class,
         OrderRepositoryInterface::class => OrderRepository::class,
         FeedbackRepositoryInterface::class => FeedbackRepository::class,
         ReviewRepositoryInterface::class => ReviewRepository::class,
@@ -134,8 +136,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(function (): RecommendationServiceInterface {
-            return new RecommendationService(
-                baseUrl: config('services.recommendation.url'),
+            return new CachedRecommendationService(
+                new RecommendationService(
+                    baseUrl: config('services.recommendation.url'),
+                )
             );
         });
 
@@ -154,9 +158,17 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(function (): CurrencyServiceInterface {
-            return new CurrencyService(
-                baseUrl: config('services.currency_rates.url'),
-                timeout: config('services.currency_rates.timeout'),
+            return new CachedCurrencyService(
+                new CurrencyService(
+                    baseUrl: config('services.currency_rates.url'),
+                    timeout: config('services.currency_rates.timeout'),
+                )
+            );
+        });
+
+        $this->app->singleton(function (Application $app): AnalyticsServiceInterface {
+            return new CachedAnalyticsService(
+                $app->make(AnalyticsService::class)
             );
         });
 
