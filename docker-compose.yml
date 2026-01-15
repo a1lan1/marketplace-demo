@@ -137,6 +137,14 @@ services:
     profiles:
       - kafka
     image: confluentinc/cp-kafka:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.50'
+          memory: 512M
     restart: unless-stopped
     ports:
       - "9094:9092"
@@ -241,6 +249,14 @@ services:
     # profiles:
     #   - monitoring
     image: clickhouse/clickhouse-server:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
     restart: unless-stopped
     ports:
       - "8123:8123" # HTTP interface
