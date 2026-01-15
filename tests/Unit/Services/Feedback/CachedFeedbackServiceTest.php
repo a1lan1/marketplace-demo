@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit\Services\Feedback;
 
 use App\Contracts\FeedbackServiceInterface;
+use App\Enums\CacheKeyEnum;
 use App\Services\Feedback\CachedFeedbackService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -16,24 +17,29 @@ test('get feedbacks for target returns cached result', function (): void {
     $paginator = Mockery::mock(LengthAwarePaginator::class);
     $type = 'product';
     $id = 1;
+    $page = 1;
 
     Cache::shouldReceive('tags')->with(['feedbacks'])->andReturnSelf();
-    Cache::shouldReceive('remember')
+    Cache::shouldReceive('flexible')
         ->once()
-        ->with(sprintf('feedbacks_target_%s_%d_page_1', $type, $id), 3600, Mockery::type('closure'))
+        ->with(
+            sprintf(CacheKeyEnum::FEEDBACKS_TARGET->value, $type, $id, $page),
+            Mockery::type('array'),
+            Mockery::type('closure')
+        )
         ->andReturnUsing(function ($key, $ttl, $callback) {
             return $callback();
         });
 
     $innerService->shouldReceive('getFeedbacksForTarget')
         ->once()
-        ->with($type, $id, 1)
+        ->with($type, $id, $page)
         ->andReturn($paginator);
 
     $cachedService = new CachedFeedbackService($innerService);
 
     // Act
-    $result = $cachedService->getFeedbacksForTarget($type, $id);
+    $result = $cachedService->getFeedbacksForTarget($type, $id, $page);
 
     // Assert
     expect($result)->toBe($paginator);
@@ -44,24 +50,29 @@ test('get seller feedbacks returns cached result', function (): void {
     $innerService = Mockery::mock(FeedbackServiceInterface::class);
     $paginator = Mockery::mock(LengthAwarePaginator::class);
     $userId = 1;
+    $page = 1;
 
     Cache::shouldReceive('tags')->with(['feedbacks'])->andReturnSelf();
-    Cache::shouldReceive('remember')
+    Cache::shouldReceive('flexible')
         ->once()
-        ->with(sprintf('feedbacks_seller_%d_page_1', $userId), 3600, Mockery::type('closure'))
+        ->with(
+            sprintf(CacheKeyEnum::FEEDBACKS_SELLER->value, $userId, $page),
+            Mockery::type('array'),
+            Mockery::type('closure')
+        )
         ->andReturnUsing(function ($key, $ttl, $callback) {
             return $callback();
         });
 
     $innerService->shouldReceive('getSellerFeedbacks')
         ->once()
-        ->with($userId, 1)
+        ->with($userId, $page)
         ->andReturn($paginator);
 
     $cachedService = new CachedFeedbackService($innerService);
 
     // Act
-    $result = $cachedService->getSellerFeedbacks($userId);
+    $result = $cachedService->getSellerFeedbacks($userId, $page);
 
     // Assert
     expect($result)->toBe($paginator);
