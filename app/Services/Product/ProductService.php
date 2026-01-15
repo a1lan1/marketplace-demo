@@ -12,7 +12,6 @@ use App\DTO\ProductDTO;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class ProductService implements ProductServiceInterface
@@ -40,9 +39,7 @@ class ProductService implements ProductServiceInterface
 
         $processedQuery = $this->nlpSearchPreprocessingService->preprocessQuery($searchQuery);
 
-        $suggestions = $this->productRepository->searchSuggestions($processedQuery, $limit);
-
-        return $suggestions->map(fn (Model $product) => $product->only('id', 'name'));
+        return $this->productRepository->searchSuggestions($processedQuery, $limit);
     }
 
     public function getUserProducts(User $user, int $perPage = 10, int $page = 1): LengthAwarePaginator
