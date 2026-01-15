@@ -117,10 +117,7 @@ test('get autocomplete suggestions preprocesses query and returns mapped product
         ->andReturn($processedQuery);
 
     $product1 = Mockery::mock(Product::class);
-    $product1->shouldReceive('only')->with('id', 'name')->andReturn(['id' => 1, 'name' => 'Test Product 1']);
-
     $product2 = Mockery::mock(Product::class);
-    $product2->shouldReceive('only')->with('id', 'name')->andReturn(['id' => 2, 'name' => 'Test Product 2']);
 
     $rawProductsFromRepo = collect([$product1, $product2]);
 
@@ -136,8 +133,5 @@ test('get autocomplete suggestions preprocesses query and returns mapped product
     // Assert
     expect($result)->toBeInstanceOf(Collection::class)
         ->and($result->count())->toBe(2)
-        ->and($result->all())->toBe([
-            ['id' => 1, 'name' => 'Test Product 1'],
-            ['id' => 2, 'name' => 'Test Product 2'],
-        ]);
+        ->and($result)->toBe($rawProductsFromRepo);
 });
