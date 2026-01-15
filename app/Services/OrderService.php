@@ -19,7 +19,7 @@ class OrderService implements OrderServiceInterface
             ->select(['id', 'user_id', 'total_amount', 'status', 'created_at'])
             ->with([
                 'products' => function (Relation $query): void {
-                    $query->select(['products.id', 'products.name', 'products.price']);
+                    $query->select(['products.id', 'products.name', 'products.price'])->with('media');
                 },
                 'buyer' => function (Relation $query): void {
                     $query->select('id', 'name')->with('media');

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Controllers;
 
 use App\Enums\OrderStatusEnum;
+use App\Events\OrderStatusChanged;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
@@ -77,6 +79,7 @@ test('an order fails if balance is insufficient', function (): void {
 
 // Update Status
 test('an admin can update order status', function (): void {
+    Event::fake();
     $order = Order::factory()->for($this->buyer, 'buyer')->create(['status' => OrderStatusEnum::PENDING]);
 
     actingAs($this->admin)->put(route('orders.status.update', $order), [
@@ -87,6 +90,10 @@ test('an admin can update order status', function (): void {
         'id' => $order->id,
         'status' => OrderStatusEnum::COMPLETED->value,
     ]);
+
+    Event::assertDispatched(OrderStatusChanged::class, function ($event) use ($order) {
+        return $event->order->id === $order->id;
+    });
 });
 
 test('a non-admin cannot update order status', function (): void {

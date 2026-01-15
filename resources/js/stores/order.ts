@@ -32,6 +32,15 @@ export const useOrderStore = defineStore('order', {
     },
     resetOrders() {
       this.orders = []
+    },
+    setOrders(initialOrders: Order[]) {
+      this.orders = initialOrders
+    },
+    updateOrderStatus(orderId: number, status: Order['status']) {
+      const order = this.orders.find((o) => o.id === orderId)
+      if (order) {
+        order.status = status
+      }
     }
   }
 })

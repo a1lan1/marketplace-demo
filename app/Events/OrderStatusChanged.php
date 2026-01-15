@@ -21,7 +21,7 @@ class OrderStatusChanged implements ShouldBroadcast
 
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('orders.'.$this->order->id);
+        return new PrivateChannel('App.Models.User.'.$this->order->user_id);
     }
 
     public function broadcastWith(): array

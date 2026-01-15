@@ -3,16 +3,16 @@ import { usePermissions } from '@/composables/usePermissions'
 import { orderStatusOptions, StatusVariant } from '@/enums/OrderStatus'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { update as updateOrderStatusRoute } from '@/routes/orders/status'
+import { useOrderStore } from '@/stores/order'
 import {
   type BreadcrumbItem,
   type Order,
-  type OrderStatusChangedEvent,
   type Pagination
 } from '@/types'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { Head, router } from '@inertiajs/vue3'
-import { echo } from '@laravel/echo-vue'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue'
 
 const props = defineProps<{
   orders: Pagination<Order>;
@@ -26,7 +26,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 const { hasPermission } = usePermissions()
-const orders = ref<Order[]>(props.orders.data)
+
+const orderStore = useOrderStore()
+const { setOrders } = orderStore
+const { orders: stateOrders } = storeToRefs(orderStore)
 
 const headers = [
   { title: 'Order ID', key: 'id' },
@@ -44,22 +47,7 @@ const orderStatusColor = (status: Order['status']) => {
 }
 
 onMounted(() => {
-  orders.value.forEach((order) => {
-    echo()
-      .private(`orders.${order.id}`)
-      .listen('OrderStatusChanged', (e: OrderStatusChangedEvent) => {
-        const updatedOrder = orders.value.find((o) => o.id === e.order_id)
-        if (updatedOrder) {
-          updatedOrder.status = e.status
-        }
-      })
-  })
-})
-
-onUnmounted(() => {
-  orders.value.forEach((order) => {
-    echo().leave(`orders.${order.id}`)
-  })
+  setOrders(props.orders.data)
 })
 </script>
 
@@ -71,9 +59,9 @@ onUnmounted(() => {
       <v-card>
         <v-card-title>Your Orders</v-card-title>
         <v-data-table
-          v-if="orders.length > 0"
+          v-if="stateOrders.length > 0"
           :headers="headers"
-          :items="orders"
+          :items="stateOrders"
           item-value="id"
           class="elevation-1"
         >

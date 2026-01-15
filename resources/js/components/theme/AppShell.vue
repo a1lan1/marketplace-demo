@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import ChatWidget from '@/components/chat/ChatWidget.vue'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import type { AppPageProps, FlashMessage, OrderCreatedEvent } from '@/types'
+import { useOrderStore } from '@/stores/order'
+import type {
+  AppPageProps,
+  FlashMessage,
+  OrderCreatedEvent,
+  OrderStatusChangedEvent
+} from '@/types'
 import { usePage } from '@inertiajs/vue3'
 import { echo } from '@laravel/echo-vue'
 import { getCurrentInstance, onMounted, watch } from 'vue'
@@ -17,6 +23,7 @@ const isOpen = page.props.sidebarOpen
 
 const app = getCurrentInstance()
 const snackbar = app?.appContext.config.globalProperties.$snackbar
+const orderStore = useOrderStore()
 
 onMounted(() => {
   if (page.props.auth.user) {
@@ -27,6 +34,16 @@ onMounted(() => {
           text: `New order #${e.order.id} has been placed!`,
           location: 'top right'
         })
+      })
+      .listen('OrderStatusChanged', (e: OrderStatusChangedEvent) => {
+        snackbar.info({
+          text: `Status for order #${e.order_id} updated to "${e.status}"`,
+          location: 'top right'
+        })
+
+        if (orderStore.orders.length > 0) {
+          orderStore.updateOrderStatus(e.order_id, e.status)
+        }
       })
   }
 })
