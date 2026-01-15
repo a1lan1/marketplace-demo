@@ -28,6 +28,7 @@ use App\Contracts\Services\Geo\GeoCollectorServiceInterface;
 use App\Contracts\Services\Geo\LocationServiceInterface;
 use App\Contracts\Services\Geo\ResponseTemplateServiceInterface;
 use App\Contracts\Services\Geo\ReviewServiceInterface;
+use App\Contracts\UserPermissionServiceInterface;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\FeedbackRepository;
@@ -57,6 +58,8 @@ use App\Services\Product\CachedProductService;
 use App\Services\Product\ProductService;
 use App\Services\RecommendationService;
 use App\Services\SellerService;
+use App\Services\User\CachedUserPermissionService;
+use App\Services\User\UserPermissionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -121,6 +124,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(function (Application $app): ReviewServiceInterface {
             return new CachedReviewService(
                 $app->make(ReviewService::class)
+            );
+        });
+
+        $this->app->bind(function (Application $app): UserPermissionServiceInterface {
+            return new CachedUserPermissionService(
+                $app->make(UserPermissionService::class)
             );
         });
 

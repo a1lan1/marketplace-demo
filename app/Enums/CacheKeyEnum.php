@@ -15,4 +15,7 @@ enum CacheKeyEnum: string
     case PRODUCTS_AUTOCOMPLETE = 'products_autocomplete_%s_limit_%d';
     case PRODUCTS_USER = 'products_user_%d_page_%s_per_%d';
     case PRODUCTS_RECOMMENDATIONS = 'products_recommendations_user_%d_excluded_%s';
+
+    case USER_PERMISSIONS = 'user_permissions_%d';
+    case USER_ROLES = 'user_roles_%d';
 }

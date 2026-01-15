@@ -76,6 +76,7 @@ class UsersTable
                     ])
                     ->action(function (User $record, array $data): void {
                         $record->syncRoles($data['roles']);
+                        $record->touch();
                     })
                     ->visible(fn (): bool => auth()->user()?->isAdmin()),
             ])

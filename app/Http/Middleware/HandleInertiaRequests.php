@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Contracts\UserPermissionServiceInterface;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -19,6 +20,10 @@ class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+
+    public function __construct(
+        private readonly UserPermissionServiceInterface $userPermissionService
+    ) {}
 
     /**
      * Determines the current asset version.
@@ -43,14 +48,16 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
-                'roles' => $request->user() ? $request->user()->getRoleNames()->toArray() : [],
-                'permissions' => $request->user() ? $request->user()->getAllPermissions()->pluck('name')->toArray() : [],
+                'user' => $user,
+                'roles' => fn (): array => $user ? $this->userPermissionService->getRoles($user) : [],
+                'permissions' => fn (): array => $user ? $this->userPermissionService->getPermissions($user) : [],
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),
