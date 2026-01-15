@@ -222,4 +222,22 @@ return [
 
     'max_execution_time' => 30,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Swoole Options
+    |--------------------------------------------------------------------------
+    |
+    | The following configuration options are directly passed to the Swoole
+    | server instance. You are free to add any of the settings that are
+    | supported by Swoole to this array.
+    |
+    */
+
+    'swoole' => [
+        'workers' => env('OCTANE_WORKERS', 'auto'),
+        'task_workers' => env('OCTANE_TASK_WORKERS', 'auto'),
+        'max_requests' => env('OCTANE_MAX_REQUESTS', 1000),
+        'http_compression' => true,
+    ],
+
 ];
