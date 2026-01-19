@@ -74,6 +74,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Override;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -178,6 +179,10 @@ class AppServiceProvider extends ServiceProvider
                 'seller' => User::class,
             ]);
         });
+
+        $this->app->singleton(function (): StripeClient {
+            return new StripeClient(config('services.stripe.secret'));
+        });
     }
 
     /**
@@ -190,18 +195,22 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventAccessingMissingAttributes(! $this->app->isProduction());
 
+        $this->configureGates();
+        $this->configureRateLimiting();
+    }
+
+    protected function configureGates(): void
+    {
         Gate::define('viewApiDocs', function (?User $user): bool {
             if (! $this->app->isProduction()) {
                 return true;
             }
 
             return $user instanceof User && in_array($user->email, [
-                'test@example.com',
-                'demo@example.com',
-            ]);
+                    'test@example.com',
+                    'demo@example.com',
+                ]);
         });
-
-        $this->configureRateLimiting();
     }
 
     protected function configureRateLimiting(): void
