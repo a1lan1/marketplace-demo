@@ -40,6 +40,7 @@
     "dependencies": {
         "@inertiajs/vue3": "^2.1.0",
         "@mdi/font": "^7.4.47",
+        "@stripe/stripe-js": "^8.6.1",
         "@vue-leaflet/vue-leaflet": "^0.10.1",
         "@vueuse/core": "^12.8.2",
         "axios": "^1.13.2",
