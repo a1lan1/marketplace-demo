@@ -59,6 +59,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
+ * @property-read Collection<int, PaymentMethod> $paymentMethods
+ * @property-read int|null $payment_methods_count
+ * @property-read Collection<int, Payment> $payments
+ * @property-read int|null $payments_count
+ * @property-read Collection<int, PayoutMethod> $payoutMethods
+ * @property-read int|null $payout_methods_count
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read Collection<int, Product> $products
@@ -67,6 +73,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $response_templates_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
+ * @property-read Collection<int, Transaction> $transactions
+ * @property-read int|null $transactions_count
  *
  * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
@@ -111,6 +119,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         'name',
         'email',
         'password',
+        'balance',
     ];
 
     /**
@@ -158,6 +167,21 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     /**
