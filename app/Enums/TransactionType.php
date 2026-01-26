@@ -10,11 +10,17 @@ enum TransactionType: string
 
     case WITHDRAWAL = 'withdrawal';
 
+    case TRANSFER = 'transfer';
+
+    case PURCHASE = 'purchase';
+
     public function label(): string
     {
         return match ($this) {
             self::DEPOSIT => 'Deposit',
             self::WITHDRAWAL => 'Withdrawal',
+            self::TRANSFER => 'Transfer',
+            self::PURCHASE => 'Purchase',
         };
     }
 
