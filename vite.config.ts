@@ -25,5 +25,10 @@ export default defineConfig({
       }
     }),
     vuetify({ autoImport: true })
-  ]
+  ],
+  server: {
+    watch: {
+      ignored: ['**/coverage/**']
+    }
+  }
 })
