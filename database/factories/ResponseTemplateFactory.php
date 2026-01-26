@@ -18,7 +18,7 @@ class ResponseTemplateFactory extends Factory
     public function definition(): array
     {
         return [
-            'seller_id' => User::factory(),
+            'seller_id' => User::factory()->withSellerRole(),
             'title' => fake()->sentence(3),
             'body' => fake()->paragraph,
         ];

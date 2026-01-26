@@ -20,7 +20,7 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::factory()->withBaseRoles(),
             'order_id' => Order::factory(),
             'amount' => fake()->numberBetween(10000, 100000),
             'type' => fake()->randomElement(TransactionType::cases()),

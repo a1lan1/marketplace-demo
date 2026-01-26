@@ -20,7 +20,7 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'seller_id' => User::factory(),
+            'seller_id' => User::factory()->withSellerRole(),
             'name' => fake()->company,
             'type' => fake()->randomElement(LocationTypeEnum::cases()),
             'address' => new Address(

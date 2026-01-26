@@ -19,7 +19,7 @@ class FeedbackFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::factory()->withBaseRoles(),
             'feedbackable_id' => Product::factory(),
             'feedbackable_type' => Product::class,
             'rating' => fake()->numberBetween(1, 5),
