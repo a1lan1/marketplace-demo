@@ -11,7 +11,6 @@ use App\Http\Requests\StoreFeedbackRequest;
 use App\Http\Resources\FeedbackResource;
 use App\Models\Feedback;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Validation\ValidationException;
@@ -19,8 +18,6 @@ use Throwable;
 
 class FeedbackController extends Controller
 {
-    use AuthorizesRequests;
-
     public function __construct(private readonly FeedbackServiceInterface $feedbackService) {}
 
     public function index(Request $request, string $type, int $id): AnonymousResourceCollection

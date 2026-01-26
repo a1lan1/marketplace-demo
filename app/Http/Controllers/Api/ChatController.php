@@ -11,14 +11,11 @@ use App\Http\Requests\SendMessageRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Order;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ChatController extends Controller
 {
-    use AuthorizesRequests;
-
     public function __construct(
         private readonly SendMessageAction $sendMessageAction,
         private readonly ChatServiceInterface $chatService,

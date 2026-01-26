@@ -12,7 +12,6 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,8 +19,6 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
-    use AuthorizesRequests;
-
     public function __construct(protected ProductServiceInterface $productService) {}
 
     public function catalog(ProductFilterRequest $request): Response
