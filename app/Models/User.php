@@ -186,6 +186,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         return $this->hasMany(PaymentCustomer::class);
     }
 
+    public function payoutMethods(): HasMany
+    {
+        return $this->hasMany(PayoutMethod::class);
+    }
+
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
