@@ -59,6 +59,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
+ * @property-read Collection<int, PaymentCustomer> $paymentCustomers
+ * @property-read int|null $payment_customers_count
  * @property-read Collection<int, PaymentMethod> $paymentMethods
  * @property-read int|null $payment_methods_count
  * @property-read Collection<int, Payment> $payments
@@ -177,6 +179,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function paymentCustomers(): HasMany
+    {
+        return $this->hasMany(PaymentCustomer::class);
     }
 
     public function transactions(): HasMany
