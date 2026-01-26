@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $description
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
+ * @property string|null $provider_transaction_id
+ * @property array<array-key, mixed>|null $metadata
  * @property-read Order|null $order
  * @property-read User $user
  *
@@ -34,7 +36,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|Transaction whereCreatedAt($value)
  * @method static Builder<static>|Transaction whereDescription($value)
  * @method static Builder<static>|Transaction whereId($value)
+ * @method static Builder<static>|Transaction whereMetadata($value)
  * @method static Builder<static>|Transaction whereOrderId($value)
+ * @method static Builder<static>|Transaction whereProviderTransactionId($value)
  * @method static Builder<static>|Transaction whereType($value)
  * @method static Builder<static>|Transaction whereUpdatedAt($value)
  * @method static Builder<static>|Transaction whereUserId($value)
@@ -48,9 +52,11 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'order_id',
+        'provider_transaction_id',
         'amount',
         'type',
         'description',
+        'metadata',
     ];
 
     protected function casts(): array
@@ -58,6 +64,7 @@ class Transaction extends Model
         return [
             'amount' => MoneyIntegerCast::class,
             'type' => TransactionType::class,
+            'metadata' => 'array',
         ];
     }
 

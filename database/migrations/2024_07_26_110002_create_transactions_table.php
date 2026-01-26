@@ -13,9 +13,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('provider_transaction_id')->nullable();
             $table->bigInteger('amount');
             $table->enum('type', TransactionType::values());
             $table->string('description')->nullable();
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }
