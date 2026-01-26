@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
                 GeoSeeder::class,
                 FeedbackSeeder::class,
                 TransactionSeeder::class,
+                PaymentMethodSeeder::class,
+                PaymentSeeder::class,
             ]);
         }
     }
