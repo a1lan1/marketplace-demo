@@ -9,22 +9,14 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
 
 class OrderService implements OrderServiceInterface
 {
-    public function getUserOrders(User $user, int $perPage = 10): LengthAwarePaginator
+    public function getUserOrders(User $user, int $perPage = 20): LengthAwarePaginator
     {
-        return $user->orders()
-            ->select(['id', 'user_id', 'total_amount', 'status', 'created_at'])
-            ->with([
-                'products' => function (Relation $query): void {
-                    $query->select(['products.id', 'products.name', 'products.price'])->with('media');
-                },
-                'buyer' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-            ])
+        return Order::query()
+            ->withEssentialRelations()
+            ->where('user_id', $user->id)
             ->latest()
             ->paginate($perPage);
     }
@@ -33,20 +25,15 @@ class OrderService implements OrderServiceInterface
      * Get orders for a user based on their role.
      * Admins/Managers see all orders, others see their own.
      */
-    public function getOrdersForUser(User $user): Collection
+    public function getOrdersForUser(User $user, int $perPage = 20): LengthAwarePaginator
     {
         return Order::query()
+            ->withEssentialRelations()
+            ->with(['products.seller' => function (Relation $query): void {
+                $query->select('id', 'name')->with('media');
+            }])
             ->forUser($user)
-            ->select(['id', 'user_id', 'total_amount', 'status', 'created_at'])
-            ->with([
-                'buyer' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-                'products.seller' => function (Relation $query): void {
-                    $query->select('id', 'name')->with('media');
-                },
-            ])
             ->latest()
-            ->get();
+            ->paginate($perPage);
     }
 }

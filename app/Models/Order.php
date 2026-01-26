@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
-use App\Enums\RoleEnum;
+use App\Models\Builders\OrderBuilder;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\OrderFactory;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -28,24 +29,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read User $buyer
  * @property-read Collection<int, Message> $messages
  * @property-read int|null $messages_count
+ * @property-read Payment|null $payment
  * @property-read OrderProduct|null $pivot
  * @property-read Collection<int, Product> $products
  * @property-read int|null $products_count
+ * @property-read Transaction|null $transaction
  *
  * @method static OrderFactory factory($count = null, $state = [])
- * @method static Builder<static>|Order forUser(User $user)
- * @method static Builder<static>|Order newModelQuery()
- * @method static Builder<static>|Order newQuery()
- * @method static Builder<static>|Order query()
- * @method static Builder<static>|Order whereCreatedAt($value)
- * @method static Builder<static>|Order whereId($value)
- * @method static Builder<static>|Order whereStatus($value)
- * @method static Builder<static>|Order whereTotalAmount($value)
- * @method static Builder<static>|Order whereUpdatedAt($value)
- * @method static Builder<static>|Order whereUserId($value)
+ * @method static OrderBuilder<static>|Order forUser(User $user)
+ * @method static OrderBuilder<static>|Order newModelQuery()
+ * @method static OrderBuilder<static>|Order newQuery()
+ * @method static OrderBuilder<static>|Order query()
+ * @method static OrderBuilder<static>|Order whereCreatedAt($value)
+ * @method static OrderBuilder<static>|Order whereId($value)
+ * @method static OrderBuilder<static>|Order whereStatus($value)
+ * @method static OrderBuilder<static>|Order whereTotalAmount($value)
+ * @method static OrderBuilder<static>|Order whereUpdatedAt($value)
+ * @method static OrderBuilder<static>|Order whereUserId($value)
+ * @method static OrderBuilder<static>|Order withEssentialRelations()
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(OrderBuilder::class)]
 class Order extends Model
 {
     use HasFactory;
@@ -82,17 +87,18 @@ class Order extends Model
         return $this->hasMany(Message::class);
     }
 
-    protected function scopeForUser(Builder $query, User $user): void
+    public function payment(): HasOne
     {
-        if ($user->hasRole([RoleEnum::ADMIN, RoleEnum::MANAGER])) {
-            return;
-        }
+        return $this->hasOne(Payment::class);
+    }
 
-        $query->where(function (Builder $query) use ($user): void {
-            $query->where('user_id', $user->id)
-                ->orWhereHas('products.seller', function (Builder $query) use ($user): void {
-                    $query->where('id', $user->id);
-                });
-        });
+    public function transaction(): HasOne
+    {
+        return $this->hasOne(Transaction::class);
+    }
+
+    public function updateStatus(OrderStatusEnum $status): void
+    {
+        $this->update(['status' => $status]);
     }
 }
