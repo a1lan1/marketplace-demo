@@ -11,6 +11,7 @@ use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read Collection<int, Message> $messages
  * @property-read int|null $messages_count
  * @property-read Payment|null $payment
+ * @property-read string $payment_method_display
  * @property-read OrderProduct|null $pivot
  * @property-read Collection<int, Product> $products
  * @property-read int|null $products_count
@@ -67,6 +69,23 @@ class Order extends Model
             'total_amount' => MoneyIntegerCast::class,
             'status' => OrderStatusEnum::class,
         ];
+    }
+
+    protected function paymentMethodDisplay(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                if ($this->payment) {
+                    return $this->payment->provider->label();
+                }
+
+                if ($this->transaction) {
+                    return 'Balance';
+                }
+
+                return 'N/A';
+            }
+        );
     }
 
     public function buyer(): BelongsTo
