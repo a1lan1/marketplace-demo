@@ -11,6 +11,7 @@ use App\Repositories\PaymentCustomerRepository;
 use App\Repositories\PaymentMethodRepository;
 use App\Repositories\PaymentRepository;
 use App\Services\Payment\PaymentGatewayFactory;
+use App\Services\PaymentProcessors\PaymentProcessorFactory;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Stripe\StripeClient;
@@ -39,6 +40,7 @@ class PaymentServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(PaymentGatewayFactory::class);
+        $this->app->singleton(PaymentProcessorFactory::class);
     }
 
     /**
