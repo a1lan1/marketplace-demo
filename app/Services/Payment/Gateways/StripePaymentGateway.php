@@ -10,12 +10,13 @@ use App\DTO\Payment\GatewayChargeResultDTO;
 use App\DTO\Payment\GatewaySetupIntentResultDTO;
 use App\DTO\Payment\PaymentChargeDTO;
 use App\DTO\Payment\PayoutResultDTO;
+use App\DTO\Payment\StripePaymentIntentParamsDTO;
 use App\Exceptions\PaymentGatewayException;
-use App\Models\PaymentMethod;
 use App\Models\PayoutMethod;
 use App\Models\User;
 use Cknow\Money\Money;
 use Stripe\Exception\ApiErrorException;
+use Stripe\PaymentMethod;
 use Stripe\StripeClient;
 
 class StripePaymentGateway implements PaymentGatewayInterface
@@ -28,30 +29,13 @@ class StripePaymentGateway implements PaymentGatewayInterface
     public function charge(PaymentChargeDTO $dto): GatewayChargeResultDTO
     {
         try {
-            $params = [
-                'amount' => $dto->amount,
-                'currency' => $dto->currency,
-                'customer' => $dto->customerId,
-                'confirm' => true,
-                'return_url' => $dto->returnUrl ?? route('home'),
-            ];
-
-            if ($dto->paymentMethod instanceof PaymentMethod) {
-                $params['payment_method'] = $dto->paymentMethod->provider_id;
-            } elseif ($dto->paymentMethodToken) {
-                $params['payment_method'] = $dto->paymentMethodToken;
-            }
-
-            if ($dto->saveCard) {
-                $params['setup_future_usage'] = 'off_session';
-            }
-
             $options = [];
 
             if ($dto->idempotencyKey) {
                 $options['idempotency_key'] = $dto->idempotencyKey;
             }
 
+            $params = StripePaymentIntentParamsDTO::fromChargeDTO($dto)->toStripeArray();
             $paymentIntent = $this->stripe->paymentIntents->create($params, $options);
 
             return GatewayChargeResultDTO::from([
@@ -107,7 +91,7 @@ class StripePaymentGateway implements PaymentGatewayInterface
     /**
      * @throws PaymentGatewayException
      */
-    public function attachPaymentMethod(string $paymentMethodId, string $customerId): \Stripe\PaymentMethod
+    public function attachPaymentMethod(string $paymentMethodId, string $customerId): PaymentMethod
     {
         try {
             return $this->stripe->paymentMethods->attach($paymentMethodId, ['customer' => $customerId]);
@@ -119,7 +103,7 @@ class StripePaymentGateway implements PaymentGatewayInterface
     /**
      * @throws PaymentGatewayException
      */
-    public function retrievePaymentMethod(string $paymentMethodId): \Stripe\PaymentMethod
+    public function retrievePaymentMethod(string $paymentMethodId): PaymentMethod
     {
         try {
             return $this->stripe->paymentMethods->retrieve($paymentMethodId);
