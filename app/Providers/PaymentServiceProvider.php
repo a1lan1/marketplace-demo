@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\Repositories\PaymentRepositoryInterface;
+use App\Repositories\PaymentRepository;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Stripe\StripeClient;
@@ -16,7 +18,7 @@ class PaymentServiceProvider extends ServiceProvider
      * @var array<string, string>
      */
     public array $bindings = [
-        //
+        PaymentRepositoryInterface::class => PaymentRepository::class,
     ];
 
     /**
