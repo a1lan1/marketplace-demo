@@ -74,7 +74,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Override;
-use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -179,10 +178,6 @@ class AppServiceProvider extends ServiceProvider
                 'seller' => User::class,
             ]);
         });
-
-        $this->app->singleton(function (): StripeClient {
-            return new StripeClient(config('services.stripe.secret'));
-        });
     }
 
     /**
@@ -207,9 +202,9 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $user instanceof User && in_array($user->email, [
-                    'test@example.com',
-                    'demo@example.com',
-                ]);
+                'test@example.com',
+                'demo@example.com',
+            ]);
         });
     }
 
