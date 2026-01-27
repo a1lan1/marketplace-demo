@@ -10,6 +10,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class OrderCreated implements ShouldBroadcast
 {
@@ -17,7 +18,10 @@ class OrderCreated implements ShouldBroadcast
     use InteractsWithSockets;
     use SerializesModels;
 
-    public function __construct(public Order $order) {}
+    public function __construct(
+        public Order $order,
+        public Collection $sellerPayouts
+    ) {}
 
     public function broadcastAs(): string
     {
