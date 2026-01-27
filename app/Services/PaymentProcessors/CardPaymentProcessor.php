@@ -36,7 +36,7 @@ readonly class CardPaymentProcessor implements PaymentProcessorInterface
         }
 
         $result = $this->paymentService->processPayment(
-            ProcessPaymentDTO::from([
+            ProcessPaymentDTO::make([
                 'user' => $purchaseDTO->buyer,
                 'amount' => (int) $totalAmount->getAmount(),
                 'currency' => 'USD',
