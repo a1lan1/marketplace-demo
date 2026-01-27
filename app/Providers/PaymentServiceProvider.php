@@ -10,6 +10,7 @@ use App\Contracts\Repositories\PaymentRepositoryInterface;
 use App\Repositories\PaymentCustomerRepository;
 use App\Repositories\PaymentMethodRepository;
 use App\Repositories\PaymentRepository;
+use App\Services\Payment\PaymentGatewayFactory;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Stripe\StripeClient;
@@ -36,6 +37,8 @@ class PaymentServiceProvider extends ServiceProvider
         $this->app->singleton(function (): StripeClient {
             return new StripeClient(config('services.stripe.secret'));
         });
+
+        $this->app->singleton(PaymentGatewayFactory::class);
     }
 
     /**
