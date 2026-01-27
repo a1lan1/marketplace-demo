@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\Repositories\PaymentCustomerRepositoryInterface;
 use App\Contracts\Repositories\PaymentMethodRepositoryInterface;
 use App\Contracts\Repositories\PaymentRepositoryInterface;
+use App\Repositories\PaymentCustomerRepository;
 use App\Repositories\PaymentMethodRepository;
 use App\Repositories\PaymentRepository;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +24,7 @@ class PaymentServiceProvider extends ServiceProvider
     public array $bindings = [
         PaymentRepositoryInterface::class => PaymentRepository::class,
         PaymentMethodRepositoryInterface::class => PaymentMethodRepository::class,
+        PaymentCustomerRepositoryInterface::class => PaymentCustomerRepository::class,
     ];
 
     /**
