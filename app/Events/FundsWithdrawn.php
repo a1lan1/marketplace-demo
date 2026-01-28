@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Events;
 
+use App\Contracts\LoggableEvent;
 use App\Models\Transaction;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FundsWithdrawn
+class FundsWithdrawn implements LoggableEvent
 {
     use Dispatchable;
     use SerializesModels;
@@ -21,4 +23,29 @@ class FundsWithdrawn
         public Money $amount,
         public string $payoutId
     ) {}
+
+    public function getPerformedOn(): ?Model
+    {
+        return $this->transaction;
+    }
+
+    public function getCausedBy(): ?User
+    {
+        return $this->user;
+    }
+
+    public function getDescription(): string
+    {
+        return 'Funds withdrawn';
+    }
+
+    public function getProperties(): array
+    {
+        return [
+            'amount' => $this->amount->getAmount(),
+            'currency' => $this->amount->getCurrency()->getCode(),
+            'new_balance' => $this->user->refresh()->balance->getAmount(),
+            'payout_id' => $this->payoutId,
+        ];
+    }
 }

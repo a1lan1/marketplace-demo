@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Events;
 
+use App\Contracts\LoggableEvent;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-class OrderCreated implements ShouldBroadcast
+class OrderCreated implements LoggableEvent, ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -39,5 +42,25 @@ class OrderCreated implements ShouldBroadcast
         }
 
         return $channels;
+    }
+
+    public function getPerformedOn(): ?Model
+    {
+        return $this->order;
+    }
+
+    public function getCausedBy(): ?User
+    {
+        return $this->order->buyer;
+    }
+
+    public function getDescription(): string
+    {
+        return 'Order created successfully';
+    }
+
+    public function getProperties(): array
+    {
+        return [];
     }
 }
