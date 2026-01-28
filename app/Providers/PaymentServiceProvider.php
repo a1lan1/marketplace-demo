@@ -7,10 +7,12 @@ namespace App\Providers;
 use App\Contracts\Repositories\PaymentCustomerRepositoryInterface;
 use App\Contracts\Repositories\PaymentMethodRepositoryInterface;
 use App\Contracts\Repositories\PaymentRepositoryInterface;
+use App\Contracts\Repositories\PayoutMethodRepositoryInterface;
 use App\Enums\PaymentProviderEnum;
 use App\Repositories\PaymentCustomerRepository;
 use App\Repositories\PaymentMethodRepository;
 use App\Repositories\PaymentRepository;
+use App\Repositories\PayoutMethodRepository;
 use App\Services\Payment\PaymentGatewayFactory;
 use App\Services\Payment\PaymentService;
 use App\Services\PaymentProcessors\PaymentProcessorFactory;
@@ -31,6 +33,7 @@ class PaymentServiceProvider extends ServiceProvider
         PaymentRepositoryInterface::class => PaymentRepository::class,
         PaymentMethodRepositoryInterface::class => PaymentMethodRepository::class,
         PaymentCustomerRepositoryInterface::class => PaymentCustomerRepository::class,
+        PayoutMethodRepositoryInterface::class => PayoutMethodRepository::class,
     ];
 
     /**
