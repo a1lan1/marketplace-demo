@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Contracts\BalanceServiceInterface;
 use App\Contracts\ChatServiceInterface;
 use App\Contracts\FeedbackServiceInterface;
 use App\Contracts\NlpSearchPreprocessingServiceInterface;
@@ -22,6 +21,7 @@ use App\Contracts\Repositories\TransactionRepositoryInterface;
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Contracts\SellerServiceInterface;
 use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
+use App\Contracts\Services\BalanceServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
 use App\Contracts\Services\Feedback\FeedbackableMapInterface;
 use App\Contracts\Services\Geo\GeoCollectorServiceInterface;

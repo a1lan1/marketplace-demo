@@ -7,6 +7,7 @@ namespace App\DTO\Payment;
 use App\Enums\PaymentProviderEnum;
 use App\Enums\PaymentStatusEnum;
 use App\Models\User;
+use Cknow\Money\Money;
 use Illuminate\Support\Str;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\RequiredWithout;
@@ -53,6 +54,11 @@ class ProcessPaymentDTO extends Data
         }
 
         return self::from($data);
+    }
+
+    public function getMoney(): Money
+    {
+        return new Money($this->amount, $this->currency);
     }
 
     public function forModel(): array
