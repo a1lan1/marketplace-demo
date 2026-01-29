@@ -6,7 +6,11 @@ namespace App\Services;
 
 use App\Actions\Transactions\CreateTransactionAction;
 use App\Contracts\BalanceServiceInterface;
+use App\DTO\Balance\DepositDTO;
+use App\DTO\Balance\TransferDTO;
+use App\DTO\Balance\WithdrawDTO;
 use App\DTO\Payment\CreateTransactionDTO;
+use App\DTO\Payment\TransferResultDTO;
 use App\DTO\PurchaseOnBalanceDTO;
 use App\Enums\TransactionType;
 use App\Events\FundsDeductedForPurchase;
@@ -17,7 +21,6 @@ use App\Events\PurchaseFailedInsufficientFunds;
 use App\Events\TransferFailedInsufficientFunds;
 use App\Events\WithdrawalFailedInsufficientFunds;
 use App\Exceptions\InsufficientFundsException;
-use App\Models\PayoutMethod;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Payment\PaymentGatewayFactory;
@@ -35,23 +38,24 @@ readonly class BalanceService implements BalanceServiceInterface
     /**
      * @throws Throwable
      */
-    public function deposit(User $user, Money $amount, ?string $description = null): Transaction
+    public function deposit(DepositDTO $dto): Transaction
     {
-        return DB::transaction(function () use ($user, $amount, $description): Transaction {
-            $user = User::query()->lockForUpdate()->find($user->id);
+        return DB::transaction(function () use ($dto): Transaction {
+            $user = User::query()->lockForUpdate()->find($dto->user->id);
 
-            $user->update(['balance' => $user->balance->add($amount)]);
+            $user->update(['balance' => $user->balance->add($dto->amount)]);
 
             $transaction = $this->createTransactionAction->execute(
                 new CreateTransactionDTO(
-                    user: $user,
-                    amount: $amount,
+                    user: $dto->user,
+                    amount: $dto->amount,
                     type: TransactionType::DEPOSIT,
-                    description: $description
+                    orderId: $dto->order?->id,
+                    description: $dto->description
                 )
             );
 
-            event(new FundsDeposited($transaction, $user, $amount));
+            event(new FundsDeposited($transaction, $dto->user, $dto->amount));
 
             return $transaction;
         });
@@ -61,29 +65,29 @@ readonly class BalanceService implements BalanceServiceInterface
      * @throws Throwable
      * @throws InsufficientFundsException
      */
-    public function withdraw(User $user, Money $amount, PayoutMethod $payoutMethod, ?string $description = null): Transaction
+    public function withdraw(WithdrawDTO $dto): Transaction
     {
-        return DB::transaction(function () use ($user, $amount, $payoutMethod, $description): Transaction {
-            $user = User::query()->lockForUpdate()->find($user->id);
+        return DB::transaction(function () use ($dto): Transaction {
+            $user = User::query()->lockForUpdate()->find($dto->user->id);
 
-            if (! $this->hasSufficientFunds($user, $amount)) {
-                event(new WithdrawalFailedInsufficientFunds($user, $amount));
+            if (! $this->hasSufficientFunds($user, $dto->amount)) {
+                event(new WithdrawalFailedInsufficientFunds($user, $dto->amount));
                 throw new InsufficientFundsException;
             }
 
-            $user->update(['balance' => $user->balance->subtract($amount)]);
+            $user->update(['balance' => $user->balance->subtract($dto->amount)]);
 
             $transaction = $this->createTransactionAction->execute(
                 new CreateTransactionDTO(
-                    user: $user,
-                    amount: $amount,
+                    user: $dto->user,
+                    amount: $dto->amount,
                     type: TransactionType::WITHDRAWAL,
-                    description: $description
+                    description: $dto->description
                 )
             );
 
-            $gateway = $this->paymentGatewayFactory->make($payoutMethod->provider);
-            $payoutResult = $gateway->createPayout($payoutMethod, $amount);
+            $gateway = $this->paymentGatewayFactory->make($dto->payoutMethod->provider);
+            $payoutResult = $gateway->createPayout($dto->payoutMethod, $dto->amount);
 
             $transaction->update([
                 'provider_transaction_id' => $payoutResult->payoutId,
@@ -93,7 +97,7 @@ readonly class BalanceService implements BalanceServiceInterface
                 ],
             ]);
 
-            event(new FundsWithdrawn($transaction, $user, $amount, $payoutResult->payoutId));
+            event(new FundsWithdrawn($transaction, $user, $dto->amount, $payoutResult->payoutId));
 
             return $transaction;
         });
@@ -135,50 +139,50 @@ readonly class BalanceService implements BalanceServiceInterface
      * @throws Throwable
      * @throws InsufficientFundsException
      */
-    public function transfer(User $sender, User $recipient, Money $amount, ?string $description = null): array
+    public function transfer(TransferDTO $dto): TransferResultDTO
     {
-        return DB::transaction(function () use ($sender, $recipient, $amount, $description): array {
+        return DB::transaction(function () use ($dto): TransferResultDTO {
             // Lock users in consistent order to prevent deadlocks
-            $firstId = min($sender->id, $recipient->id);
-            $secondId = max($sender->id, $recipient->id);
+            $firstId = min($dto->sender->id, $dto->recipient->id);
+            $secondId = max($dto->sender->id, $dto->recipient->id);
 
             $users = User::query()->lockForUpdate()->findMany([$firstId, $secondId]);
-            $sender = $users->find($sender->id);
-            $recipient = $users->find($recipient->id);
+            $sender = $users->find($dto->sender->id);
+            $recipient = $users->find($dto->recipient->id);
 
-            if (! $this->hasSufficientFunds($sender, $amount)) {
-                event(new TransferFailedInsufficientFunds($sender, $recipient, $amount));
+            if (! $this->hasSufficientFunds($sender, $dto->amount)) {
+                event(new TransferFailedInsufficientFunds($sender, $recipient, $dto->amount));
                 throw new InsufficientFundsException;
             }
 
-            $sender->update(['balance' => $sender->balance->subtract($amount)]);
+            $sender->update(['balance' => $sender->balance->subtract($dto->amount)]);
 
-            $recipient->update(['balance' => $recipient->balance->add($amount)]);
+            $recipient->update(['balance' => $recipient->balance->add($dto->amount)]);
 
             $senderTransaction = $this->createTransactionAction->execute(
                 new CreateTransactionDTO(
                     user: $sender,
-                    amount: $amount,
+                    amount: $dto->amount,
                     type: TransactionType::TRANSFER,
-                    description: $description ? sprintf('Transfer to %s: %s', $recipient->name, $description) : 'Transfer to '.$recipient->name
+                    description: $dto->description ? sprintf('Transfer to %s: %s', $recipient->name, $dto->description) : 'Transfer to '.$recipient->name
                 )
             );
 
             $recipientTransaction = $this->createTransactionAction->execute(
                 new CreateTransactionDTO(
                     user: $recipient,
-                    amount: $amount,
+                    amount: $dto->amount,
                     type: TransactionType::TRANSFER,
-                    description: $description ? sprintf('Transfer from %s: %s', $sender->name, $description) : 'Transfer from '.$sender->name
+                    description: $dto->description ? sprintf('Transfer from %s: %s', $sender->name, $dto->description) : 'Transfer from '.$sender->name
                 )
             );
 
-            event(new FundsTransferred($senderTransaction, $sender, $recipient, $amount));
+            event(new FundsTransferred($senderTransaction, $sender, $recipient, $dto->amount));
 
-            return [
-                'senderTransaction' => $senderTransaction,
-                'recipientTransaction' => $recipientTransaction,
-            ];
+            return new TransferResultDTO(
+                senderTransaction: $senderTransaction,
+                recipientTransaction: $recipientTransaction,
+            );
         });
     }
 
