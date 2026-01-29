@@ -9,6 +9,7 @@ use App\Contracts\Repositories\PaymentMethodRepositoryInterface;
 use App\Contracts\Repositories\PaymentRepositoryInterface;
 use App\Contracts\Repositories\PayoutMethodRepositoryInterface;
 use App\Enums\PaymentProviderEnum;
+use App\Exceptions\PaymentConfigurationException;
 use App\Repositories\PaymentCustomerRepository;
 use App\Repositories\PaymentMethodRepository;
 use App\Repositories\PaymentRepository;
@@ -17,9 +18,9 @@ use App\Services\Payment\PaymentGatewayFactory;
 use App\Services\Payment\PaymentService;
 use App\Services\PaymentProcessors\PaymentProcessorFactory;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Response;
 use Illuminate\Support\ServiceProvider;
 use Override;
-use RuntimeException;
 use Stripe\StripeClient;
 
 class PaymentServiceProvider extends ServiceProvider
@@ -53,13 +54,19 @@ class PaymentServiceProvider extends ServiceProvider
             $defaultProvider = config('services.payments.default_provider');
 
             if (! is_string($defaultProvider)) {
-                throw new RuntimeException('Default payment provider is not configured.');
+                throw new PaymentConfigurationException(
+                    'Default payment provider is not configured.',
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
 
             $providerEnum = PaymentProviderEnum::tryFrom($defaultProvider);
 
             if (! $providerEnum) {
-                throw new RuntimeException('Invalid default payment provider configured: '.$defaultProvider);
+                throw new PaymentConfigurationException(
+                    'Invalid default payment provider configured: '.$defaultProvider,
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
 
             $factory = $app->make(PaymentGatewayFactory::class);
