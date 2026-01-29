@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserRepository implements UserRepositoryInterface
@@ -17,5 +18,15 @@ class UserRepository implements UserRepositoryInterface
                 ->latest()
                 ->take($productsLimit);
         }]);
+    }
+
+    /**
+     * @throws ModelNotFoundException
+     */
+    public function findOrFail(int $id): User
+    {
+        return User::query()
+            ->select(['id', 'name', 'balance'])
+            ->findOrFail($id);
     }
 }
