@@ -14,4 +14,6 @@ interface PayoutMethodRepositoryInterface
      * @return Collection<int, PayoutMethod>
      */
     public function getForUser(User $user): Collection;
+
+    public function findOrFail(int $id): PayoutMethod;
 }

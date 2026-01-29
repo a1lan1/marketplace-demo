@@ -26,4 +26,18 @@ class PayoutMethodRepository implements PayoutMethodRepositoryInterface
             ->where('user_id', $user->id)
             ->get();
     }
+
+    public function findOrFail(int $id): PayoutMethod
+    {
+        return PayoutMethod::query()
+            ->select([
+                'id',
+                'user_id',
+                'provider',
+                'provider_id',
+                'type',
+                'details',
+            ])
+            ->findOrFail($id);
+    }
 }
