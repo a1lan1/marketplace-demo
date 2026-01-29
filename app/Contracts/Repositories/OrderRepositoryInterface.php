@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Contracts\Repositories;
 
 use App\DTO\SalesStatsDTO;
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use App\Models\Order;
 use App\Models\User;
 use Cknow\Money\Money;

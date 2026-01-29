@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Payment;
 
-use App\Enums\PaymentStatusEnum;
+use App\Enums\Payment\PaymentStatusEnum;
 use App\Models\Payment;
 use Spatie\LaravelData\Data;
 

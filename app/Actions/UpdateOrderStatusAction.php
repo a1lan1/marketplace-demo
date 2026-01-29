@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Contracts\Repositories\OrderRepositoryInterface;
-use App\Enums\OrderStatusEnum;
-use App\Events\OrderStatusChanged;
+use App\Enums\Order\OrderStatusEnum;
+use App\Events\Order\OrderStatusChanged;
 use App\Models\Order;
 
 class UpdateOrderStatusAction

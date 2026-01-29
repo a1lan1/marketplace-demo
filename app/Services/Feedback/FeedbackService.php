@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Feedback;
 
-use App\Contracts\FeedbackServiceInterface;
 use App\Contracts\Repositories\FeedbackRepositoryInterface;
 use App\Contracts\Services\Feedback\FeedbackableMapInterface;
+use App\Contracts\Services\FeedbackServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 readonly class FeedbackService implements FeedbackServiceInterface

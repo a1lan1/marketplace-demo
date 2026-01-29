@@ -6,8 +6,8 @@ namespace Tests\Feature\Actions;
 
 use App\Actions\UpdateOrderStatusAction;
 use App\Contracts\Repositories\OrderRepositoryInterface;
-use App\Enums\OrderStatusEnum;
-use App\Events\OrderStatusChanged;
+use App\Enums\Order\OrderStatusEnum;
+use App\Events\Order\OrderStatusChanged;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Orders\Pages;
 
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
 use Filament\Actions\Action;

@@ -19,10 +19,10 @@ class LogActivityJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        protected Model $performedOn,
-        protected Model $causedBy,
-        protected string $description,
-        protected array $properties = []
+        public ?Model $performedOn,
+        public ?Model $causedBy,
+        public string $description,
+        public array $properties = []
     ) {}
 
     public function handle(): void

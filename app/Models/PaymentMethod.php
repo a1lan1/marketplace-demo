@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\PaymentProviderEnum;
+use App\Enums\Payment\PaymentProviderEnum;
 use Carbon\CarbonImmutable;
 use Database\Factories\PaymentMethodFactory;
 use Illuminate\Database\Eloquent\Builder;

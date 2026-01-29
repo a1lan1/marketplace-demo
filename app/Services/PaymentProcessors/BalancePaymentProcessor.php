@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\PaymentProcessors;
 
-use App\Contracts\BalanceServiceInterface;
+use App\Contracts\Services\BalanceServiceInterface;
 use App\Contracts\Services\Payment\PaymentProcessorInterface;
 use App\DTO\PurchaseDTO;
 use App\DTO\PurchaseOnBalanceDTO;
-use App\Events\FundsWithdrawnFromBalance;
+use App\Events\Payment\FundsWithdrawnFromBalance;
 use App\Models\Order;
 use Cknow\Money\Money;
 use Throwable;

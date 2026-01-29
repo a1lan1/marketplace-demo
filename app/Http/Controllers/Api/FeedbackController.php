@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Feedback\CreateFeedbackAction;
-use App\Contracts\FeedbackServiceInterface;
+use App\Contracts\Services\FeedbackServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFeedbackRequest;
 use App\Http\Resources\FeedbackResource;

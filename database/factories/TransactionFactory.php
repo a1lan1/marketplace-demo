@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\TransactionType;
+use App\Enums\Transaction\TransactionType;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\User;

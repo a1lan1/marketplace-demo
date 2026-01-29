@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Payment;
 
-use App\Enums\TransactionType;
+use App\Enums\Transaction\TransactionType;
 use App\Models\User;
 use Cknow\Money\Money;
 use Spatie\LaravelData\Attributes\MapName;

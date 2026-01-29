@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Contracts\SellerServiceInterface;
+use App\Contracts\Services\SellerServiceInterface;
 use App\Http\Resources\SellerResource;
 use App\Models\User;
 use Inertia\Inertia;

@@ -8,7 +8,7 @@ use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\Contracts\Services\Analytics\AnalyticsServiceInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
 use App\DTO\SalesStatsDTO;
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use Cknow\Money\Money;
 use Illuminate\Support\Collection;
 

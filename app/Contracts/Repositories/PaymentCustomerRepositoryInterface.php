@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Contracts\Repositories;
 
-use App\Enums\PaymentProviderEnum;
+use App\Enums\Payment\PaymentProviderEnum;
 use App\Models\PaymentCustomer;
 
 interface PaymentCustomerRepositoryInterface

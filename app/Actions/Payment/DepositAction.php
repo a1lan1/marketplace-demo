@@ -8,8 +8,8 @@ use App\Contracts\Services\BalanceServiceInterface;
 use App\DTO\Balance\DepositDTO;
 use App\DTO\Payment\ProcessPaymentDTO;
 use App\DTO\Payment\ProcessPaymentResultDTO;
-use App\Enums\PaymentStatusEnum;
-use App\Exceptions\PaymentGatewayException;
+use App\Enums\Payment\PaymentStatusEnum;
+use App\Exceptions\Payment\PaymentGatewayException;
 use App\Services\Payment\PaymentService;
 use Throwable;
 

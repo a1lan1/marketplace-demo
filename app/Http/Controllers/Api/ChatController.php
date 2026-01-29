@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Chat\SendMessageAction;
-use App\Contracts\ChatServiceInterface;
+use App\Contracts\Services\ChatServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SendMessageRequest;
 use App\Http\Resources\MessageResource;

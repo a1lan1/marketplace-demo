@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Feedback;
 
-use App\Contracts\FeedbackServiceInterface;
+use App\Contracts\Services\FeedbackServiceInterface;
 use App\Enums\CacheKeyEnum;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;

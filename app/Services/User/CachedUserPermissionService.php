@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\User;
 
-use App\Contracts\UserPermissionServiceInterface;
+use App\Contracts\Services\UserPermissionServiceInterface;
 use App\Enums\CacheKeyEnum;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;

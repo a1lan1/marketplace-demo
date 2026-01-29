@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\TransactionType;
+use App\Enums\Transaction\TransactionType;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
@@ -18,13 +18,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property int|null $order_id
+ * @property string|null $provider_transaction_id
  * @property Money $amount
  * @property TransactionType $type
  * @property string|null $description
+ * @property array<array-key, mixed>|null $metadata
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- * @property string|null $provider_transaction_id
- * @property array<array-key, mixed>|null $metadata
  * @property-read Order|null $order
  * @property-read User $user
  *

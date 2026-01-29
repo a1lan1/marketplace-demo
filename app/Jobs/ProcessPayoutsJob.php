@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Events\SellerPayoutProcessed;
+use App\Events\Payment\SellerPayoutProcessed;
 use App\Models\Order;
 use App\Services\Purchase\PayoutDistributor;
 use Illuminate\Bus\Queueable;

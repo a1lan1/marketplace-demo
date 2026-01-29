@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\TransactionType;
+use App\Enums\Transaction\TransactionType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

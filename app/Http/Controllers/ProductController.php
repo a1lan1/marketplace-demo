@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Contracts\ProductServiceInterface;
+use App\Contracts\Services\ProductServiceInterface;
 use App\DTO\ProductDTO;
 use App\Http\Requests\ProductFilterRequest;
 use App\Http\Requests\StoreProductRequest;

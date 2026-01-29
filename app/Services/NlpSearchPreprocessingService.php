@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Contracts\NlpSearchPreprocessingServiceInterface;
+use App\Contracts\Services\NlpSearchPreprocessingServiceInterface;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

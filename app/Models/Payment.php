@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\PaymentProviderEnum;
-use App\Enums\PaymentStatusEnum;
+use App\Enums\Payment\PaymentProviderEnum;
+use App\Enums\Payment\PaymentStatusEnum;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;

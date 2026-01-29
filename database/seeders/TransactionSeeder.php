@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Enums\OrderStatusEnum;
-use App\Enums\TransactionType;
+use App\Enums\Order\OrderStatusEnum;
+use App\Enums\Transaction\TransactionType;
 use App\Models\Order;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Collection;

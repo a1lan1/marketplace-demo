@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Transactions\Tables;
 
-use App\Enums\TransactionType;
+use App\Enums\Transaction\TransactionType;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -29,6 +29,8 @@ class TransactionTable
                     ->color(fn (TransactionType $state): string => match ($state) {
                         TransactionType::DEPOSIT => 'success',
                         TransactionType::WITHDRAWAL => 'danger',
+                        TransactionType::TRANSFER => 'info',
+                        TransactionType::PURCHASE => 'primary',
                     }),
                 TextColumn::make('amount')
                     ->money('USD')

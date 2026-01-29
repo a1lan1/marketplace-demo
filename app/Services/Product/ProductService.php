@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Product;
 
-use App\Contracts\NlpSearchPreprocessingServiceInterface;
-use App\Contracts\ProductServiceInterface;
-use App\Contracts\RecommendationServiceInterface;
 use App\Contracts\Repositories\ProductRepositoryInterface;
+use App\Contracts\Services\NlpSearchPreprocessingServiceInterface;
+use App\Contracts\Services\ProductServiceInterface;
+use App\Contracts\Services\RecommendationServiceInterface;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 use App\Models\User;

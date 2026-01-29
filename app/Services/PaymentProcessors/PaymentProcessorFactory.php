@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\PaymentProcessors;
 
 use App\Contracts\Services\Payment\PaymentProcessorInterface;
-use App\Enums\PaymentTypeEnum;
+use App\Enums\Payment\PaymentTypeEnum;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 

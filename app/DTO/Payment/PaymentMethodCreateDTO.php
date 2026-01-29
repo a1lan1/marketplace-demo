@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Payment;
 
-use App\Enums\PaymentProviderEnum;
+use App\Enums\Payment\PaymentProviderEnum;
 use Carbon\CarbonImmutable;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;

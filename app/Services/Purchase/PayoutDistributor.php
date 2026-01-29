@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Purchase;
 
-use App\Contracts\BalanceServiceInterface;
-use App\Exceptions\PayoutException;
+use App\Contracts\Services\BalanceServiceInterface;
+use App\DTO\Balance\DepositDTO;
+use App\Exceptions\Payment\PayoutException;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -36,9 +37,12 @@ readonly class PayoutDistributor
             }
 
             $this->balanceService->deposit(
-                user: $seller,
-                amount: $payoutAmount,
-                description: 'Payout for order #'.$order->id
+                new DepositDTO(
+                    user: $seller,
+                    amount: $payoutAmount,
+                    order: $order,
+                    description: 'Payout for order #'.$order->id
+                )
             );
         }
     }

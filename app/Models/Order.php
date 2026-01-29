@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use App\Models\Builders\OrderBuilder;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;

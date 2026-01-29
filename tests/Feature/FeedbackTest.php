@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use App\Models\Feedback;
 use App\Models\Order;
 use App\Models\Product;

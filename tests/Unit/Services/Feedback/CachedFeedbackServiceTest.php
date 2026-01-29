@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Feedback;
 
-use App\Contracts\FeedbackServiceInterface;
+use App\Contracts\Services\FeedbackServiceInterface;
 use App\Enums\CacheKeyEnum;
 use App\Services\Feedback\CachedFeedbackService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

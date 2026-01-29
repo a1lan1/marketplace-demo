@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\Repositories\UserRepositoryInterface;
-use App\Contracts\SellerServiceInterface;
+use App\Contracts\Services\SellerServiceInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 

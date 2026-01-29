@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Payment;
 
 use App\Contracts\Services\Payment\PaymentGatewayInterface;
-use App\Enums\PaymentProviderEnum;
+use App\Enums\Payment\PaymentProviderEnum;
 use App\Services\Payment\Gateways\FakePaymentGateway;
 use App\Services\Payment\Gateways\StripePaymentGateway;
 use Illuminate\Contracts\Container\BindingResolutionException;

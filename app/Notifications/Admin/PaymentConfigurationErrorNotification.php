@@ -39,7 +39,7 @@ class PaymentConfigurationErrorNotification extends Notification implements Shou
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'message' => 'Critical Payment Configuration Error: ' . $this->errorMessage,
+            'message' => 'Critical Payment Configuration Error: '.$this->errorMessage,
             'level' => 'error',
         ]);
     }

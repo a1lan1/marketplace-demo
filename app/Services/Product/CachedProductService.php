@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Product;
 
-use App\Contracts\ProductServiceInterface;
+use App\Contracts\Services\ProductServiceInterface;
 use App\DTO\ProductDTO;
 use App\Enums\CacheKeyEnum;
 use App\Models\Product;

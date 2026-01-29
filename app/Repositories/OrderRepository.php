@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\DTO\SalesStatsDTO;
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use App\Models\Order;
 use App\Models\User;
 use Cknow\Money\Money;

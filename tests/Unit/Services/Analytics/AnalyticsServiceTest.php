@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\Contracts\Services\CurrencyServiceInterface;
 use App\DTO\SalesStatsDTO;
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
 use App\Services\Analytics\AnalyticsService;
 use Cknow\Money\Money;
 

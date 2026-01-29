@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTO\Payment;
 
-use App\Enums\PaymentProviderEnum;
-use App\Enums\PaymentStatusEnum;
+use App\Enums\Payment\PaymentProviderEnum;
+use App\Enums\Payment\PaymentStatusEnum;
 use App\Models\User;
 use Cknow\Money\Money;
 use Illuminate\Support\Str;

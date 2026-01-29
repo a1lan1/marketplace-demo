@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Contracts\OrderServiceInterface;
+use App\Contracts\Services\OrderServiceInterface;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Auth\Access\AuthorizationException;

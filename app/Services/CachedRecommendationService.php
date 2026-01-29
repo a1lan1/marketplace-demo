@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Contracts\RecommendationServiceInterface;
+use App\Contracts\Services\RecommendationServiceInterface;
 use App\Enums\CacheKeyEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;

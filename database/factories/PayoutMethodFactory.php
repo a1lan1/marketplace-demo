@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\PaymentProviderEnum;
-use App\Enums\PaymentTypeEnum;
+use App\Enums\Payment\PaymentProviderEnum;
+use App\Enums\Payment\PaymentTypeEnum;
 use App\Models\PayoutMethod;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;

@@ -10,7 +10,7 @@ use App\DTO\Payment\GatewayChargeResultDTO;
 use App\DTO\Payment\GatewaySetupIntentResultDTO;
 use App\DTO\Payment\PaymentChargeDTO;
 use App\DTO\Payment\PayoutResultDTO;
-use App\Exceptions\PaymentGatewayException;
+use App\Exceptions\Payment\PaymentGatewayException;
 use App\Models\PayoutMethod;
 use App\Models\User;
 use Cknow\Money\Money;

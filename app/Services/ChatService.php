@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Contracts\ChatServiceInterface;
 use App\Contracts\Repositories\MessageRepositoryInterface;
+use App\Contracts\Services\ChatServiceInterface;
 use App\Models\Order;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;

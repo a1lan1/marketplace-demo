@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
-use App\Contracts\RecommendationServiceInterface;
+use App\Contracts\Services\RecommendationServiceInterface;
 use App\Enums\CacheKeyEnum;
 use App\Services\CachedRecommendationService;
 use Illuminate\Support\Facades\Cache;
