@@ -7,6 +7,7 @@ namespace App\Exceptions\Payment;
 use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Notifications\Admin\PaymentConfigurationErrorNotification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class PaymentConfigurationException extends PaymentException
@@ -18,5 +19,7 @@ class PaymentConfigurationException extends PaymentException
         if ($admins->isNotEmpty()) {
             Notification::send($admins, new PaymentConfigurationErrorNotification($this->getMessage()));
         }
+
+        Log::error('Payment Configuration Error: '.$this->getMessage());
     }
 }
