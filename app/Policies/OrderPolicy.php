@@ -23,11 +23,15 @@ class OrderPolicy
 
     public function view(User $user, Order $order): bool
     {
-        if ($this->isProductOwner($user, $order)) {
+        if ($user->isAdminOrManager()) {
             return true;
         }
 
-        return $user->isAdminOrManager();
+        if ($this->isOrderBuyer($user, $order)) {
+            return true;
+        }
+
+        return $order->products()->where('user_id', $user->id)->exists();
     }
 
     public function create(User $user): bool
@@ -61,20 +65,15 @@ class OrderPolicy
 
     public function viewChat(User $user, Order $order): bool
     {
-        if ($user->isAdminOrManager() || $this->isProductOwner($user, $order)) {
-            return true;
-        }
-
-        // Or if they are a seller of any product in this order
-        return $order->products()->where('user_id', $user->id)->exists();
+        return $this->view($user, $order);
     }
 
     public function sendMessage(User $user, Order $order): bool
     {
-        return $this->viewChat($user, $order);
+        return $this->view($user, $order);
     }
 
-    public function isProductOwner(User $user, Order $order): bool
+    public function isOrderBuyer(User $user, Order $order): bool
     {
         return $user->id === $order->user_id;
     }
