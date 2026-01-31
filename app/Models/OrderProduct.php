@@ -9,6 +9,7 @@ use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\OrderProductFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property Money $price
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
+ * @property-read mixed $line_total
  *
  * @method static OrderProductFactory factory($count = null, $state = [])
  * @method static Builder<static>|OrderProduct newModelQuery()
@@ -46,5 +48,12 @@ class OrderProduct extends Pivot
         return [
             'price' => MoneyIntegerCast::class,
         ];
+    }
+
+    protected function lineTotal(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->price->multiply($this->quantity)
+        );
     }
 }
