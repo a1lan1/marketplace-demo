@@ -7,6 +7,7 @@ namespace App\Events\Order;
 use App\Contracts\LoggableEvent;
 use App\Models\Order;
 use App\Models\User;
+use Cknow\Money\Money;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,6 +22,9 @@ class OrderCreated implements LoggableEvent, ShouldBroadcast
     use InteractsWithSockets;
     use SerializesModels;
 
+    /**
+     * @param  Collection<int, Money>  $sellerPayouts
+     */
     public function __construct(
         public Order $order,
         public Collection $sellerPayouts
@@ -37,8 +41,8 @@ class OrderCreated implements LoggableEvent, ShouldBroadcast
             new PrivateChannel('App.Models.User.'.$this->order->user_id),
         ];
 
-        foreach ($this->order->products as $product) {
-            $channels[] = new PrivateChannel('App.Models.User.'.$product->user_id);
+        foreach ($this->order->sellers as $seller) {
+            $channels[] = new PrivateChannel('App.Models.User.'.$seller->id);
         }
 
         return $channels;
