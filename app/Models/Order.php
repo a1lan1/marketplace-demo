@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @property int $id
@@ -35,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read OrderProduct|null $pivot
  * @property-read Collection<int, Product> $products
  * @property-read int|null $products_count
+ * @property-read SupportCollection $sellers
  * @property-read Transaction|null $transaction
  *
  * @method static OrderFactory factory($count = null, $state = [])
@@ -75,15 +77,29 @@ class Order extends Model
     {
         return Attribute::make(
             get: function (): string {
-                if ($this->payment) {
+                if ($this->relationLoaded('payment') && $this->payment) {
                     return $this->payment->provider->label();
                 }
 
-                if ($this->transaction) {
+                if ($this->relationLoaded('transaction') && $this->transaction) {
                     return 'Balance';
                 }
 
                 return 'N/A';
+            }
+        );
+    }
+
+    /**
+     * @return Attribute<SupportCollection<int, User>, never>
+     */
+    protected function sellers(): Attribute
+    {
+        return Attribute::make(
+            get: function (): SupportCollection {
+                $this->loadMissing('products.seller');
+
+                return $this->products->map(fn (Product $product) => $product->seller)->unique('id');
             }
         );
     }
