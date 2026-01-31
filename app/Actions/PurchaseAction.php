@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Contracts\Repositories\OrderRepositoryInterface;
 use App\Contracts\Repositories\ProductRepositoryInterface;
+use App\Contracts\Services\OrderServiceInterface;
 use App\DTO\PurchaseDTO;
 use App\Enums\Order\OrderStatusEnum;
 use App\Events\Order\OrderCreated;
@@ -24,7 +24,7 @@ readonly class PurchaseAction
     public function __construct(
         private CartCalculator $cartCalculator,
         private InventoryService $inventoryService,
-        private OrderRepositoryInterface $orderRepository,
+        private OrderServiceInterface $orderService,
         private ProductRepositoryInterface $productRepository,
         private PaymentProcessorFactory $paymentProcessorFactory
     ) {}
@@ -52,7 +52,12 @@ readonly class PurchaseAction
             $calculation = $this->cartCalculator->calculate($purchaseDTO->cart, $products);
 
             // Create Order
-            $order = $this->orderRepository->create($purchaseDTO->buyer, $calculation->totalAmount);
+            $order = $this->orderService->createOrder(
+                $purchaseDTO->buyer,
+                $calculation->totalAmount,
+                $purchaseDTO->cart,
+                $products
+            );
 
             // Process Payment
             $paymentProcessor = $this->paymentProcessorFactory->make($purchaseDTO->paymentType);
