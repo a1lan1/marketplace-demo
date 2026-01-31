@@ -10,7 +10,9 @@ use App\Enums\Order\OrderStatusEnum;
 use App\Models\Order;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -68,5 +70,40 @@ class OrderRepository implements OrderRepositoryInterface
     public function updateStatus(Order $order, OrderStatusEnum $status): void
     {
         $order->update(['status' => $status]);
+    }
+
+    public function paginateByBuyer(User $buyer, int $perPage = 20): LengthAwarePaginator
+    {
+        return Order::query()
+            ->withEssentialRelations()
+            ->where('user_id', $buyer->id)
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    public function paginateForUser(User $user, int $perPage = 20): LengthAwarePaginator
+    {
+        return Order::query()
+            ->withEssentialRelations()
+            ->with(['products.seller' => function (Relation $query): void {
+                $query->select('id', 'name')->with('media');
+            }])
+            ->forUser($user)
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    public function findByIdWithDetails(int $orderId): Order
+    {
+        return Order::query()
+            ->with([
+                'buyer:id,name,email',
+                'products:id,name,user_id',
+                'products.media',
+                'products.seller:id,name',
+                'payment:id,order_id,provider',
+                'transaction:id,order_id',
+            ])
+            ->findOrFail($orderId);
     }
 }
