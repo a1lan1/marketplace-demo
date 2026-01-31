@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Purchase;
 
-use App\Contracts\BalanceServiceInterface;
-use App\Exceptions\PayoutException;
+use App\Contracts\Services\BalanceServiceInterface;
+use App\DTO\Balance\DepositDTO;
+use App\Exceptions\Payment\PayoutException;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\Purchase\PayoutDistributor;
@@ -54,7 +55,13 @@ test('distribute deposits to seller balance', function (): void {
 
     $balanceService->shouldReceive('deposit')
         ->once()
-        ->with($seller, $amount, 'Payout for order #123');
+        ->with(Mockery::on(function ($arg) use ($seller, $amount, $order): bool {
+            return $arg instanceof DepositDTO &&
+                   $arg->user === $seller &&
+                   $arg->amount->equals($amount) &&
+                   $arg->order === $order &&
+                   $arg->description === 'Payout for order #123';
+        }));
 
     // Act
     $distributor->distribute($order, $sellerPayouts, $sellers);
