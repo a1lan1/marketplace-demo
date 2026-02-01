@@ -22,7 +22,7 @@ class CartCalculator
 
         foreach ($cart as $item) {
             /** @var Product|null $product */
-            $product = $products->get($item->productId);
+            $product = $products->firstWhere('id', $item->productId);
 
             if (! $product) {
                 throw new ModelNotFoundException(sprintf('Product with ID %s from cart not found in the provided product collection.', $item->productId));

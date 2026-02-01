@@ -30,9 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::resource('products', ProductController::class)->except(['show']);
 
     Route::get('checkout', fn () => Inertia::render('Checkout'))->name('checkout.index');
+    Route::get('payment', fn () => Inertia::render('Payment'))->name('payment.index');
 
     Route::prefix('orders')->group(function (): void {
         Route::get('', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::post('', [OrderController::class, 'store'])
             ->middleware(['throttle:orders', 'idempotency'])
             ->name('orders.store');

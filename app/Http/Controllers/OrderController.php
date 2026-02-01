@@ -6,9 +6,10 @@ namespace App\Http\Controllers;
 
 use App\Actions\PurchaseAction;
 use App\Actions\UpdateOrderStatusAction;
-use App\Contracts\OrderServiceInterface;
+use App\Contracts\Services\OrderServiceInterface;
 use App\DTO\PurchaseDTO;
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
+use App\Enums\Payment\PaymentTypeEnum;
 use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\NotEnoughStockException;
 use App\Http\Requests\PurchaseRequest;
@@ -16,7 +17,6 @@ use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,9 +25,7 @@ use Throwable;
 
 class OrderController extends Controller
 {
-    use AuthorizesRequests;
-
-    public function __construct(protected OrderServiceInterface $orderRetrievalService) {}
+    public function __construct(protected OrderServiceInterface $orderService) {}
 
     /**
      * @throws AuthorizationException
@@ -36,10 +34,24 @@ class OrderController extends Controller
     {
         $this->authorize('viewAny', Order::class);
 
-        $orders = $this->orderRetrievalService->getUserOrders($request->user());
+        $orders = $this->orderService->getUserOrders($request->user());
 
-        return Inertia::render('Orders', [
+        return Inertia::render('Order/Index', [
             'orders' => OrderResource::collection($orders),
+        ]);
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function show(Order $order): Response
+    {
+        $this->authorize('view', $order);
+
+        $detailedOrder = $this->orderService->findOrderById($order->id);
+
+        return Inertia::render('Order/Show', [
+            'order' => OrderResource::make($detailedOrder),
         ]);
     }
 
@@ -51,12 +63,16 @@ class OrderController extends Controller
         $this->authorize('create', Order::class);
 
         try {
-            $purchaseDTO = PurchaseDTO::from([
-                'buyer' => $request->user(),
-                'cart' => $request->validated('cart'),
-            ]);
-
-            $purchaseAction->execute($purchaseDTO);
+            $purchaseAction->execute(
+                PurchaseDTO::from([
+                    'buyer' => $request->user(),
+                    'cart' => $request->validated('cart'),
+                    'paymentType' => PaymentTypeEnum::from($request->validated('payment_type')),
+                    'paymentMethodId' => $request->validated('payment_method_id'),
+                    'paymentProvider' => $request->validated('payment_provider'),
+                    'saveCard' => $request->boolean('save_card'),
+                ])
+            );
         } catch (InsufficientFundsException) {
             return back()->withErrors(['purchase' => 'You do not have enough funds to complete this purchase.']);
         } catch (NotEnoughStockException $e) {
@@ -77,9 +93,10 @@ class OrderController extends Controller
     {
         $this->authorize('update', Order::class);
 
-        $status = OrderStatusEnum::from($request->validated('status'));
-
-        $updateOrderStatus->execute($order, $status);
+        $updateOrderStatus->execute(
+            order: $order,
+            status: OrderStatusEnum::from($request->validated('status'))
+        );
 
         return back()->with('success', 'Order status updated.');
     }

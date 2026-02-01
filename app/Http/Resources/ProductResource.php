@@ -27,15 +27,18 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->whenHas('description'),
-            'price' => (float) $this->price->getAmount() / 100,
+            'price' => $this->price,
             'stock' => $this->whenHas('stock'),
             'user_id' => $this->whenHas('user_id'),
             'cover_image' => $this->cover_image,
             'created_at' => $this->whenHas('created_at'),
             'updated_at' => $this->whenHas('updated_at'),
             'seller' => UserResource::make($this->whenLoaded('seller')),
-            'quantity' => $this->when(isset($this->pivot), fn () => $this->pivot?->quantity),
-            'total_price' => $this->when(isset($this->pivot), fn (): float => (float) $this->pivot?->price->getAmount() / 100),
+
+            // Pivot data for orders
+            'quantity' => $this->when(isset($this->pivot), fn () => $this->pivot->quantity),
+            'purchase_price' => $this->when(isset($this->pivot), fn () => $this->pivot->price),
+            'line_total' => $this->when(isset($this->pivot), fn () => $this->pivot->line_total),
         ];
     }
 }

@@ -19,7 +19,7 @@ class InventoryService
     {
         foreach ($cart as $item) {
             /** @var Product|null $product */
-            $product = $products->get($item->productId);
+            $product = $products->firstWhere('id', $item->productId);
 
             if (! $product) {
                 throw new ModelNotFoundException(sprintf('Product with ID %s not found in the provided collection.', $item->productId));
@@ -35,9 +35,9 @@ class InventoryService
     {
         foreach ($cart as $item) {
             /** @var Product|null $product */
-            $product = $products->get($item->productId);
+            $product = $products->firstWhere('id', $item->productId);
 
-            $product?->decrement('stock', $item->quantity);
+            $product->decrement('stock', $item->quantity);
         }
     }
 }
