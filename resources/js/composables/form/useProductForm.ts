@@ -15,7 +15,7 @@ export function useProductForm(initial?: Product) {
   const form = useForm<ProductFormData>({
     name: initial?.name ?? '',
     description: initial?.description ?? null,
-    price: initial ? initial.price.amount / 100 : 0,
+    price: initial ? Number(initial.price.amount) / 100 : 0,
     stock: initial?.stock ?? 0,
     cover_image: null
   })
@@ -66,7 +66,7 @@ export function useProductForm(initial?: Product) {
 
       form.name = newVal.name
       form.description = newVal.description
-      form.price = newVal.price.amount / 100
+      form.price = Number(newVal.price.amount) / 100
       form.stock = newVal.stock
       form.cover_image = null
     },

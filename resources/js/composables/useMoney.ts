@@ -18,10 +18,10 @@ export function useMoney(
     }
 
     if (typeof rawValue === 'object' && 'amount' in rawValue) {
-      return rawValue.amount / 100
+      return Number(rawValue.amount) / 100
     }
 
-    return Number(rawValue)
+    return Number(rawValue) / 100
   })
 
   const convertedAmount = computed(() => {
@@ -34,9 +34,9 @@ export function useMoney(
     return rate ? amountInBase.value * rate : amountInBase.value
   })
 
-  const formatted = computed(() => {
-    return formatCurrency(convertedAmount.value, currentCurrency.value)
-  })
+  const formatted = computed(() =>
+    formatCurrency(convertedAmount.value * 100, currentCurrency.value)
+  )
 
   return {
     amount: convertedAmount,

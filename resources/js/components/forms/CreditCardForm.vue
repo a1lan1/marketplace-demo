@@ -1,23 +1,37 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
 import type { CardDetails } from '@/types/payment'
+import { computed, ref, watch } from 'vue'
 
 // Original Pen: https://codepen.io/JavaScriptJunkie/pen/YzzNGeR
 
-const cardData = ref<CardDetails>({
-  number: '',
-  name: '',
-  expiry: '',
-  cvv: ''
-})
-
-const isCardFlipped = ref(false)
+const props = defineProps<{
+  modelValue: CardDetails;
+  errors?: Record<string, string>;
+}>()
 
 const emit = defineEmits(['update:modelValue'])
 
-watch(cardData, (newValue) => {
-  emit('update:modelValue', newValue)
-}, { deep: true })
+const cardData = ref<CardDetails>({ ...props.modelValue })
+
+const isCardFlipped = ref(false)
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (JSON.stringify(newValue) !== JSON.stringify(cardData.value)) {
+      cardData.value = { ...newValue }
+    }
+  },
+  { deep: true }
+)
+
+watch(
+  cardData,
+  (newValue) => {
+    emit('update:modelValue', newValue)
+  },
+  { deep: true }
+)
 
 const formattedCardNumberForDisplay = computed(() => {
   const value = cardData.value.number.replace(/\D/g, '')
@@ -51,6 +65,16 @@ function handleCardNumberInput(event: Event) {
 function handleExpiryInput(event: Event) {
   const input = event.target as HTMLInputElement
   let value = input.value.replace(/\D/g, '').slice(0, 4)
+
+  if (value.length >= 2) {
+    const month = parseInt(value.slice(0, 2))
+
+    if (month > 12) {
+      value = '12' + value.slice(2)
+    } else if (month === 0 && value.length === 2) {
+      value = '01' + value.slice(2)
+    }
+  }
 
   if (value.length > 2) {
     value = `${value.slice(0, 2)}/${value.slice(2)}`
@@ -144,9 +168,16 @@ function blurCVV() {
           id="cardNumber"
           type="text"
           class="card-input__input"
+          :class="{ '-error': errors?.cardNumber }"
           maxlength="19"
           @input="handleCardNumberInput"
         >
+        <div
+          v-if="errors?.cardNumber"
+          class="card-input__error"
+        >
+          {{ errors.cardNumber }}
+        </div>
       </div>
       <div class="card-input">
         <label
@@ -158,7 +189,14 @@ function blurCVV() {
           v-model="cardData.name"
           type="text"
           class="card-input__input"
+          :class="{ '-error': errors?.cardName }"
         >
+        <div
+          v-if="errors?.cardName"
+          class="card-input__error"
+        >
+          {{ errors.cardName }}
+        </div>
       </div>
       <div class="card-form__row">
         <div class="card-form__col">
@@ -171,10 +209,17 @@ function blurCVV() {
               id="cardMonth"
               type="text"
               class="card-input__input"
+              :class="{ '-error': errors?.cardExpiry }"
               placeholder="MM/YY"
               maxlength="5"
               @input="handleExpiryInput"
             >
+            <div
+              v-if="errors?.cardExpiry"
+              class="card-input__error"
+            >
+              {{ errors.cardExpiry }}
+            </div>
           </div>
         </div>
         <div class="card-form__col -cvv">
@@ -188,10 +233,17 @@ function blurCVV() {
               v-model="cardData.cvv"
               type="text"
               class="card-input__input"
+              :class="{ '-error': errors?.cardCvv }"
               maxlength="4"
               @focus="focusCVV"
               @blur="blurCVV"
             >
+            <div
+              v-if="errors?.cardCvv"
+              class="card-input__error"
+            >
+              {{ errors.cardCvv }}
+            </div>
           </div>
         </div>
       </div>
@@ -254,7 +306,7 @@ function blurCVV() {
   object-fit: cover;
 }
 .card-item__wrapper {
-  font-family: "Source Code Pro", monospace;
+  font-family: 'Source Code Pro', monospace;
   padding: 25px 15px;
   position: relative;
   z-index: 4;
@@ -401,11 +453,19 @@ function blurCVV() {
   padding: 5px 15px;
   background: none;
   color: #1a3b5d;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 .card-input__input:focus {
   border-color: #3d9cff;
   outline: none;
+}
+.card-input__input.-error {
+  border-color: #ff5252;
+}
+.card-input__error {
+  color: #ff5252;
+  font-size: 12px;
+  margin-top: 5px;
 }
 .card-form__row {
   display: flex;

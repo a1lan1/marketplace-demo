@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import Money from '@/components/common/Money.vue'
-import { trackError } from '@/composables/useActivity'
 import AppLayout from '@/layouts/AppLayout.vue'
-import { index as ordersIndex, store as storeOrder } from '@/routes/orders'
 import { useCartStore } from '@/stores/cart'
-import { generateUUID } from '@/utils/uuid'
-import type { BreadcrumbItem, CartItem, CheckoutForm } from '@/types'
-import { Head, router, useForm } from '@inertiajs/vue3'
+import type { BreadcrumbItem, CartItem } from '@/types'
+import { Head, router } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
 
 const cartStore = useCartStore()
 const { items, totalPrice } = storeToRefs(cartStore)
-const { clearCart, removeFromCart } = cartStore
+const { removeFromCart } = cartStore
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -21,37 +17,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   }
 ]
 
-const form = useForm<CheckoutForm>({
-  cart: []
-})
-
-const idempotencyKey = ref(generateUUID())
-
-const placeOrder = () => {
-  form.cart = items.value.map((item) => ({
-    product_id: item.product_id,
-    quantity: item.quantity
-  }))
-
-  form.post(storeOrder().url, {
-    headers: {
-      'Idempotency-Key': idempotencyKey.value
-    },
-    onSuccess: () => {
-      clearCart()
-      idempotencyKey.value = generateUUID()
-      router.visit(ordersIndex().url)
-    },
-    onError: (errors: any) => {
-      console.error(errors)
-      trackError('Error placing order')
-      idempotencyKey.value = generateUUID()
-    }
-  })
+const proceedToPayment = () => {
+  router.visit('/payment')
 }
 
 const getItemTotalPrice = (item: CartItem): number => {
-  return Number(item.price) * item.quantity
+  return Number(item.price.amount) * item.quantity
 }
 
 const cartHeaders = [
@@ -72,15 +43,6 @@ const cartHeaders = [
       <v-card>
         <v-card-title>Order Summary</v-card-title>
         <v-card-text>
-          <v-alert
-            v-if="'purchase' in form.errors"
-            type="error"
-            variant="tonal"
-            class="mb-4"
-          >
-            {{ form.errors.purchase }}
-          </v-alert>
-
           <v-data-table
             v-if="items.length > 0"
             :headers="cartHeaders"
@@ -105,7 +67,7 @@ const cartHeaders = [
             </template>
 
             <template #[`item.price`]="{ item }">
-              <Money :value="Number(item.price)" />
+              <Money :value="item.price" />
             </template>
 
             <template #[`item.quantity`]="{ item }">
@@ -159,12 +121,10 @@ const cartHeaders = [
           <v-btn
             color="success"
             variant="elevated"
-            prepend-icon="mdi-currency-usd"
-            :loading="form.processing"
-            :disabled="form.processing"
-            @click="placeOrder"
+            prepend-icon="mdi-credit-card"
+            @click="proceedToPayment"
           >
-            Place Order
+            Proceed to Payment
           </v-btn>
         </v-card-actions>
       </v-card>

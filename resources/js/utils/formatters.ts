@@ -7,11 +7,11 @@ export function formatCurrency(
 ): string {
   let num: number
 
-  if (typeof value === 'object' && 'amount' in value && 'currency' in value) {
+  if (typeof value === 'object' && value !== null && 'amount' in value) {
     num = Number(value.amount) / 100
-    currency = value.currency
+    currency = value.currency || currency
   } else {
-    num = Number(value)
+    num = Number(value) / 100
   }
 
   if (isNaN(num)) {

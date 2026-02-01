@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Messenger from '@/components/chat/Messenger.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
-import type { BreadcrumbItem, Order } from '@/types'
+import type { BreadcrumbItem, Order, Pagination } from '@/types'
 import { Head } from '@inertiajs/vue3'
 
 defineProps<{
-  orders: Order[];
+  orders: Pagination<Order>;
 }>()
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -18,7 +18,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 <template>
   <Head title="Chat" />
-
   <AppLayout :breadcrumbs>
     <Messenger :orders />
   </AppLayout>

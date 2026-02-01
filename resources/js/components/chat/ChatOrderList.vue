@@ -1,24 +1,28 @@
 <script setup lang="ts">
+import InfiniteScroll from '@/components/theme/InfiniteScroll.vue'
 import { useOrderStore } from '@/stores/order'
-import type { Order } from '@/types'
+import type { Order, Pagination } from '@/types'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
-  orders?: Order[];
+  orders?: Pagination<Order>;
 }>()
 
 const orderStore = useOrderStore()
-const { loading, orders: orderList, activeOrder } = storeToRefs(orderStore)
-const { fetchUserOrders } = orderStore
-
-const orderItems = computed(() => {
-  return props.orders || orderList.value || []
-})
+const {
+  loading,
+  orders: paginatedOrders,
+  activeOrder,
+  pagination
+} = storeToRefs(orderStore)
+const { fetchUserOrders, setOrders } = orderStore
 
 onMounted(() => {
-  if (!props.orders) {
-    fetchUserOrders()
+  if (props.orders) {
+    setOrders(props.orders)
+  } else {
+    fetchUserOrders(pagination.value?.current_page || 1)
   }
 })
 
@@ -30,7 +34,7 @@ onUnmounted(() => {
 <template>
   <div
     class="flex w-1/5 flex-col"
-    style="height: calc(100vh - 110px)"
+    style="height: calc(100vh - 70px)"
   >
     <v-list-item
       title="Your Orders"
@@ -41,40 +45,46 @@ onUnmounted(() => {
     <v-divider />
 
     <div class="min-h-0 flex-grow overflow-y-auto">
-      <v-skeleton-loader
-        v-if="loading"
-        type="list-item-two-line"
-      />
-
-      <v-list
-        v-model:active="activeOrder"
-        nav
-        density="compact"
-        variant="tonal"
+      <InfiniteScroll
+        :items="paginatedOrders"
+        :pagination="pagination"
+        :on-load="fetchUserOrders"
       >
-        <v-list-item
-          v-for="order in orderItems"
-          :key="order.id"
-          :title="`Order #${order.id}`"
-          :subtitle="`Total: ${order.total_amount.formatted}`"
-          :active="activeOrder?.id === order.id"
-          active-color="primary"
-          @click="activeOrder = order"
+        <v-skeleton-loader
+          v-if="loading && !paginatedOrders.length"
+          type="list-item-two-line@5"
+        />
+        <v-list
+          v-else
+          v-model:active="activeOrder"
+          nav
+          density="compact"
+          variant="tonal"
         >
-          <template #prepend>
-            <v-avatar>
-              <v-img
-                v-if="order.buyer"
-                :src="order.buyer.avatar"
-              />
-              <v-icon
-                v-else
-                icon="mdi-account"
-              />
-            </v-avatar>
-          </template>
-        </v-list-item>
-      </v-list>
+          <v-list-item
+            v-for="order in paginatedOrders"
+            :key="order.id"
+            :title="`Order #${order.id}`"
+            :subtitle="`Total: ${order.total_amount.formatted}`"
+            :active="activeOrder?.id === order.id"
+            active-color="primary"
+            @click="activeOrder = order"
+          >
+            <template #prepend>
+              <v-avatar>
+                <v-img
+                  v-if="order.buyer"
+                  :src="order.buyer.avatar"
+                />
+                <v-icon
+                  v-else
+                  icon="mdi-account"
+                />
+              </v-avatar>
+            </template>
+          </v-list-item>
+        </v-list>
+      </InfiniteScroll>
     </div>
   </div>
 </template>

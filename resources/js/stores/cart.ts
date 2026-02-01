@@ -11,16 +11,18 @@ export const useCartStore = defineStore(
       return items.value.reduce((total, item) => total + item.quantity, 0)
     })
 
+    const cartItemsForOrder = computed(() =>
+      items.value.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity
+      }))
+    )
+
     const totalPrice = computed(() => {
       return items.value.reduce((total, item) => {
-        let price = 0
-        if (typeof item.price === 'object' && 'amount' in item.price) {
-          price = item.price.amount / 100
-        } else {
-          price = Number(item.price)
-        }
+        const priceInCents = Number(item.price.amount)
 
-        return total + price * item.quantity
+        return total + priceInCents * item.quantity
       }, 0)
     })
 
@@ -59,13 +61,12 @@ export const useCartStore = defineStore(
     return {
       items,
       totalItems,
-      totalPrice,
+      cartItemsForOrder,
+      totalPrice, // in cents
       addToCart,
       removeFromCart,
       clearCart
     }
   },
-  {
-    persist: true
-  }
+  { persist: true }
 )

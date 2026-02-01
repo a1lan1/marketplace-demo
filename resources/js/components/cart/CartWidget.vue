@@ -2,6 +2,8 @@
 import Money from '@/components/common/Money.vue'
 import { index as checkoutIndex } from '@/routes/checkout'
 import { useCartStore } from '@/stores/cart'
+import { CartItem } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
 import { router } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
 
@@ -9,13 +11,8 @@ const cartStore = useCartStore()
 const { items, totalItems, totalPrice } = storeToRefs(cartStore)
 const { removeFromCart } = cartStore
 
-const getItemTotal = (item: any) => {
-  const price =
-    typeof item.price === 'object' && 'amount' in item.price
-      ? item.price.amount / 100
-      : Number(item.price)
-
-  return price * item.quantity
+const getItemTotal = (item: CartItem) => {
+  return Number(item.price.amount) * item.quantity
 }
 </script>
 
@@ -46,10 +43,9 @@ const getItemTotal = (item: any) => {
         >
           <template #subtitle>
             Quantity: {{ item.quantity }} -
-            <Money
-              :value="getItemTotal(item)"
-              size="small"
-            />
+            <span class="font-weight-bold text-primary">
+              {{ formatCurrency(getItemTotal(item), item.price.currency) }}
+            </span>
           </template>
 
           <template #prepend>

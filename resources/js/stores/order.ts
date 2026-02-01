@@ -1,4 +1,4 @@
-import type { Order } from '@/types'
+import type { Order, Pagination } from '@/types'
 import { defineStore } from 'pinia'
 
 interface State {
@@ -6,6 +6,7 @@ interface State {
   storing: boolean;
   orders: Order[];
   activeOrder: Order | null;
+  pagination: Pagination<Order>['meta'] | null;
 }
 
 export const useOrderStore = defineStore('order', {
@@ -13,15 +14,17 @@ export const useOrderStore = defineStore('order', {
     loading: false,
     storing: false,
     orders: [],
-    activeOrder: null
+    activeOrder: null,
+    pagination: null
   }),
 
   actions: {
-    async fetchUserOrders(): Promise<void> {
+    async fetchUserOrders(page = 1): Promise<void> {
       try {
         this.loading = true
-        const { data } = await this.$axios.get<Order[]>('/user/orders')
-        this.orders = data
+        const { data } = await this.$axios.get<Pagination<Order>>(`/user/orders?page=${page}`)
+
+        this.setOrders(data)
       } catch (e: any) {
         this.$snackbar.error({
           text: e.message || 'An error occurred while fetching orders.'
@@ -33,8 +36,14 @@ export const useOrderStore = defineStore('order', {
     resetOrders() {
       this.orders = []
     },
-    setOrders(initialOrders: Order[]) {
-      this.orders = initialOrders
+    setOrders(orders: Pagination<Order>) {
+      if (orders.meta.current_page === 1) {
+        this.orders = orders.data
+      } else {
+        this.orders.push(...orders.data)
+      }
+
+      this.pagination = orders.meta
     },
     updateOrderStatus(orderId: number, status: Order['status']) {
       const order = this.orders.find((o) => o.id === orderId)
