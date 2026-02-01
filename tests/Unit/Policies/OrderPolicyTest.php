@@ -53,8 +53,8 @@ it('allows manager to view a specific order', function (): void {
     expect((new OrderPolicy)->view($this->manager, $this->otherOrder))->toBeTrue();
 });
 
-it('denies seller from viewing an order they are not the buyer of', function (): void {
-    expect((new OrderPolicy)->view($this->seller, $this->order))->toBeFalse();
+it('allows seller to view an order containing their product', function (): void {
+    expect((new OrderPolicy)->view($this->seller, $this->order))->toBeTrue();
 });
 
 it('denies plain user from viewing any specific order', function (): void {

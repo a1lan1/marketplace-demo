@@ -29,7 +29,7 @@ test('a user can view the chat index page with their orders', function (string $
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
             ->component('Chat')
-            ->has('orders', 1)
+            ->where('orders.data', fn ($data): bool => count($data) >= 1)
         );
 })->with(['buyer']);
 

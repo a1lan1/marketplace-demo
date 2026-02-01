@@ -1,12 +1,18 @@
 <?php
 
+use App\Enums\Payment\PaymentTypeEnum;
+use App\Jobs\ProcessPayoutsJob;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function (): void {
+    Notification::fake();
+    Bus::fake([ProcessPayoutsJob::class]);
     Route::post('/test/idempotency', function (Request $request) {
         return response()->json(['message' => 'Processed', 'data' => $request->all()]);
     })->middleware(['auth', 'idempotency']);
@@ -73,6 +79,7 @@ test('concurrent stock updates', function (): void {
             'cart' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
+            'payment_type' => PaymentTypeEnum::BALANCE->value,
         ], ['Idempotency-Key' => $key]);
 
     $response1->assertRedirect(route('orders.index'));
@@ -82,6 +89,7 @@ test('concurrent stock updates', function (): void {
             'cart' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
+            'payment_type' => PaymentTypeEnum::BALANCE->value,
         ], ['Idempotency-Key' => $key]);
 
     $response2->assertRedirect(route('orders.index'));

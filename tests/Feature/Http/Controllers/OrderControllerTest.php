@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Controllers;
 
-use App\Enums\OrderStatusEnum;
-use App\Events\OrderStatusChanged;
+use App\Enums\Order\OrderStatusEnum;
+use App\Enums\Payment\PaymentTypeEnum;
+use App\Events\Order\OrderStatusChanged;
+use App\Jobs\ProcessPayoutsJob;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
@@ -18,6 +22,8 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 
 beforeEach(function (): void {
+    Notification::fake();
+    Bus::fake([ProcessPayoutsJob::class]);
     $this->admin = User::factory()->withAdminRole()->create();
     $this->buyer = User::factory()->withBuyerRole()->create(['balance' => Money::USD(100000)]);
     $this->userWithoutRole = User::factory()->create();
@@ -32,7 +38,7 @@ test('a buyer can view their orders', function (): void {
         ->get(route('orders.index'))
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
-            ->component('Orders')
+            ->component('Order/Index')
             ->has('orders.data', 2)
         );
 });
@@ -45,12 +51,13 @@ test('a guest cannot view orders', function (): void {
 test('a buyer can place an order', function (): void {
     actingAs($this->buyer)->post(route('orders.store'), [
         'cart' => [['product_id' => $this->product->id, 'quantity' => 2]],
+        'payment_type' => PaymentTypeEnum::BALANCE->value,
     ], ['Idempotency-Key' => 'test-key'])->assertRedirect(route('orders.index'))->assertSessionHas('success');
 
     assertDatabaseHas('orders', [
         'user_id' => $this->buyer->id,
         'total_amount' => 20000, // 200.00 * 100
-        'status' => OrderStatusEnum::PENDING->value,
+        'status' => OrderStatusEnum::PAID->value,
     ]);
     assertDatabaseHas('products', [
         'id' => $this->product->id,
@@ -64,6 +71,7 @@ test('a buyer can place an order', function (): void {
 test('an order fails if stock is insufficient', function (): void {
     actingAs($this->buyer)->post(route('orders.store'), [
         'cart' => [['product_id' => $this->product->id, 'quantity' => 11]],
+        'payment_type' => PaymentTypeEnum::BALANCE->value,
     ], ['Idempotency-Key' => 'test-key'])->assertRedirect()->assertSessionHasErrors('purchase');
 
     expect($this->product->stock)->toBe(10);
@@ -74,6 +82,7 @@ test('an order fails if balance is insufficient', function (): void {
 
     actingAs($buyerWithLowBalance)->post(route('orders.store'), [
         'cart' => [['product_id' => $this->product->id, 'quantity' => 1]],
+        'payment_type' => PaymentTypeEnum::BALANCE->value,
     ], ['Idempotency-Key' => 'test-key'])->assertRedirect()->assertSessionHasErrors('purchase');
 });
 
@@ -91,7 +100,7 @@ test('an admin can update order status', function (): void {
         'status' => OrderStatusEnum::COMPLETED->value,
     ]);
 
-    Event::assertDispatched(OrderStatusChanged::class, function ($event) use ($order) {
+    Event::assertDispatched(OrderStatusChanged::class, function ($event) use ($order): bool {
         return $event->order->id === $order->id;
     });
 });

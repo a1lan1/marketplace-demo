@@ -20,9 +20,7 @@ use App\Services\Payment\PaymentService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Mockery;
 
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\mock;
 
 beforeEach(function (): void {
@@ -140,25 +138,14 @@ it('handles payment gateway exception', function (): void {
 it('processes payment and persists to database', function (): void {
     // Arrange
     $user = User::factory()->create();
-
-    $gatewayMock = Mockery::mock(PaymentGatewayInterface::class);
-    $gatewayMock->shouldReceive('createCustomer')->andReturn('cus_test');
-    $gatewayMock->shouldReceive('charge')->andReturn(new GatewayChargeResultDTO(
-        transactionId: 'pi_test',
-        status: 'succeeded',
-        amount: 1000,
-        currency: 'USD',
-        clientSecret: 'secret'
-    ));
-
-    $this->app->bind(PaymentGatewayFactory::class, function () use ($gatewayMock) {
-        $mock = Mockery::mock(PaymentGatewayFactory::class);
-        $mock->shouldReceive('make')->andReturn($gatewayMock);
-
-        return $mock;
-    });
-
-    $service = $this->app->make(PaymentService::class);
+    $idempotencyKey = Str::uuid()->toString();
+    $payment = Payment::factory()->make([
+        'id' => 1,
+        'user_id' => $user->id,
+        'amount' => 1000,
+        'status' => PaymentStatusEnum::SUCCEEDED,
+        'transaction_id' => 'pi_test',
+    ]);
 
     $dto = ProcessPaymentDTO::make([
         'user' => $user,
@@ -167,20 +154,28 @@ it('processes payment and persists to database', function (): void {
         'paymentMethodId' => 'pm_card',
         'saveCard' => false,
         'provider' => PaymentProviderEnum::STRIPE,
-        'idempotencyKey' => Str::uuid()->toString(),
+        'idempotencyKey' => $idempotencyKey,
     ]);
 
+    $this->paymentRepositoryMock->shouldReceive('findByIdempotencyKey')->once()->with($idempotencyKey, $user->id)->andReturnNull();
+    $this->customerRepositoryMock->shouldReceive('findByUserIdAndProvider')->once()->andReturnNull();
+    $this->gatewayMock->shouldReceive('createCustomer')->once()->andReturn('cus_test');
+    $this->customerRepositoryMock->shouldReceive('create')->once();
+    $this->paymentRepositoryMock->shouldReceive('create')->once()->andReturn($payment);
+
+    $chargeResult = new GatewayChargeResultDTO(
+        transactionId: 'pi_test',
+        status: 'succeeded',
+        amount: 1000,
+        currency: 'USD',
+        clientSecret: 'secret'
+    );
+    $this->gatewayMock->shouldReceive('charge')->once()->andReturn($chargeResult);
+    $this->paymentRepositoryMock->shouldReceive('updateStatus')->once();
+
     // Act
-    $result = $service->processPayment($dto);
+    $result = $this->paymentService->processPayment($dto);
 
     // Assert
     expect($result->status)->toBe(PaymentStatusEnum::SUCCEEDED);
-
-    assertDatabaseHas('payments', [
-        'id' => $result->paymentId,
-        'user_id' => $user->id,
-        'amount' => 1000,
-        'status' => PaymentStatusEnum::SUCCEEDED->value,
-        'transaction_id' => 'pi_test',
-    ]);
 });

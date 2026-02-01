@@ -48,7 +48,7 @@ test('buyer can view their own order', function (): void {
 });
 
 test('seller can view order containing their product', function (): void {
-    expect($this->policy->view($this->seller, $this->order))->toBeFalse();
+    expect($this->policy->view($this->seller, $this->order))->toBeTrue();
 });
 
 test('admin can view other order', function (): void {

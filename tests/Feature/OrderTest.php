@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Enums\OrderStatusEnum;
+use App\Enums\Order\OrderStatusEnum;
+use App\Enums\Payment\PaymentTypeEnum;
+use App\Jobs\ProcessPayoutsJob;
 use App\Models\Product;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\post;
 
 beforeEach(function (): void {
+    Notification::fake();
+    Bus::fake([ProcessPayoutsJob::class]);
     $this->buyer = User::factory()->withBuyerRole()->create(['balance' => Money::USD(100000)]);
     actingAs($this->buyer);
 });
@@ -27,6 +33,7 @@ test('user can place order', function (): void {
         'cart' => [
             ['product_id' => $product->id, 'quantity' => 2],
         ],
+        'payment_type' => PaymentTypeEnum::BALANCE->value,
     ], ['Idempotency-Key' => 'test-key']);
 
     // Assert
@@ -36,7 +43,7 @@ test('user can place order', function (): void {
     assertDatabaseHas('orders', [
         'user_id' => $this->buyer->id,
         'total_amount' => 20000,
-        'status' => OrderStatusEnum::PENDING->value,
+        'status' => OrderStatusEnum::PAID->value,
     ]);
 });
 
@@ -46,6 +53,7 @@ test('user cannot order non-existent product', function (): void {
         'cart' => [
             ['product_id' => 99999, 'quantity' => 1],
         ],
+        'payment_type' => PaymentTypeEnum::BALANCE->value,
     ], ['Idempotency-Key' => 'test-key']);
 
     // Assert
