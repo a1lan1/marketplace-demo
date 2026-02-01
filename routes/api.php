@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BalanceController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CurrencyController;
 use App\Http\Controllers\Api\CurrentUserController;
@@ -53,4 +54,17 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::post('feedbacks', [FeedbackController::class, 'store'])
         ->middleware('throttle:feedbacks')
         ->name('api.feedbacks.store');
+
+    Route::prefix('balance')->name('api.balance.')->group(function (): void {
+        Route::get('/', [BalanceController::class, 'show'])->name('show');
+        Route::post('deposit', [BalanceController::class, 'deposit'])
+            ->middleware(['throttle:10,1', 'idempotency'])
+            ->name('deposit');
+        Route::post('withdraw', [BalanceController::class, 'withdraw'])
+            ->middleware('throttle:10,1')
+            ->name('withdraw');
+        Route::post('transfer', [BalanceController::class, 'transfer'])
+            ->middleware('throttle:10,1')
+            ->name('transfer');
+    });
 });
