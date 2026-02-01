@@ -48,6 +48,46 @@ export function useEchoSubscriptions() {
             }
           }
         )
+        .listen(
+          '.order.confirmation',
+          (e: { order_id: number; total_amount: string }) => {
+            snackbar.success({
+              text: `Your order #${e.order_id} has been confirmed!`
+            })
+          }
+        )
+        .listen(
+          '.payment.failed',
+          (e: { order_id: number; error_message: string }) => {
+            snackbar.error({
+              text: `Payment for order #${e.order_id} failed: ${e.error_message}`
+            })
+          }
+        )
+        .listen(
+          '.purchase.insufficient_funds',
+          (e: { attempted_amount: string; message: string }) => {
+            snackbar.error({
+              text: e.message
+            })
+          }
+        )
+        .listen(
+          '.balance.deposited',
+          (e: { amount: string; message: string }) => {
+            snackbar.success({
+              text: e.message
+            })
+          }
+        )
+        .listen(
+          '.system.payment_error',
+          (e: { message: string; level: string }) => {
+            snackbar.error({
+              text: e.message
+            })
+          }
+        )
     }
   })
 
