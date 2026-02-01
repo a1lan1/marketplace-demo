@@ -31,7 +31,7 @@ export type AppPageProps<
 };
 
 export interface MoneyData {
-  amount: number;
+  amount: number | string;
   currency: string;
   formatted: string;
 }
@@ -69,7 +69,8 @@ export interface Product {
 
 export interface ProductInOrder extends Product {
   quantity: number;
-  price: MoneyData;
+  purchase_price: MoneyData;
+  line_total: MoneyData;
 }
 
 export interface ProductFormData {
@@ -89,6 +90,7 @@ export interface Order {
   updated_at: string;
   buyer?: User;
   products: ProductInOrder[];
+  payment_method?: string;
 }
 
 export interface Message {
@@ -181,6 +183,27 @@ export interface FeedbackForm {
   feedbackable_id: number;
   rating: number;
   comment: string;
+}
+
+export interface Transaction {
+  id: number;
+  amount: number;
+  formatted_amount: string;
+  currency: string;
+  type: 'deposit' | 'withdrawal' | 'transfer';
+  description: string | null;
+  created_at: string;
+}
+
+export interface PayoutMethod {
+  id: number;
+  provider: string;
+  type: string;
+  details: {
+    last4?: string;
+    bank_name?: string;
+    brand?: string;
+  };
 }
 
 // Echo Events
