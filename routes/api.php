@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Geo\ResponseTemplateController;
 use App\Http\Controllers\Api\Geo\ReviewController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PayoutMethodController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserActivityController;
 use Illuminate\Support\Facades\Route;
@@ -77,4 +78,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
             ->middleware('throttle:10,1')
             ->name('transfer');
     });
+
+    Route::apiResource('payout-methods', PayoutMethodController::class);
 });
