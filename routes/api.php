@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Geo\LocationController;
 use App\Http\Controllers\Api\Geo\ResponseTemplateController;
 use App\Http\Controllers\Api\Geo\ReviewController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserActivityController;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::post('feedbacks', [FeedbackController::class, 'store'])
         ->middleware('throttle:feedbacks')
         ->name('api.feedbacks.store');
+
+    Route::prefix('payments')->name('api.payments.')->group(function (): void {
+        Route::get('methods', [PaymentController::class, 'index'])->name('methods.index');
+        Route::post('methods', [PaymentController::class, 'storeMethod'])->name('methods.store');
+        Route::post('setup-intent', [PaymentController::class, 'setupIntent'])->name('setup-intent');
+        Route::post('purchase', [PaymentController::class, 'purchase'])
+            ->middleware('idempotency')
+            ->name('purchase');
+    });
 
     Route::prefix('balance')->name('api.balance.')->group(function (): void {
         Route::get('/', [BalanceController::class, 'show'])->name('show');
