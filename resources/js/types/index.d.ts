@@ -185,12 +185,15 @@ export interface FeedbackForm {
   comment: string;
 }
 
+export type TransactionType = 'deposit' | 'withdrawal' | 'transfer' | 'purchase';
+
 export interface Transaction {
   id: number;
+  order_id: number | null;
   amount: number;
   formatted_amount: string;
   currency: string;
-  type: 'deposit' | 'withdrawal' | 'transfer';
+  type: TransactionType;
   description: string | null;
   created_at: string;
 }
