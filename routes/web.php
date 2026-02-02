@@ -5,6 +5,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('checkout', fn () => Inertia::render('Checkout'))->name('checkout.index');
     Route::get('payment', fn () => Inertia::render('Payment'))->name('payment.index');
+    Route::get('wallet', [WalletController::class, 'index'])->name('wallet.index');
 
     Route::prefix('orders')->group(function (): void {
         Route::get('', [OrderController::class, 'index'])->name('orders.index');

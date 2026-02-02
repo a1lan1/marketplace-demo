@@ -20,11 +20,12 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * @return LengthAwarePaginator<int, Transaction>
      */
-    public function paginateForUser(User $user, int $perPage = 20): LengthAwarePaginator
+    public function paginateForUser(User $user, int $perPage = 10): LengthAwarePaginator
     {
         return Transaction::query()
             ->select([
                 'id',
+                'order_id',
                 'amount',
                 'type',
                 'description',
