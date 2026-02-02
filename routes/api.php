@@ -34,6 +34,7 @@ Route::get('currency/rates', [CurrencyController::class, 'rates'])
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('user', CurrentUserController::class);
     Route::get('user/orders', [OrderController::class, 'getUserOrders'])->name('api.user.orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('api.orders.show');
 
     Route::prefix('chat')->group(function (): void {
         Route::get('{order}/messages', [ChatController::class, 'getMessages'])->name('api.orders.messages.index');
