@@ -68,6 +68,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
 
     Route::prefix('balance')->name('api.balance.')->group(function (): void {
         Route::get('/', [BalanceController::class, 'show'])->name('show');
+        Route::get('transactions', [BalanceController::class, 'transactions'])->name('transactions');
+        Route::get('recipients', [BalanceController::class, 'recipients'])->name('recipients');
         Route::post('deposit', [BalanceController::class, 'deposit'])
             ->middleware(['throttle:10,1', 'idempotency'])
             ->name('deposit');

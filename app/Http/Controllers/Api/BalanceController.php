@@ -8,6 +8,7 @@ use App\Actions\Payment\DepositAction;
 use App\Actions\Payment\TransferAction;
 use App\Actions\Payment\WithdrawAction;
 use App\Contracts\Repositories\TransactionRepositoryInterface;
+use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Contracts\Services\BalanceServiceInterface;
 use App\DTO\Payment\ProcessPaymentDTO;
 use App\Enums\Payment\PaymentProviderEnum;
@@ -16,13 +17,16 @@ use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\Payment\PaymentGatewayException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DepositRequest;
+use App\Http\Requests\SearchRecipientsRequest;
 use App\Http\Requests\TransferRequest;
 use App\Http\Requests\WithdrawRequest;
 use App\Http\Resources\TransactionResource;
 use App\Http\Resources\UserBalanceResource;
+use App\Http\Resources\UserResource;
 use Cknow\Money\Money;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Throwable;
 
 class BalanceController extends Controller
@@ -30,19 +34,33 @@ class BalanceController extends Controller
     public function __construct(
         protected BalanceServiceInterface $balanceService,
         protected TransactionRepositoryInterface $transactionRepository,
+        protected UserRepositoryInterface $userRepository,
     ) {}
 
     public function show(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $transactions = $this->transactionRepository->paginateForUser($user);
-
         return response()->json([
-            'balance' => UserBalanceResource::make($user),
-            'transactions' => TransactionResource::collection($transactions)
-                ->response()
-                ->getData(true),
+            'balance' => UserBalanceResource::make($request->user()),
         ]);
+    }
+
+    public function transactions(Request $request): AnonymousResourceCollection
+    {
+        $transactions = $this->transactionRepository->paginateForUser($request->user());
+
+        return TransactionResource::collection($transactions);
+    }
+
+    public function recipients(SearchRecipientsRequest $request): AnonymousResourceCollection
+    {
+        $search = $request->string('search')->toString();
+
+        $users = $this->userRepository->searchByNameOrEmail(
+            query: $search,
+            excludeUserId: $request->user()->id
+        );
+
+        return UserResource::collection($users);
     }
 
     public function deposit(DepositRequest $request, DepositAction $action): JsonResponse
@@ -112,11 +130,12 @@ class BalanceController extends Controller
     public function transfer(TransferRequest $request, TransferAction $action): JsonResponse
     {
         $sender = $request->user();
+        $recipient = $this->userRepository->findByEmail($request->validated('email'));
 
         try {
             $action->execute(
                 $sender,
-                $request->validated('recipient_id'),
+                $recipient->id,
                 Money::parse($request->integer('amount'), $request->validated('currency')),
                 $request->validated('description')
             );
