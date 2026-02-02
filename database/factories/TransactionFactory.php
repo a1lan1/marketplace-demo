@@ -20,10 +20,33 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory()->withBaseRoles(),
-            'order_id' => Order::factory(),
-            'amount' => fake()->numberBetween(10000, 100000),
-            'type' => fake()->randomElement(TransactionType::cases()),
+            'user_id' => User::factory(),
+            'order_id' => null,
+            'amount' => fake()->numberBetween(1000, 50000),
+            'type' => fake()->randomElement([
+                TransactionType::DEPOSIT,
+                TransactionType::WITHDRAWAL,
+                TransactionType::TRANSFER,
+            ]),
+            'description' => fake()->sentence,
         ];
+    }
+
+    public function purchase(): self
+    {
+        return $this->state(function (array $attributes): array {
+            return [
+                'type' => TransactionType::PURCHASE,
+                'order_id' => Order::factory()->create([
+                    'user_id' => $attributes['user_id'],
+                ])->id,
+            ];
+        })->afterCreating(function (Transaction $transaction): void {
+            if ($transaction->order) {
+                $transaction->order->update(['total_amount' => $transaction->amount]);
+                $transaction->description = 'Payment for order #'.$transaction->order_id;
+                $transaction->save();
+            }
+        });
     }
 }

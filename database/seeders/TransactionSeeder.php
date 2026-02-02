@@ -8,21 +8,20 @@ use App\Enums\Order\OrderStatusEnum;
 use App\Enums\Transaction\TransactionType;
 use App\Models\Order;
 use App\Models\Transaction;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class TransactionSeeder extends Seeder
 {
     public function run(): void
     {
-        /** @var Collection<int, Order> $orders */
-        $orders = Order::with('buyer')
+        $users = User::all();
+        $pendingOrders = Order::with('buyer')
             ->where('status', OrderStatusEnum::PENDING)
-            ->whereDoesntHave('payment')
             ->whereDoesntHave('transaction')
             ->get();
 
-        foreach ($orders as $order) {
+        foreach ($pendingOrders as $order) {
             Transaction::factory()
                 ->for($order->buyer, 'user')
                 ->for($order)
@@ -32,7 +31,13 @@ class TransactionSeeder extends Seeder
                     'description' => 'Payment for order #'.$order->id,
                 ]);
 
-            $order->updateStatus(OrderStatusEnum::PAID);
+            $order->update(['status' => OrderStatusEnum::PAID]);
+        }
+
+        foreach ($users as $user) {
+            Transaction::factory(rand(10, 15))
+                ->for($user)
+                ->create();
         }
     }
 }
