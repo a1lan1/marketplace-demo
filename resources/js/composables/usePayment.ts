@@ -79,48 +79,78 @@ export function usePayment({ userBalance }: UsePaymentOptions) {
     cardName: z.string().optional(),
     cardExpiry: z.string().optional(),
     cardCvv: z.string().optional()
-  }).superRefine((data, ctx) => {
-    // Balance Validation
-    if (data.paymentType === 'balance') {
-      if (!data.userBalance) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'User balance information is missing.',
-          path: ['paymentType']
-        })
-      } else if (data.userBalance < data.totalPrice) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Insufficient balance.',
-          path: ['paymentType']
-        })
-      }
-    }
-
-    // Custom Card Validation
-    if (data.paymentType === 'card' && data.isNewCard && data.provider === PaymentProvider.Custom) {
-      if (!data.cardNumber) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Card number is required', path: ['cardNumber'] })
-      if (!data.cardName) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Card name is required', path: ['cardName'] })
-      if (!data.cardCvv) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'CVV is required', path: ['cardCvv'] })
-
-      if (!data.cardExpiry) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Expiry date is required', path: ['cardExpiry'] })
-      } else {
-        const [monthStr, yearStr] = data.cardExpiry.split('/')
-        const month = parseInt(monthStr, 10)
-        const year = parseInt(yearStr, 10)
-
-        if (!month || !year || month < 1 || month > 12) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Invalid date (MM/YY)', path: ['cardExpiry'] })
+  })
+    .superRefine((data, ctx) => {
+      // Balance Validation
+      if (data.paymentType === 'balance') {
+        if (!data.userBalance) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'User balance information is missing.',
+            path: ['paymentType']
+          })
+        } else if (data.userBalance < data.totalPrice) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Insufficient balance.',
+            path: ['paymentType']
+          })
         }
       }
-    }
-  })
+
+      // Custom Card Validation
+      if (
+        data.paymentType === 'card' &&
+        data.isNewCard &&
+        data.provider === PaymentProvider.Custom
+      ) {
+        if (!data.cardNumber)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Card number is required',
+            path: ['cardNumber']
+          })
+        if (!data.cardName)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Card name is required',
+            path: ['cardName']
+          })
+        if (!data.cardCvv)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'CVV is required',
+            path: ['cardCvv']
+          })
+
+        if (!data.cardExpiry) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Expiry date is required',
+            path: ['cardExpiry']
+          })
+        } else {
+          const [monthStr, yearStr] = data.cardExpiry.split('/')
+          const month = parseInt(monthStr, 10)
+          const year = parseInt(yearStr, 10)
+
+          if (!month || !year || month < 1 || month > 12) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Invalid date (MM/YY)',
+              path: ['cardExpiry']
+            })
+          }
+        }
+      }
+    })
 
   const formData = computed(() => ({
     paymentType: paymentMethodType.value,
     totalPrice: totalPrice.value,
-    userBalance: userBalance.value ? Number(userBalance.value.amount) : undefined,
+    userBalance: userBalance.value
+      ? Number(userBalance.value.amount)
+      : undefined,
     isNewCard: isNewCardSelected.value,
     provider: paymentProvider.value,
     cardNumber: customCardData.value.number,
@@ -227,14 +257,13 @@ export function usePayment({ userBalance }: UsePaymentOptions) {
           console.error(errors)
           regenerateIdempotencyKey()
           const message =
-              errors.purchase || errors.payment_type || 'Error placing order.'
+            errors.purchase || errors.payment_type || 'Error placing order.'
           snackbar.error({ text: message })
         },
         onFinish: () => {
           processing.value = false
         }
-      }
-      )
+      })
     } catch (e: any) {
       console.error(e)
       snackbar.error({ text: e.message || 'Payment failed' })

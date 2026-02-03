@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import OrderDetails from '@/components/order/OrderDetails.vue'
+import OrderDetailsDialog from '@/components/order/OrderDetailsDialog.vue'
 import { usePermissions } from '@/composables/usePermissions'
 import { orderStatusOptions, StatusVariant } from '@/enums/OrderStatus'
 import AppLayout from '@/layouts/AppLayout.vue'
@@ -39,12 +39,12 @@ const loading = ref(false)
 const items = ref(props.orders.data)
 const totalItems = ref(props.orders.meta.total)
 
-const dialog = ref(false)
-const selectedOrder = ref<Order | null>(null)
+const isDialogVisible = ref(false)
+const selectedOrderId = ref<number | null>(null)
 
 const openDialog = (order: Order) => {
-  selectedOrder.value = order
-  dialog.value = true
+  selectedOrderId.value = order.id
+  isDialogVisible.value = true
 }
 
 const updateOrderStatus = (orderId: number, status: Order['status']) => {
@@ -62,7 +62,6 @@ const loadItems = ({
   page: number;
   itemsPerPage: number;
 }) => {
-  // Prevent reloading the same page
   if (
     page === props.orders.meta.current_page &&
     itemsPerPage === props.orders.meta.per_page
@@ -81,7 +80,6 @@ const loadItems = ({
   )
 }
 
-// Watch for prop changes to update local state
 watch(
   () => props.orders,
   (newOrders) => {
@@ -167,34 +165,9 @@ watch(
       </v-card>
     </v-container>
 
-    <!-- Order Details Dialog -->
-    <v-dialog
-      v-model="dialog"
-      max-width="800"
-    >
-      <v-card v-if="selectedOrder">
-        <v-card-title class="d-flex justify-space-between align-center">
-          <span>Order #{{ selectedOrder.id }} Details</span>
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            @click="dialog = false"
-          />
-        </v-card-title>
-
-        <OrderDetails :order="selectedOrder" />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <OrderDetailsDialog
+      v-model="isDialogVisible"
+      :order-id="selectedOrderId"
+    />
   </AppLayout>
 </template>
