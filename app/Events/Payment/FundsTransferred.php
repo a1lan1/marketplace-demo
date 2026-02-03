@@ -8,17 +8,21 @@ use App\Contracts\LoggableEvent;
 use App\Models\Transaction;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FundsTransferred implements LoggableEvent
+class FundsTransferred implements LoggableEvent, ShouldBroadcast
 {
     use Dispatchable;
+    use InteractsWithSockets;
     use SerializesModels;
 
     public function __construct(
-        public Transaction $senderTransaction,
+        public Transaction $transaction,
         public User $sender,
         public User $recipient,
         public Money $amount
@@ -26,7 +30,7 @@ class FundsTransferred implements LoggableEvent
 
     public function getPerformedOn(): ?Model
     {
-        return $this->senderTransaction;
+        return $this->transaction;
     }
 
     public function getCausedBy(): ?User
@@ -42,9 +46,27 @@ class FundsTransferred implements LoggableEvent
     public function getProperties(): array
     {
         return [
-            'recipient_id' => $this->recipient->id,
             'amount' => $this->amount->getAmount(),
             'currency' => $this->amount->getCurrency()->getCode(),
+            'sender_id' => $this->sender->id,
+            'recipient_id' => $this->recipient->id,
+            'new_sender_balance' => $this->sender->refresh()->balance->getAmount(),
         ];
+    }
+
+    /**
+     * @return array<int, PrivateChannel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('App.Models.User.'.$this->sender->id),
+            new PrivateChannel('App.Models.User.'.$this->recipient->id),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'funds.transferred';
     }
 }

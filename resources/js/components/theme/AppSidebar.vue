@@ -25,6 +25,7 @@ import {
 } from '@/routes/products'
 import { defaultMethod as prometheus } from '@/routes/prometheus'
 import scramble from '@/routes/scramble'
+import { index as walletIndex } from '@/routes/wallet'
 import type { NavItem } from '@/types'
 import { Link } from '@inertiajs/vue3'
 import {
@@ -36,7 +37,8 @@ import {
   MessageSquare,
   Package,
   Radar,
-  ShoppingCart
+  ShoppingCart,
+  Wallet
 } from 'lucide-vue-next'
 import AppLogo from './AppLogo.vue'
 
@@ -55,6 +57,11 @@ const mainNavItems: NavItem[] = [
     title: 'My Products',
     href: productsIndex(),
     icon: Package
+  },
+  {
+    title: 'Wallet',
+    href: walletIndex(),
+    icon: Wallet
   },
   {
     title: 'Support',

@@ -8,13 +8,17 @@ use App\Contracts\LoggableEvent;
 use App\Models\Transaction;
 use App\Models\User;
 use Cknow\Money\Money;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FundsDeposited implements LoggableEvent
+class FundsDeposited implements LoggableEvent, ShouldBroadcast
 {
     use Dispatchable;
+    use InteractsWithSockets;
     use SerializesModels;
 
     public function __construct(
@@ -45,5 +49,20 @@ class FundsDeposited implements LoggableEvent
             'currency' => $this->amount->getCurrency()->getCode(),
             'new_balance' => $this->user->refresh()->balance->getAmount(),
         ];
+    }
+
+    /**
+     * @return array<int, PrivateChannel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('App.Models.User.'.$this->user->id),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'funds.deposited';
     }
 }

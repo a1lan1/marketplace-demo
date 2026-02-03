@@ -33,6 +33,31 @@ export const useOrderStore = defineStore('order', {
         this.loading = false
       }
     },
+    async fetchOrder(id: number): Promise<void> {
+      if (this.activeOrder?.id === id) {
+        return
+      }
+
+      try {
+        this.loading = true
+        this.activeOrder = null
+
+        const { data } = await this.$axios.get<Order>(`/orders/${id}`)
+        this.setActiveOrder(data)
+      } catch (e: any) {
+        this.$snackbar.error({
+          text: e.message || 'Failed to load order details.'
+        })
+      } finally {
+        this.loading = false
+      }
+    },
+    setActiveOrder(order: Order) {
+      this.activeOrder = order
+    },
+    clearActiveOrder() {
+      this.activeOrder = null
+    },
     resetOrders() {
       this.orders = []
     },
